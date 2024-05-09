@@ -1,0 +1,8 @@
+Compiler supported targets: xtensa-esp32-elf
+
+ESP Insights Project commit: 1830a88-dirty
+ESP RainMaker Project commit: 1830a88-dirty
+CMake Error at components/arduino/CMakeLists.txt:297 (message):
+  esp32-arduino requires CONFIG_FREERTOS_HZ=1000 (currently 100)
+
+
