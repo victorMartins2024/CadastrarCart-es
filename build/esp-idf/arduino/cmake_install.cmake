@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/components/arduino
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/components/arduino
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

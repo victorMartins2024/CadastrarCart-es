@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/managed_components/joltwallet__littlefs
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/managed_components/joltwallet__littlefs
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

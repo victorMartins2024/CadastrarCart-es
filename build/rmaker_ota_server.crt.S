@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/joao.santos/esp/TelemetriaGT/managed_components/espressif__esp_rainmaker/server_certs/rmaker_ota_server.crt
+/* * Data converted from C:/Users/joao.santos/esp/Prototipo/managed_components/espressif__esp_rainmaker/server_certs/rmaker_ota_server.crt
  * (null byte appended)
  */
 .data

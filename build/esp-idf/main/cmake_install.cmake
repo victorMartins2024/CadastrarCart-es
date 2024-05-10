@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/main
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

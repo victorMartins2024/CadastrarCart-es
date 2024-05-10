@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/managed_components/espressif__esp-zboss-lib
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/managed_components/espressif__esp-zboss-lib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

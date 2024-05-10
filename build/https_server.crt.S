@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/joao.santos/esp/TelemetriaGT/managed_components/espressif__esp_insights/server_certs/https_server.crt
+/* * Data converted from C:/Users/joao.santos/esp/Prototipo/managed_components/espressif__esp_insights/server_certs/https_server.crt
  * (null byte appended)
  */
 .data

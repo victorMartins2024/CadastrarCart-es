@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/esp32-arduino-lib-builder/components/arduino_tinyusb
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/esp32-arduino-lib-builder/components/arduino_tinyusb
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

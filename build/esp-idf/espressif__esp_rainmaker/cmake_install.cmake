@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/TelemetriaGT/managed_components/espressif__esp_rainmaker
+# Install script for directory: C:/Users/joao.santos/esp/Prototipo/managed_components/espressif__esp_rainmaker
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
