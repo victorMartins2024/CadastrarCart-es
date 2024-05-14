@@ -26406,192 +26406,28 @@
                 "children": [
                     {
                         "children": [],
-                        "depends_on": null,
-                        "help": "You can access parent node of parsed json",
-                        "id": "JSMN_PARENT_LINKS",
-                        "name": "JSMN_PARENT_LINKS",
+                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
+                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
+                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
                         "range": null,
-                        "title": "Enable parent links",
+                        "title": "Enable DS peripheral support",
                         "type": "bool"
                     },
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "In strict mode primitives are: numbers and booleans",
-                        "id": "JSMN_STRICT",
-                        "name": "JSMN_STRICT",
+                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
+                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
                         "range": null,
-                        "title": "Enable strict mode",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Declar JSMN API as static (instead of extern)",
-                        "id": "JSMN_STATIC",
-                        "name": "JSMN_STATIC",
-                        "range": null,
-                        "title": "Declare JSMN API as static",
+                        "title": "Enable support for legacy formats",
                         "type": "bool"
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-jsmn",
-                "title": "jsmn",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
-                                "help": null,
-                                "id": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
-                                "name": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
-                                "range": null,
-                                "title": "Format arguments as TLV",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
-                                "help": null,
-                                "id": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
-                                "name": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
-                                "range": null,
-                                "title": "Format arguments as string",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "For error/warning/event logs, diagnostics module collects program counter, timestamp,\ntag, RO data pointer and log arguments. Log arguments are stored in statically allocated buffer.\nThis option configures how to format and store log arguments in buffer.\nLog arguments can be formatted as TLV or complete log string formatted using vsnprintf.\n\nIf \"TLV\" is selected, buffer contains arguments formatted as TLV.\nType - 1 byte for the type of argument, please check esp_diag_arg_type_t.\nLength - 1 byte for the size of argument, size is calculated using sizeof operator.\nValue - Size bytes for the value.\n\nIf \"STRING\" is selected, buffer contains the entire string formatted using vsnprintf.",
-                        "id": "component-config-diagnostics-diagnostics-log-argument-format",
-                        "name": "DIAG_LOG_MSG_ARG_FORMAT",
-                        "title": "Diagnostics log argument format",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Log arguments are stored in a static allocated buffer.\nThis option configures the maximum size of buffer for storing log arguments.",
-                        "id": "DIAG_LOG_MSG_ARG_MAX_SIZE",
-                        "name": "DIAG_LOG_MSG_ARG_MAX_SIZE",
-                        "range": [
-                            32,
-                            255
-                        ],
-                        "title": "Maximum size of diagnostics log argument buffer",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Every Wi-Fi log printed on the console adds three diagnostics logs.\nFor some users, Wi-Fi logs may not be that useful.\nBy default, diagnostics drops Wi-Fi logs. Set this config option to \"n\" for recording Wi-Fi logs.",
-                        "id": "DIAG_LOG_DROP_WIFI_LOGS",
-                        "name": "DIAG_LOG_DROP_WIFI_LOGS",
-                        "range": null,
-                        "title": "Drop Wi-Fi logs",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "This option configures the maximum number of metrics that can be registered.",
-                                "id": "DIAG_METRICS_MAX_COUNT",
-                                "name": "DIAG_METRICS_MAX_COUNT",
-                                "range": null,
-                                "title": "Maximum number of metrics",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "Enables the heap memory metrics. This collects free memory, largest free block,\nand minimum free memory for heaps in internal as well as external memory.",
-                                "id": "DIAG_ENABLE_HEAP_METRICS",
-                                "name": "DIAG_ENABLE_HEAP_METRICS",
-                                "range": null,
-                                "title": "Enable Heap Metrics",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "Enables Wi-Fi metrics and collects Wi-Fi RSSI and minumum ever Wi-Fi RSSI.",
-                                "id": "DIAG_ENABLE_WIFI_METRICS",
-                                "name": "DIAG_ENABLE_WIFI_METRICS",
-                                "range": null,
-                                "title": "Enable Wi-Fi Metrics",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Diagnostics module supports recording and reporting metrics to cloud.\nThis option enables the diagnostics metrics and related functionality.",
-                        "id": "DIAG_ENABLE_METRICS",
-                        "name": "DIAG_ENABLE_METRICS",
-                        "range": null,
-                        "title": "Enable diagnostics metrics",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_VARIABLES",
-                                "help": "This option configures the maximum number of variables that can be registered.",
-                                "id": "DIAG_VARIABLES_MAX_COUNT",
-                                "name": "DIAG_VARIABLES_MAX_COUNT",
-                                "range": null,
-                                "title": "Maximum number of variables",
-                                "type": "int"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                        "help": "Enable more advanced network variables",
-                                        "id": "DIAG_MORE_NETWORK_VARS",
-                                        "name": "DIAG_MORE_NETWORK_VARS",
-                                        "range": null,
-                                        "title": "Enable More Advanced Network variables",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "DIAG_ENABLE_VARIABLES",
-                                "help": "Enables the Wi-Fi and IP address variables. Below variables are collected.\nFor Wi-Fi: SSID, BSSID, channel, auth mode, connection status, disconnection reason.\nFor IP: IPv4 address, netmask, and gateway of the device.",
-                                "id": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                "name": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                "range": null,
-                                "title": "Enable Network variables",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Variables are similar to metrics but they represent entities where their current value\nis much more important than over a period of time.\nThis option enables the diagnostics variables and related functionality",
-                        "id": "DIAG_ENABLE_VARIABLES",
-                        "name": "DIAG_ENABLE_VARIABLES",
-                        "range": null,
-                        "title": "Enable diagnostics variables",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Diagnostics component wraps the esp_log_write and esp_log_writev APIs using `--wrap` gcc option.\nThere can be scenario where another component also wants to wrap the logging functions.\nIn that case, enable this option and use the data ingestion APIs esp_diag_log_write and esp_diag_log_writev.",
-                        "id": "DIAG_USE_EXTERNAL_LOG_WRAP",
-                        "name": "DIAG_USE_EXTERNAL_LOG_WRAP",
-                        "range": null,
-                        "title": "Use external log wrapper",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics",
-                "title": "Diagnostics",
+                "id": "component-config-esp-secure-cert-manager",
+                "title": "ESP Secure Cert Manager",
                 "type": "menu"
             },
             {
@@ -26877,265 +26713,6 @@
             {
                 "children": [
                     {
-                        "children": [],
-                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
-                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
-                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "range": null,
-                        "title": "Enable DS peripheral support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
-                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "range": null,
-                        "title": "Enable support for legacy formats",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-secure-cert-manager",
-                "title": "ESP Secure Cert Manager",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
-                        "id": "MDNS_MAX_INTERFACES",
-                        "name": "MDNS_MAX_INTERFACES",
-                        "range": [
-                            1,
-                            9
-                        ],
-                        "title": "Max number of interfaces",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
-                        "id": "MDNS_MAX_SERVICES",
-                        "name": "MDNS_MAX_SERVICES",
-                        "range": null,
-                        "title": "Max number of services",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
-                        "id": "MDNS_TASK_PRIORITY",
-                        "name": "MDNS_TASK_PRIORITY",
-                        "range": [
-                            1,
-                            255
-                        ],
-                        "title": "mDNS task priority",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting the length of mDNS action queue.",
-                        "id": "MDNS_ACTION_QUEUE_LEN",
-                        "name": "MDNS_ACTION_QUEUE_LEN",
-                        "range": [
-                            8,
-                            64
-                        ],
-                        "title": "Maximum actions pending to the server",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task stacksize.",
-                        "id": "MDNS_TASK_STACK_SIZE",
-                        "name": "MDNS_TASK_STACK_SIZE",
-                        "range": null,
-                        "title": "mDNS task stack size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "range": null,
-                                "title": "No affinity",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU0",
-                                "name": "MDNS_TASK_AFFINITY_CPU0",
-                                "range": null,
-                                "title": "CPU0",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU1",
-                                "name": "MDNS_TASK_AFFINITY_CPU1",
-                                "range": null,
-                                "title": "CPU1",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
-                        "id": "component-config-mdns-mdns-task-affinity",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "title": "mDNS task affinity",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "MDNS_TASK_AFFINITY",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "range": null,
-                        "title": null,
-                        "type": "hex"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
-                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "range": [
-                            10,
-                            30000
-                        ],
-                        "title": "mDNS adding service timeout (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
-                        "id": "MDNS_TIMER_PERIOD_MS",
-                        "name": "MDNS_TIMER_PERIOD_MS",
-                        "range": [
-                            10,
-                            10000
-                        ],
-                        "title": "mDNS timer period (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
-                        "id": "MDNS_NETWORKING_SOCKET",
-                        "name": "MDNS_NETWORKING_SOCKET",
-                        "range": null,
-                        "title": "Use BSD sockets for mDNS networking",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
-                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "range": null,
-                        "title": "Skip suppressing our own packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
-                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "range": null,
-                        "title": "Enable debug prints of mDNS packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
-                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "range": null,
-                        "title": "Enable responding to IPv4 reverse queries",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables adding multiple service instances under the same service type.",
-                        "id": "MDNS_MULTIPLE_INSTANCE",
-                        "name": "MDNS_MULTIPLE_INSTANCE",
-                        "range": null,
-                        "title": "Multiple instances under the same service type",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
-                                "id": "MDNS_PREDEF_NETIF_STA",
-                                "name": "MDNS_PREDEF_NETIF_STA",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Station",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
-                                "id": "MDNS_PREDEF_NETIF_AP",
-                                "name": "MDNS_PREDEF_NETIF_AP",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Access Point",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "ETH_ENABLED",
-                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
-                                "id": "MDNS_PREDEF_NETIF_ETH",
-                                "name": "MDNS_PREDEF_NETIF_ETH",
-                                "range": null,
-                                "title": "Use predefined interface for Ethernet",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "id": "component-config-mdns-mdns-predefined-interfaces",
-                        "title": "MDNS Predefined interfaces",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-mdns",
-                "title": "mDNS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
                         "children": [
                             {
                                 "children": [
@@ -27296,257 +26873,6 @@
                 "depends_on": null,
                 "id": "component-config-zigbee",
                 "title": "Zigbee",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": null,
-                                "id": "DIAG_DATA_STORE_RTC",
-                                "name": "DIAG_DATA_STORE_RTC",
-                                "range": null,
-                                "title": "RTC memory",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": "Just a placeholder. This data store type is not supported as of now",
-                                "id": "DIAG_DATA_STORE_FLASH",
-                                "name": "DIAG_DATA_STORE_FLASH",
-                                "range": null,
-                                "title": "Flash",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
-                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
-                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
-                        "title": "Diagnostics data store destination",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
-                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "range": [
-                            50,
-                            90
-                        ],
-                        "title": "Reporting watermark percentage",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
-                                "id": "RTC_STORE_DATA_SIZE",
-                                "name": "RTC_STORE_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    7168
-                                ],
-                                "title": "RTC store data size",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
-                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    3072
-                                ],
-                                "title": "Maximum size of critical data store",
-                                "type": "int"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_RTC",
-                        "id": "component-config-diagnostics-data-store-rtc-store",
-                        "title": "RTC Store",
-                        "type": "menu"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_FLASH",
-                                "help": "Diagnostics data is stored in this partition",
-                                "id": "FLASH_STORE_PARTITION_LABEL",
-                                "name": "FLASH_STORE_PARTITION_LABEL",
-                                "range": null,
-                                "title": "Diagnostics data partition name",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_FLASH",
-                        "id": "component-config-diagnostics-data-store-flash-store",
-                        "title": "Flash Store",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics-data-store",
-                "title": "Diagnostics data store",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
-                        "help": null,
-                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "range": null,
-                        "title": null,
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_ANSI",
-                                "name": "DSP_ANSI",
-                                "range": null,
-                                "title": "ANSI C",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_OPTIMIZED",
-                                "name": "DSP_OPTIMIZED",
-                                "range": null,
-                                "title": "Optimized",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
-                        "id": "component-config-dsp-library-dsp-optimization",
-                        "name": "DSP_OPTIMIZATION",
-                        "title": "DSP Optimization",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_OPTIMIZATION",
-                        "name": "DSP_OPTIMIZATION",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_512",
-                                "name": "DSP_MAX_FFT_SIZE_512",
-                                "range": null,
-                                "title": "512",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_1024",
-                                "name": "DSP_MAX_FFT_SIZE_1024",
-                                "range": null,
-                                "title": "1024",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_2048",
-                                "name": "DSP_MAX_FFT_SIZE_2048",
-                                "range": null,
-                                "title": "2048",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_4096",
-                                "name": "DSP_MAX_FFT_SIZE_4096",
-                                "range": null,
-                                "title": "4096",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_8192",
-                                "name": "DSP_MAX_FFT_SIZE_8192",
-                                "range": null,
-                                "title": "8192",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_16384",
-                                "name": "DSP_MAX_FFT_SIZE_16384",
-                                "range": null,
-                                "title": "16384",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_32768",
-                                "name": "DSP_MAX_FFT_SIZE_32768",
-                                "range": null,
-                                "title": "32768",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This is default FFT size for internal usage.",
-                        "id": "component-config-dsp-library-maximum-fft-length",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "title": "Maximum FFT length",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_MAX_FFT_SIZE",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-dsp-library",
-                "title": "DSP Library",
                 "type": "menu"
             },
             {
@@ -27999,6 +27325,680 @@
                 "depends_on": null,
                 "id": "component-config-littlefs",
                 "title": "LittleFS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": null,
+                                "id": "DIAG_DATA_STORE_RTC",
+                                "name": "DIAG_DATA_STORE_RTC",
+                                "range": null,
+                                "title": "RTC memory",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": "Just a placeholder. This data store type is not supported as of now",
+                                "id": "DIAG_DATA_STORE_FLASH",
+                                "name": "DIAG_DATA_STORE_FLASH",
+                                "range": null,
+                                "title": "Flash",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
+                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
+                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
+                        "title": "Diagnostics data store destination",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
+                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "range": [
+                            50,
+                            90
+                        ],
+                        "title": "Reporting watermark percentage",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
+                                "id": "RTC_STORE_DATA_SIZE",
+                                "name": "RTC_STORE_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    7168
+                                ],
+                                "title": "RTC store data size",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
+                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    3072
+                                ],
+                                "title": "Maximum size of critical data store",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_RTC",
+                        "id": "component-config-diagnostics-data-store-rtc-store",
+                        "title": "RTC Store",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_FLASH",
+                                "help": "Diagnostics data is stored in this partition",
+                                "id": "FLASH_STORE_PARTITION_LABEL",
+                                "name": "FLASH_STORE_PARTITION_LABEL",
+                                "range": null,
+                                "title": "Diagnostics data partition name",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_FLASH",
+                        "id": "component-config-diagnostics-data-store-flash-store",
+                        "title": "Flash Store",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-diagnostics-data-store",
+                "title": "Diagnostics data store",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
+                        "help": null,
+                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_ANSI",
+                                "name": "DSP_ANSI",
+                                "range": null,
+                                "title": "ANSI C",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_OPTIMIZED",
+                                "name": "DSP_OPTIMIZED",
+                                "range": null,
+                                "title": "Optimized",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
+                        "id": "component-config-dsp-library-dsp-optimization",
+                        "name": "DSP_OPTIMIZATION",
+                        "title": "DSP Optimization",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_OPTIMIZATION",
+                        "name": "DSP_OPTIMIZATION",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_512",
+                                "name": "DSP_MAX_FFT_SIZE_512",
+                                "range": null,
+                                "title": "512",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_1024",
+                                "name": "DSP_MAX_FFT_SIZE_1024",
+                                "range": null,
+                                "title": "1024",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_2048",
+                                "name": "DSP_MAX_FFT_SIZE_2048",
+                                "range": null,
+                                "title": "2048",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_4096",
+                                "name": "DSP_MAX_FFT_SIZE_4096",
+                                "range": null,
+                                "title": "4096",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_8192",
+                                "name": "DSP_MAX_FFT_SIZE_8192",
+                                "range": null,
+                                "title": "8192",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_16384",
+                                "name": "DSP_MAX_FFT_SIZE_16384",
+                                "range": null,
+                                "title": "16384",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_32768",
+                                "name": "DSP_MAX_FFT_SIZE_32768",
+                                "range": null,
+                                "title": "32768",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This is default FFT size for internal usage.",
+                        "id": "component-config-dsp-library-maximum-fft-length",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "title": "Maximum FFT length",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_MAX_FFT_SIZE",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-dsp-library",
+                "title": "DSP Library",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
+                        "id": "MDNS_MAX_INTERFACES",
+                        "name": "MDNS_MAX_INTERFACES",
+                        "range": [
+                            1,
+                            9
+                        ],
+                        "title": "Max number of interfaces",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
+                        "id": "MDNS_MAX_SERVICES",
+                        "name": "MDNS_MAX_SERVICES",
+                        "range": null,
+                        "title": "Max number of services",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
+                        "id": "MDNS_TASK_PRIORITY",
+                        "name": "MDNS_TASK_PRIORITY",
+                        "range": [
+                            1,
+                            255
+                        ],
+                        "title": "mDNS task priority",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting the length of mDNS action queue.",
+                        "id": "MDNS_ACTION_QUEUE_LEN",
+                        "name": "MDNS_ACTION_QUEUE_LEN",
+                        "range": [
+                            8,
+                            64
+                        ],
+                        "title": "Maximum actions pending to the server",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task stacksize.",
+                        "id": "MDNS_TASK_STACK_SIZE",
+                        "name": "MDNS_TASK_STACK_SIZE",
+                        "range": null,
+                        "title": "mDNS task stack size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "range": null,
+                                "title": "No affinity",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU0",
+                                "name": "MDNS_TASK_AFFINITY_CPU0",
+                                "range": null,
+                                "title": "CPU0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU1",
+                                "name": "MDNS_TASK_AFFINITY_CPU1",
+                                "range": null,
+                                "title": "CPU1",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
+                        "id": "component-config-mdns-mdns-task-affinity",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "title": "mDNS task affinity",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "MDNS_TASK_AFFINITY",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "range": null,
+                        "title": null,
+                        "type": "hex"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
+                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "range": [
+                            10,
+                            30000
+                        ],
+                        "title": "mDNS adding service timeout (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
+                        "id": "MDNS_TIMER_PERIOD_MS",
+                        "name": "MDNS_TIMER_PERIOD_MS",
+                        "range": [
+                            10,
+                            10000
+                        ],
+                        "title": "mDNS timer period (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
+                        "id": "MDNS_NETWORKING_SOCKET",
+                        "name": "MDNS_NETWORKING_SOCKET",
+                        "range": null,
+                        "title": "Use BSD sockets for mDNS networking",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
+                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "range": null,
+                        "title": "Skip suppressing our own packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
+                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "range": null,
+                        "title": "Enable debug prints of mDNS packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
+                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "range": null,
+                        "title": "Enable responding to IPv4 reverse queries",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables adding multiple service instances under the same service type.",
+                        "id": "MDNS_MULTIPLE_INSTANCE",
+                        "name": "MDNS_MULTIPLE_INSTANCE",
+                        "range": null,
+                        "title": "Multiple instances under the same service type",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
+                                "id": "MDNS_PREDEF_NETIF_STA",
+                                "name": "MDNS_PREDEF_NETIF_STA",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Station",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
+                                "id": "MDNS_PREDEF_NETIF_AP",
+                                "name": "MDNS_PREDEF_NETIF_AP",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Access Point",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ETH_ENABLED",
+                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
+                                "id": "MDNS_PREDEF_NETIF_ETH",
+                                "name": "MDNS_PREDEF_NETIF_ETH",
+                                "range": null,
+                                "title": "Use predefined interface for Ethernet",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-mdns-mdns-predefined-interfaces",
+                        "title": "MDNS Predefined interfaces",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-mdns",
+                "title": "mDNS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "You can access parent node of parsed json",
+                        "id": "JSMN_PARENT_LINKS",
+                        "name": "JSMN_PARENT_LINKS",
+                        "range": null,
+                        "title": "Enable parent links",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "In strict mode primitives are: numbers and booleans",
+                        "id": "JSMN_STRICT",
+                        "name": "JSMN_STRICT",
+                        "range": null,
+                        "title": "Enable strict mode",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Declar JSMN API as static (instead of extern)",
+                        "id": "JSMN_STATIC",
+                        "name": "JSMN_STATIC",
+                        "range": null,
+                        "title": "Declare JSMN API as static",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-jsmn",
+                "title": "jsmn",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
+                                "help": null,
+                                "id": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
+                                "name": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
+                                "range": null,
+                                "title": "Format arguments as TLV",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
+                                "help": null,
+                                "id": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
+                                "name": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
+                                "range": null,
+                                "title": "Format arguments as string",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "For error/warning/event logs, diagnostics module collects program counter, timestamp,\ntag, RO data pointer and log arguments. Log arguments are stored in statically allocated buffer.\nThis option configures how to format and store log arguments in buffer.\nLog arguments can be formatted as TLV or complete log string formatted using vsnprintf.\n\nIf \"TLV\" is selected, buffer contains arguments formatted as TLV.\nType - 1 byte for the type of argument, please check esp_diag_arg_type_t.\nLength - 1 byte for the size of argument, size is calculated using sizeof operator.\nValue - Size bytes for the value.\n\nIf \"STRING\" is selected, buffer contains the entire string formatted using vsnprintf.",
+                        "id": "component-config-diagnostics-diagnostics-log-argument-format",
+                        "name": "DIAG_LOG_MSG_ARG_FORMAT",
+                        "title": "Diagnostics log argument format",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Log arguments are stored in a static allocated buffer.\nThis option configures the maximum size of buffer for storing log arguments.",
+                        "id": "DIAG_LOG_MSG_ARG_MAX_SIZE",
+                        "name": "DIAG_LOG_MSG_ARG_MAX_SIZE",
+                        "range": [
+                            32,
+                            255
+                        ],
+                        "title": "Maximum size of diagnostics log argument buffer",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Every Wi-Fi log printed on the console adds three diagnostics logs.\nFor some users, Wi-Fi logs may not be that useful.\nBy default, diagnostics drops Wi-Fi logs. Set this config option to \"n\" for recording Wi-Fi logs.",
+                        "id": "DIAG_LOG_DROP_WIFI_LOGS",
+                        "name": "DIAG_LOG_DROP_WIFI_LOGS",
+                        "range": null,
+                        "title": "Drop Wi-Fi logs",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "This option configures the maximum number of metrics that can be registered.",
+                                "id": "DIAG_METRICS_MAX_COUNT",
+                                "name": "DIAG_METRICS_MAX_COUNT",
+                                "range": null,
+                                "title": "Maximum number of metrics",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "Enables the heap memory metrics. This collects free memory, largest free block,\nand minimum free memory for heaps in internal as well as external memory.",
+                                "id": "DIAG_ENABLE_HEAP_METRICS",
+                                "name": "DIAG_ENABLE_HEAP_METRICS",
+                                "range": null,
+                                "title": "Enable Heap Metrics",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "Enables Wi-Fi metrics and collects Wi-Fi RSSI and minumum ever Wi-Fi RSSI.",
+                                "id": "DIAG_ENABLE_WIFI_METRICS",
+                                "name": "DIAG_ENABLE_WIFI_METRICS",
+                                "range": null,
+                                "title": "Enable Wi-Fi Metrics",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Diagnostics module supports recording and reporting metrics to cloud.\nThis option enables the diagnostics metrics and related functionality.",
+                        "id": "DIAG_ENABLE_METRICS",
+                        "name": "DIAG_ENABLE_METRICS",
+                        "range": null,
+                        "title": "Enable diagnostics metrics",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_VARIABLES",
+                                "help": "This option configures the maximum number of variables that can be registered.",
+                                "id": "DIAG_VARIABLES_MAX_COUNT",
+                                "name": "DIAG_VARIABLES_MAX_COUNT",
+                                "range": null,
+                                "title": "Maximum number of variables",
+                                "type": "int"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                        "help": "Enable more advanced network variables",
+                                        "id": "DIAG_MORE_NETWORK_VARS",
+                                        "name": "DIAG_MORE_NETWORK_VARS",
+                                        "range": null,
+                                        "title": "Enable More Advanced Network variables",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "DIAG_ENABLE_VARIABLES",
+                                "help": "Enables the Wi-Fi and IP address variables. Below variables are collected.\nFor Wi-Fi: SSID, BSSID, channel, auth mode, connection status, disconnection reason.\nFor IP: IPv4 address, netmask, and gateway of the device.",
+                                "id": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                "name": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                "range": null,
+                                "title": "Enable Network variables",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Variables are similar to metrics but they represent entities where their current value\nis much more important than over a period of time.\nThis option enables the diagnostics variables and related functionality",
+                        "id": "DIAG_ENABLE_VARIABLES",
+                        "name": "DIAG_ENABLE_VARIABLES",
+                        "range": null,
+                        "title": "Enable diagnostics variables",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Diagnostics component wraps the esp_log_write and esp_log_writev APIs using `--wrap` gcc option.\nThere can be scenario where another component also wants to wrap the logging functions.\nIn that case, enable this option and use the data ingestion APIs esp_diag_log_write and esp_diag_log_writev.",
+                        "id": "DIAG_USE_EXTERNAL_LOG_WRAP",
+                        "name": "DIAG_USE_EXTERNAL_LOG_WRAP",
+                        "range": null,
+                        "title": "Use external log wrapper",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-diagnostics",
+                "title": "Diagnostics",
                 "type": "menu"
             }
         ],

@@ -18,6 +18,12 @@
     "string": "cpp",
     "unordered_map": "cpp",
     "unordered_set": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "*.tcc": "cpp",
+    "fstream": "cpp",
+    "istream": "cpp",
+    "numeric": "cpp",
+    "ostream": "cpp",
+    "sstream": "cpp"
   }
 }
