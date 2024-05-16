@@ -515,8 +515,8 @@
     "SPI_FLASH_VERIFY_WRITE": false,
     "SPI_FLASH_WRITE_CHUNK_SIZE": 8192,
     "SPI_FLASH_YIELD_DURING_ERASE": true,
-    "XTAL_FREQ": 40,
+    "XTAL_FREQ": 0,
     "XTAL_FREQ_26": false,
-    "XTAL_FREQ_40": true,
-    "XTAL_FREQ_AUTO": false
+    "XTAL_FREQ_40": false,
+    "XTAL_FREQ_AUTO": true
 }

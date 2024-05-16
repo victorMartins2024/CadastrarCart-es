@@ -1,18 +1,19 @@
 /*-----------------------------------------------------------------
 
-  Hourmeter V0.2 main.cpp
+  Telemetry V0.3 main.cpp
 
   MQtt
   Flash memory
   Hourmeter counter      
-  Ampere reading
+  INA + shunt system
   Display OLED
+  LCD 16x2 display
 
   Compiler: VsCode 1.88.1
   MCU: ESP32 DEV MODULE
 
-  Author: João  G. Uzêda
-  date: 2024, March
+  Author: João  G. Uzêda && Victor Martins
+  date: 2024, May
 
 -----------------------------------------------------------------*/
 
@@ -24,6 +25,7 @@
 #include "freertos/task.h"
 #include "PubSubClient.h"
 #include "esp_task_wdt.h"
+#include "Password.h"
 #include "rtc_wdt.h"
 #include "Arduino.h"
 #include "MFRC522.h"
@@ -32,7 +34,13 @@
 #include "Wire.h"
 #include "SPI.h"
 // -----------------------------------------------------------------  
-#define SHUNT_RESISTENCE 1
+
+// ----------------------------------------------------------------- 
+// ---defines---
+#define SHUNT_RESISTENCE 0.75
+
+// ----------------------------------------------------------------- 
+
 // -----------------------------------------------------------------  
 //----I²C Adresses------
 #define LCDADRESS 0x27 
@@ -48,6 +56,7 @@
 #define   MOSI      15
 #define   SDA       1
 #define   SCL       3 
+
 // -----------------------------------------------------------------  
 
 // ----------------------------------------------------------------- 
@@ -57,23 +66,30 @@ const char *pass    =    "Gr3enTech@2O24*";
 const char *mqtt    =    "192.168.30.206";            
 const char *user    =    "greentech";                           
 const char *passwd  =    "Greentech@01";                       
-int         port    =     1883;    
+int         port    =    1883;    
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------  
 // -----Topics-----
-const char *topic_JHour   =    "teste/proto/ApenasHora";
-const char *topic_FHour   =    "teste/proto/HoraTotal";
-const char *topic_A2      =    "teste/proto/elevacao";
-const char *topic_A3      =    "teste/proto/tracao";
-const char *topic_A       =    "teste/proto/geralA";
-const char *topic_T       =    "teste/proto/tensao";  
-const char *Topic_user    =    "teste/proto/rfid";  
+const char *topic_JHour   =    "proto/sim/ApenasHora";
+const char *topic_FHour   =    "proto/sim/HoraTotal";
+const char *topic_A2      =    "proto/sim/elevacao";
+const char *topic_A3      =    "proto/sim/tracao";
+const char *topic_A       =    "proto/sim/geralA";
+const char *topic_T       =    "proto/sim/tensao";  
+const char *Topic_user    =    "proto/sim/rfid";  
+const char *topic_V       =    "proto/sim/checklist/P1:";                   
+const char *topic_G       =    "proto/sim/checklist/P2:";                      
+const char *topic_E       =    "proto/sim/checklist/P3:";               
+const char *topic_F       =    "proto/sim/checklist/P4";              
+const char *topic_B       =    "proto/sim/checklist/P5:";  
+const char *topic_TEC     =    "proto/sim/manutenção";
 // -----------------------------------------------------------------
 
 void reconW();
 void reconB();
 void telemetry();
+void ina226_setup();
 
 // -----------------------------------------------------------------
 // -----Objects----
@@ -86,38 +102,55 @@ LiquidCrystal_I2C lcd(LCDADRESS, 16, 2);
 
 // -----------------------------------------------------------------
 // ----Variables----
+bool passvalue = true;
 float ABombH;
 float ATrac;
 int hourmeter;
-int sec;
+int hourmeterT;
+int hourmeterB;
 int minute;
-int pwm;
+int minuteT;
+int minuteB;
+int sec;
+int secT;
+int secB;
+byte a = 7;
+byte b = 5;
+byte maxpasslen = 5;
+byte currentpasslen = 0;
+byte maxtaglen = 6;
+byte currentlenlen = 0;
+// -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
+// --Preferences Key---
+const char *minpref = "min";
+const char *hourpref = "hour";
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
 // UIDS
-String card = "E6A1191E";
-String battery2 = "F4E0A08D";
+String OpeCard = "6379CF9A";  
+String AdmCard = "29471BC2";  
+String TecCard = "D2229A1B";  
+String PesCard = "B2B4BF1B";
 
 // -----------------------------------------------------------------
 // buffers 
 char uid_buffer[32];
+bool opnav;
+bool engnav;
 
 extern "C" void app_main(){
   initArduino();
-  INA.init();
   Wire.begin(SDA, SCL);
-  
   SPI.begin(SCK, MISO, MOSI, RST);
   rfid.PCD_Init();
   WiFi.begin(ssid, pass); 
   lcd.init();
   lcd.backlight();
 
-  INA.setResistorRange(SHUNT_RESISTENCE,300.0); 
-  INA.setConversionTime(CONV_TIME_1100); 
-  INA.setAverage(AVERAGE_4);
-    
+  ina226_setup();
 
   while(WiFi.status() != WL_CONNECTED);                                                                                               
 
@@ -127,12 +160,10 @@ extern "C" void app_main(){
     delay(500);                                         
   }  
 
-  INA.waitUntilConversionCompleted();
-
   lcd.home();
   lcd.print("INICIALIZANDO");
-  delay(1000);  
-  lcd.clear(); 
+  delay(1000);
+  lcd.clear();  
 
   while(1){
     client.loop();
@@ -143,27 +174,15 @@ extern "C" void app_main(){
       reconB();                                    //
       delay(250);                                  //   ------------------------------------------------------
     }   
-
-    if(rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial() ){     
-    lcd.clear();
-    snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
-                       rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-                      rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-
-      client.publish(Topic_user, uid_buffer);
-
-      rfid.PICC_HaltA();
-      rfid.PCD_StopCrypto1();
-    }
     telemetry();
     delay(1000);
   }    
 }
 
 
-/*---------------------------------------
-----------------FUNCTIONS----------------
----------------------------------------*/
+/*-----------------------------------------------------------------------------
+--------------------------------FUNCTIONS--------------------------------------
+-----------------------------------------------------------------------------*/
 
 void reconW(){
   while (WiFi.status() != WL_CONNECTED){
@@ -198,25 +217,48 @@ void telemetry(){
     reconB();                          //
     delay(250);                        //   ------------------------------------------------------
   }
-  
-  float Volt = INA.getShuntVoltage_mV();
-  float geralA = Volt / SHUNT_RESISTENCE;
+  INA.readAndClearFlags();
+  float Volt = INA.getBusVoltage_V();
+  float geralA = INA.getShuntVoltage_mV() / SHUNT_RESISTENCE;
 
   ABombH = geralA - 72.671;
   ATrac = geralA - 53.555;
 
   if (geralA >= 50){
-    sec++;
-  if (sec >= 60){
-    sec -= 60;
-    minute++;
-    }
-      if (minute >= 60){
+    sec++;   
+    if (sec >= 60){         //  -------------------
+      sec -= 60;
+      minute++;
+    }                       //  horimetro geral
+    if (minute >= 60){
       minute -= 60;
       hourmeter++;
+    }                       //  -------------------
+  }
+  if (geralA >= 60){
+    secB++;
+    if (secB >= 60){         //  -------------------
+      secB-=60;
+      minuteB++;
+    }
+    if (minuteB >= 60){
+      minuteB-=60;
+      hourmeterB++;
+    }
+  }
+    if (geralA >= 60){
+    secT++;
+    if (secT >= 60){         //  -------------------
+      secT-=60;
+      minuteT++;
+    }
+    if (minuteT >= 60){
+      minuteT-=60;
+      hourmeterT++;
     }
   }
 
+  
   sprintf(CABombH,  "{\"Corrente Bomba\": %.02f}", ABombH);
   sprintf(Ageral,   "{\"Corrente geral\": %.02f}", geralA);
   sprintf(CATrac,   "{\"Corrente tração\": %.02f}", ATrac);
@@ -224,6 +266,8 @@ void telemetry(){
   sprintf(FullHour, "{\"hourmeter\": %02d:%02d:%02d}",
                               hourmeter, minute, sec);
   sprintf(Justhour, "{\"JustHour\":%d}", hourmeter);
+  sprintf(Justhour, "{\"TracHour\":%d}", hourmeterB);
+  sprintf(Justhour, "{\"HbombHour\":%d}", hourmeterT);
     
   lcd.setCursor(0, 0);
   lcd.print("H:");
@@ -235,9 +279,9 @@ void telemetry(){
   lcd.setCursor(3, 1);
   lcd.print(geralA);
 
-  lcd.setCursor(10, 1);
+  lcd.setCursor(9, 1);
   lcd.print("V:");
-  lcd.setCursor(13, 1);
+  lcd.setCursor(11, 1);
   lcd.print(Volt);
 
   client.publish(topic_A, Ageral);
@@ -249,3 +293,11 @@ void telemetry(){
 
   client.loop();
 } 
+
+void ina226_setup(){
+  INA.init();
+  INA.setAverage(AVERAGE_4); 
+  INA.setConversionTime(CONV_TIME_1100); 
+  INA.setResistorRange(SHUNT_RESISTENCE,300.0); 
+  INA.waitUntilConversionCompleted(); 	
+}
