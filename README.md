@@ -11,10 +11,10 @@ Utilizando um microcontrolador ESP32 embarcado numa placa de LoRaWan da heltec p
 1. [@joaouzeda](https://github.com/joaouzeda)
 
 # Funcionalidades do Projeto
-1. Ler a corrente da bateria, do motor de tração e da bomba hidraulica
-2. realizar um horimetro com base na leitura da corrente
-3. Ler o rfid para identificação do operador
-4. Ler o rfid para identificação da bateria
+1. Ler a corrente da bateria por meio de um shunt e um INA266
+2. Ler a corrente de tração e bomba hidraulica via sensor de efeito hall
+3. realizar um horimetro com base na leitura da corrente
+4. Ler o rfid para identificação do operador e identificação da bateria
 5. Checklist do operador
 6. Publicar todas as informações necessarias no broker
 
@@ -26,6 +26,8 @@ Utilizando um microcontrolador ESP32 embarcado numa placa de LoRaWan da heltec p
 5. Sensor de corrente
 6. RTOS
 7. Arduino component
+8. Sensor de corrente efeito hall
+9. Sensor de corrente INA226 + shunt
 
 # Licença
 
