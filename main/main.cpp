@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------
 
-  Telemetry V0.4 main.cpp
+  Telemetry V0.5 main.cpp
      
   INA226
   MFRC522 
@@ -10,7 +10,7 @@
   MCU: ESP32
   Board: Dev module 28 pins
 
-  Author: João  G. Uzêda
+  Author: João  G. Uzêda & Victor Hugo
   date: 2024, May
 
 -----------------------------------------------------------------*/
