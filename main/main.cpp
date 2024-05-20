@@ -61,7 +61,7 @@
 // ---connection infos--
 const char *ssid    =    "Greentech_Administrativo";             
 const char *pass    =    "Gr3enTech@2O24*";   
-const char *mqtt    =    "192.168.30.206";      //10.244.20.104
+const char *mqtt    =    "192.168.30.130";      //192.168.30.139
 const char *user    =    "greentech";                           
 const char *passwd  =    "Greentech@01";                       
 int         port    =    1883;    
@@ -226,8 +226,7 @@ void telemetry(){
   char FullHour[30];
   char Amp_buffer[30];
   char Volt_buffer[30];
-  char HBomb[30];
-  char Htrac[30];
+
   char JusthourT[30];
   char JusthourB[30];
 
@@ -307,7 +306,7 @@ void telemetry(){
   sprintf(Justhour, "{\"JustHour\":%d}", hourmeter);
   sprintf(JusthourB, "{\"TracHour\":%d}", hourmeterB);
   sprintf(JusthourT, "{\"HbombHour\":%d}", hourmeterT);
-  sprintf(Amp_buffer, "%.02f", Volt);
+  sprintf(Amp_buffer, "%.02f", geralA);
   sprintf(Volt_buffer, "%.02f", Volt);
     
   lcd.setCursor(0, 0);
