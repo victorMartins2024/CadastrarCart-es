@@ -61,8 +61,8 @@
 // ---connection infos--
 const char *ssid    =    "Greentech_Administrativo";             
 const char *pass    =    "Gr3enTech@2O24*";   
-//const char *mqtt    =    "192.168.30.130";      // rasp nhoqui
-const char *mqtt    =    "192.168.30.212";    // rasp eng
+const char *mqtt    =    "192.168.30.130";      // rasp nhoqui
+//const char *mqtt    =    "192.168.30.212";    // rasp eng
 const char *user    =    "greentech";                           
 const char *passwd  =    "Greentech@01";                       
 int         port    =    1883;    
@@ -168,7 +168,7 @@ extern "C" void app_main(){
 
   lcd.home();
   lcd.print("INICIALIZANDO");
-  delay(500);
+  vTaskDelay(500);
   
 
   while(WiFi.status() != WL_CONNECTED);                                                                                               
@@ -176,7 +176,7 @@ extern "C" void app_main(){
   client.setServer(mqtt, port);           
   while (!client.connected()){                            
     client.connect("ESP32ClientU", user, passwd);    
-    delay(500);                                         
+    vTaskDelay(500);                                         
   } 
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
@@ -196,8 +196,7 @@ extern "C" void app_main(){
                           0);
 
 
-  delay(1000);
-  lcd.clear();  
+  vTaskDelay(1000);  
 }
 
 
@@ -241,9 +240,8 @@ void ina226_setup(){
 
 // -----------------------------------------------------------------
 // -----telemetry-----
-void xTaskTelemetry(void *pvParameters){  
-    if (WiFi.status() != WL_CONNECTED  || !client.connected())
-        recon();
+void xTaskTelemetry(void *pvParameters){ 
+  lcd.clear(); 
   minute = pref.getInt(minpref, minute);
   hourmeter = pref.getInt(hourpref, hourmeter); 
   hourmeterT = pref.getInt(hourtrac, hourmeterT);
@@ -260,15 +258,24 @@ void xTaskTelemetry(void *pvParameters){
   char Amp_buffer[30];
   char Volt_buffer[30];
 
+  esp_task_wdt_add(NULL);        //  enable watchdog     
   while(1){  
+    if (WiFi.status() != WL_CONNECTED  || !client.connected())
+      recon();
+
+    rtc_wdt_feed();    //  feed watchdog 
+
     INA.readAndClearFlags();
     Volt = INA.getBusVoltage_V();
-    geralA = INA.getShuntVoltage_mV() / SHUNT_RESISTENCE;
+    geralA = (INA.getShuntVoltage_mV() / SHUNT_RESISTENCE) - 3.4;
+
+    if (geralA <= 0)
+      geralA = 0;
 
     ABombH = geralA - 1.5;
     ATrac = geralA - 2.5;
 
-    if (geralA >= 4){ // --------------General Hourmeter--------------------------
+    if (geralA >= 1){ // --------------General Hourmeter--------------------------
       sec++;   
       if (sec >= 60){         
         sec -= 60;
@@ -290,7 +297,7 @@ void xTaskTelemetry(void *pvParameters){
         pref.remove(minpref);
         pref.putInt(hourpref, hourmeter);
       }                     
-    }  // -----------------------------------------------------------------------   
+    } // -----------------------------------------------------------------------   
 
     if (ABombH >= 13){  // --------Hidraulic bomb hourmeter----------------------
       secB++;
@@ -308,7 +315,7 @@ void xTaskTelemetry(void *pvParameters){
         pref.remove(minbomb);
         pref.putInt(hourbomb, hourmeterB);
       }
-    }// --------------------------------------------------------------------------
+    } // --------------------------------------------------------------------------
 
     if (geralA >= 13){  // ---------Trasion engine hourmeter----------------------
       secT++;
@@ -328,10 +335,10 @@ void xTaskTelemetry(void *pvParameters){
       }
     } // -----------------------------------------------------------------------
     
-    sprintf(CABombH, "{\"Corrente Bomba\": %.02f}", ABombH);
-    sprintf(Ageral, "{\"Corrente geral\": %.02f}", geralA);
-    sprintf(CATrac, "{\"Corrente tração\": %.02f}", ATrac);
-    sprintf(CVolt, "{\"Tensão geral\": %.02f}", Volt);
+    sprintf(CABombH, "{\"Corrente Bomba\":%.02f}", ABombH);
+    sprintf(Ageral, "{\"Corrente geral\":%.02f}", geralA);
+    sprintf(CATrac, "{\"Corrente tracao\":%.02f}", ATrac);
+    sprintf(CVolt, "{\"Tensao geral\":%.02f}", Volt);
     sprintf(FullHour, "{\"hourmeter\": %02d:%02d:%02d}",
                                 hourmeter, minute, sec);
     sprintf(Justhour, "{\"JustHour\":%d}", hourmeter);
@@ -339,7 +346,16 @@ void xTaskTelemetry(void *pvParameters){
     sprintf(JusthourT, "{\"HbombHour\":%d}", hourmeterT);
     sprintf(Amp_buffer, "%.02f", geralA);
     sprintf(Volt_buffer, "%.02f", Volt);
-      
+    
+    client.publish(topic_A,     Ageral);
+    client.publish(topic_A2,    CABombH);
+    client.publish(topic_A3,    CATrac);
+    client.publish(topic_T,     CVolt);
+    client.publish(topic_HBomb, JusthourB);
+    client.publish(topic_Htrac, JusthourT);
+    client.publish(topic_FHour, FullHour);
+    client.publish(topic_JHour, Justhour);
+
     lcd.setCursor(0, 0);
     lcd.print("H:");
     lcd.setCursor(3, 0);
@@ -355,26 +371,20 @@ void xTaskTelemetry(void *pvParameters){
     lcd.setCursor(11, 1);
     lcd.print(Volt);
 
-    client.publish(topic_A,     Ageral);
-    client.publish(topic_A2,    CABombH);
-    client.publish(topic_A3,    CATrac);
-    client.publish(topic_T,     CVolt);
-    client.publish(topic_HBomb, JusthourB);
-    client.publish(topic_Htrac, JusthourT);
-    client.publish(topic_FHour, FullHour);
-    client.publish(topic_JHour, Justhour);
+    esp_task_wdt_reset();        // reset watchdog if dont return any error
 
     client.loop();
-    vTaskDelay(1000);
+    vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
 } 
 // -----------------------------------------------------------------
 
 void xTaskNav(void *pvParameters){
-
+  esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
-
-
-    vTaskDelay(1000);
+    rtc_wdt_feed();                  //  feed watchdog 
+    client.publish("teste/tesk2", "rodando");
+    esp_task_wdt_reset();            // reset watchdog if dont return any error
+    vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
 }
