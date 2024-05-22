@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------
 
-  Telemetry V0.5 main.cpp
+  Telemetry V0.5.1 main.cpp
      
   INA226
   MFRC522 
@@ -169,6 +169,11 @@ extern "C" void app_main(){
   lcd.home();
   lcd.print("INICIALIZANDO");
   vTaskDelay(500);
+
+  minute = pref.getInt(minpref, minute);
+  hourmeter = pref.getInt(hourpref, hourmeter); 
+  hourmeterT = pref.getInt(hourtrac, hourmeterT);
+  hourmeterB = pref.getInt(hourbomb, hourmeterB);
   
 
   while(WiFi.status() != WL_CONNECTED);                                                                                               
@@ -180,12 +185,12 @@ extern "C" void app_main(){
   } 
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
-                          "Telemetry",   // task name
-                          8000,          // stack size in word
-                          NULL,          // input parameter
-                          1,             // priority
-                          NULL,          // task handle
-                          1);            // core
+                          "Telemetry",    // task name
+                          8000,           // stack size in word
+                          NULL,           // input parameter
+                          1,              // priority
+                          NULL,           // task handle
+                          1);                // core
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
@@ -242,11 +247,7 @@ void ina226_setup(){
 // -----telemetry-----
 void xTaskTelemetry(void *pvParameters){ 
   lcd.clear(); 
-  minute = pref.getInt(minpref, minute);
-  hourmeter = pref.getInt(hourpref, hourmeter); 
-  hourmeterT = pref.getInt(hourtrac, hourmeterT);
-  hourmeterB = pref.getInt(hourbomb, hourmeterB);
-
+  
   char CVolt[30];
   char Ageral[30];  
   char CATrac[30];
@@ -266,16 +267,14 @@ void xTaskTelemetry(void *pvParameters){
     rtc_wdt_feed();    //  feed watchdog 
 
     INA.readAndClearFlags();
-    Volt = INA.getBusVoltage_V();
-    geralA = (INA.getShuntVoltage_mV() / SHUNT_RESISTENCE) - 3.4;
 
-    if (geralA <= 0)
-      geralA = 0;
+    Volt = INA.getBusVoltage_V();
+    geralA = INA.getShuntVoltage_mV() / SHUNT_RESISTENCE;
 
     ABombH = geralA - 1.5;
     ATrac = geralA - 2.5;
 
-    if (geralA >= 1){ // --------------General Hourmeter--------------------------
+    if (geralA >= 3.5){ // --------------General Hourmeter--------------------------
       sec++;   
       if (sec >= 60){         
         sec -= 60;
@@ -383,7 +382,7 @@ void xTaskNav(void *pvParameters){
   esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
-    client.publish("teste/tesk2", "rodando");
+    
     esp_task_wdt_reset();            // reset watchdog if dont return any error
     vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
