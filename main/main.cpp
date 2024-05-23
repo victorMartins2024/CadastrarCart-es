@@ -160,6 +160,7 @@ extern "C" void app_main(){
   Wire.begin(SDA, SCL);
   SPI.begin(SCK, MISO, MOSI, RST);
   rfid.PCD_Init();
+  pref.begin("GT", false);
   WiFi.begin(ssid, pass); 
   lcd.init();
   lcd.backlight();
@@ -169,13 +170,7 @@ extern "C" void app_main(){
   lcd.home();
   lcd.print("INICIALIZANDO");
   vTaskDelay(500);
-
-  minute = pref.getInt(minpref, minute);
-  hourmeter = pref.getInt(hourpref, hourmeter); 
-  hourmeterT = pref.getInt(hourtrac, hourmeterT);
-  hourmeterB = pref.getInt(hourbomb, hourmeterB);
   
-
   while(WiFi.status() != WL_CONNECTED);                                                                                               
 
   client.setServer(mqtt, port);           
@@ -258,6 +253,11 @@ void xTaskTelemetry(void *pvParameters){
   char JusthourB[30];
   char Amp_buffer[30];
   char Volt_buffer[30];
+
+  minute = pref.getInt(minpref, minute);
+  hourmeter = pref.getInt(hourpref, hourmeter); 
+  hourmeterT = pref.getInt(hourtrac, hourmeterT);
+  hourmeterB = pref.getInt(hourbomb, hourmeterB);
 
   esp_task_wdt_add(NULL);        //  enable watchdog     
   while(1){  
