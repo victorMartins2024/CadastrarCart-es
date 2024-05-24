@@ -1,10 +1,12 @@
 /*-----------------------------------------------------------------
 
-  Telemetry V0.5.1 main.cpp
+  P.O. Prototype V0.0.1 main.cpp
      
-  INA226
-  MFRC522 
-  LCD 16x2 display
+  INA226 + Shunt
+  MFRC522 RFID
+  Keypad 4x4
+  WiFi
+  LCD 20x4 display
 
   Compiler: VsCode 1.88.1
   MCU: ESP32
@@ -24,10 +26,13 @@
 #include "PubSubClient.h"
 #include "esp_task_wdt.h"
 #include "Preferences.h"
+#include "Keypad_I2C.h"
+#include "Password.h"
 #include "rtc_wdt.h"
 #include "Arduino.h"
 #include "MFRC522.h"
 #include "INA226.h"
+#include "Keypad.h"
 #include "WiFi.h"
 #include "Wire.h"
 #include "SPI.h"
@@ -89,6 +94,9 @@ const char *topic_TEC     =    "proto/sim/manutenção";
 
 // -----------------------------------------------------------------
 // -----Functions----
+void apx();
+void eng();
+void status();
 void recon();
 void ina226_setup();
 void xTaskNav(void *pvParameters);
@@ -120,14 +128,19 @@ int minuteB;
 int sec;
 int secT;
 int secB;
-int opa = 0;
+bool preve;
+bool corre;
+byte currentlenlen = 0;
+byte currentpasslen = 0;
+bool passvalue = true;
+// -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
+// --Preferences Key---
 byte a = 7;
 byte b = 5;
 byte maxtaglen = 6;
 byte maxpasslen = 5;
-byte currentlenlen = 0;
-byte currentpasslen = 0;
-bool passvalue = true;
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
@@ -199,40 +212,6 @@ extern "C" void app_main(){
   vTaskDelay(1000);  
 }
 
-
-/*-----------------------------------------------------------------------------
---------------------------------FUNCTIONS--------------------------------------
------------------------------------------------------------------------------*/
-
-
-// -----------------------------------------------------------------
-// -----Reconection-----
-void recon(){
-  WiFi.disconnect();        
-  vTaskDelay(1000);         
-  WiFi.begin(ssid, pass);   
-  vTaskDelay(1000);         
-    
-  vTaskDelay(500);
-                
-  client.connect("TestClient", user, passwd);     
-  vTaskDelay(5000);                                  
-        
-}
-// -----------------------------------------------------------------   
-
-// -----------------------------------------------------------------
-// -----INA setup-----
-void ina226_setup(){
-  INA.init();
-  INA.setAverage(AVERAGE_4); 
-  INA.setConversionTime(CONV_TIME_1100); 
-  INA.setResistorRange(SHUNT_RESISTENCE, 300.0); 
-  INA.waitUntilConversionCompleted(); 	
-}
-// -----------------------------------------------------------------
-
-
 /*------------------------------------------------------------------
 --------------------------------Tasks-------------------------------
 ------------------------------------------------------------------*/
@@ -250,8 +229,6 @@ void xTaskTelemetry(void *pvParameters){
   char FullHour[30];
   char JusthourT[30];
   char JusthourB[30];
-  char Amp_buffer[30];
-  char Volt_buffer[30];
 
   minute = pref.getInt(minpref, minute);
   hourmeter = pref.getInt(hourpref, hourmeter); 
@@ -339,9 +316,7 @@ void xTaskTelemetry(void *pvParameters){
     sprintf(Justhour, "{\"JustHour\":%d}", hourmeter);
     sprintf(JusthourB, "{\"TracHour\":%d}", hourmeterB);
     sprintf(JusthourT, "{\"HbombHour\":%d}", hourmeterT);
-    sprintf(Amp_buffer, "%.02f", geralA);
-    sprintf(Volt_buffer, "%.02f", Volt);
-    
+
     client.publish(topic_A,     Ageral);
     client.publish(topic_A2,    CABombH);
     client.publish(topic_A3,    CATrac);
@@ -350,21 +325,6 @@ void xTaskTelemetry(void *pvParameters){
     client.publish(topic_Htrac, JusthourT);
     client.publish(topic_FHour, FullHour);
     client.publish(topic_JHour, Justhour);
-
-    lcd.setCursor(0, 0);
-    lcd.print("H:");
-    lcd.setCursor(3, 0);
-    lcd.print(hourmeter);
-
-    lcd.setCursor(0, 1);
-    lcd.print("A:");
-    lcd.setCursor(2, 1);
-    lcd.print(Amp_buffer);
-
-    lcd.setCursor(9, 1);
-    lcd.print("V:");
-    lcd.setCursor(11, 1);
-    lcd.print(Volt);
 
     esp_task_wdt_reset();        // reset watchdog if dont return any error
 
@@ -378,9 +338,99 @@ void xTaskNav(void *pvParameters){
   esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
+
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
+
+    client.loop();
+
+    char menu = kpd.getKey();
+
+    if (preve == 1)
+      status();
+    else if (corre == 1)
+      status();    
+    else{
+      if (menu != NO_KEY){
+        if (menu == '0') {
+          engnav = true;
+          opnav  = false;
+          eng();
+        }else{
+          engnav = false;
+          opnav  = true;
+          apx();
+        }
+      }
+    }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
     vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
 }
+
+
+/*-------------------------------------------------------------------
+--------------------------------FUNCTIONS----------------------------
+-------------------------------------------------------------------*/
+
+
+// -----------------------------------------------------------------
+// -----Reconection-----
+void recon(){
+  WiFi.disconnect();        
+  vTaskDelay(1000);         
+  WiFi.begin(ssid, pass);   
+  vTaskDelay(1000);         
+    
+  vTaskDelay(500);
+                
+  client.connect("TestClient", user, passwd);     
+  vTaskDelay(5000);                                  
+        
+}
+// -----------------------------------------------------------------   
+
+// -----------------------------------------------------------------
+// -----INA setup-----
+void ina226_setup(){
+  INA.init();
+  INA.setAverage(AVERAGE_4); 
+  INA.setConversionTime(CONV_TIME_1100); 
+  INA.setResistorRange(SHUNT_RESISTENCE, 300.0); 
+  INA.waitUntilConversionCompleted(); 	
+}
+// -----------------------------------------------------------------
+
+
+// -----------------------------------------------------------------
+// -----Screens-----
+void screens(){
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("ESCOLHA A OPCAO:");
+  lcd.setCursor(0, 1);
+  lcd.print("1- CADASTRAR");
+  lcd.setCursor(0, 2);
+  lcd.print("2- EXCLUIR");
+  lcd.setCursor(0, 3);
+  lcd.print("#- SAIR");
+
+  while (opnav == true) {
+
+    char key = kpd.getKey();
+
+    if (key != NO_KEY) {
+      vTaskDelay(20);
+      if (key == '1') {
+        opnav = true;
+        cadastrar();
+      } else if (key == '2') {
+        opnav = true;
+        excluir();
+      } else if (key == '#') {
+        apx();
+      }
+    }
+  }
+}
+

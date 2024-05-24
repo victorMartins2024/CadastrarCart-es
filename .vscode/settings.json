@@ -24,6 +24,8 @@
     "istream": "cpp",
     "numeric": "cpp",
     "ostream": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "teste": "c",
+    "system_error": "cpp"
   }
 }
