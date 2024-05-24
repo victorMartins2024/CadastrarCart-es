@@ -208,17 +208,16 @@ extern "C" void app_main(){
 // -----------------------------------------------------------------
 // -----Reconection-----
 void recon(){
-  while (WiFi.status() != WL_CONNECTED){
-    WiFi.disconnect();        
-    vTaskDelay(1000);         
-    WiFi.begin(ssid, pass);   
-    vTaskDelay(1000);         
-  }         
+  WiFi.disconnect();        
+  vTaskDelay(1000);         
+  WiFi.begin(ssid, pass);   
+  vTaskDelay(1000);         
+    
   vTaskDelay(500);
-  while (!client.connected()){                        
-    client.connect("TestClient", user, passwd);     
-    vTaskDelay(5000);                                  
-  }                    
+                
+  client.connect("TestClient", user, passwd);     
+  vTaskDelay(5000);                                  
+        
 }
 // -----------------------------------------------------------------   
 
@@ -234,9 +233,9 @@ void ina226_setup(){
 // -----------------------------------------------------------------
 
 
-/*-----------------------------------------------------------------------------
---------------------------------Tasks------------------------------------------
------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------
+--------------------------------Tasks-------------------------------
+------------------------------------------------------------------*/
 
 // -----------------------------------------------------------------
 // -----telemetry-----
@@ -261,9 +260,6 @@ void xTaskTelemetry(void *pvParameters){
 
   esp_task_wdt_add(NULL);        //  enable watchdog     
   while(1){  
-    if (WiFi.status() != WL_CONNECTED  || !client.connected())
-      recon();
-
     rtc_wdt_feed();    //  feed watchdog 
 
     INA.readAndClearFlags();
@@ -382,7 +378,8 @@ void xTaskNav(void *pvParameters){
   esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
-    
+    if (WiFi.status() != WL_CONNECTED  || !client.connected())
+      recon();
     esp_task_wdt_reset();            // reset watchdog if dont return any error
     vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
