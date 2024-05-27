@@ -41,13 +41,16 @@
 // ----------------------------------------------------------------- 
 // ---defines---
 #define SHUNT_RESISTENCE 0.75
+const byte ROWS = 4;
+const byte COLS = 4;
 
 // ----------------------------------------------------------------- 
 
 // -----------------------------------------------------------------  
 //----I²C Adresses------
-#define LCDADRESS 0x27 
-#define INAADRESS 0x40 
+#define LCDADRESS     0x27 
+#define INAADRESS     0x40 
+#define KEYPADADRESS  0x21
 // -----------------------------------------------------------------  
 
 // -----------------------------------------------------------------  
@@ -58,8 +61,20 @@
 #define   MISO      2
 #define   MOSI      15
 #define   SDA       1
-#define   SCL       3 
+#define   SCL       3
+byte rowPins[ROWS] = { 0, 1, 2, 3 };
+byte colPins[COLS] = { 4, 5, 6, 7 }; 
 
+// -----------------------------------------------------------------  
+
+// -----------------------------------------------------------------  
+// ----Keypad---- 
+char keys[ROWS][COLS] = {
+  { '1', '2', '3', 'A' },
+  { '4', '5', '6', 'B' },
+  { '7', '8', '9', 'C' },
+  { '*', '0', '#', 'D' }
+};
 // -----------------------------------------------------------------  
 
 // ----------------------------------------------------------------- 
@@ -110,7 +125,10 @@ WiFiClient TestClient;
 MFRC522 rfid(SS, RST);
 INA226_WE INA(INAADRESS);
 PubSubClient client(TestClient);
+Password password = Password("2552");
 LiquidCrystal_I2C lcd(LCDADRESS, 16, 2);
+Keypad_I2C kpd(makeKeymap(keys), rowPins, 
+  colPins, ROWS, COLS, KEYPADADRESS, PCF8574);  
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
@@ -147,10 +165,14 @@ byte maxpasslen = 5;
 // --Preferences Key---
 const char *minpref   =   "min";
 const char *mintrac   =   "trac";
-const char *minbomb   =   "minbomb";
 const char *hourpref  =   "hour";
+const char *minbomb   =   "minbomb";
+const char *cadaspref =   "Cadastro";
 const char *hourtrac  =   "hourtrac";
 const char *hourbomb  =   "hourbomb";
+const char *prevpref  =   "Manupreve";
+const char *correpref =   "Manucorre";
+const char *listapref =   "Cadastro Cartoes";
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
@@ -471,15 +493,15 @@ void status() {
       snprintf(SAIR, sizeof(SAIR), "%02X%02X%02X%02X",
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-      client.publish(topic_user, SAIR);
+      client.publish(Topic_user, SAIR);
 
       if (strcmp(SAIR, TecCard.c_str()) == 0) {
         corre = 0;
         preve = 0;
-        prefs.putInt(correpref, corre);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(correpref, corre);
+        pref.putInt(prevpref, preve);
         client.publish(topic_TEC, " ");
-        navcheck = true;
+        opnav = true;
         vTaskDelay(80);
         apx();
       }
@@ -517,7 +539,7 @@ void manutencao() {
   lcd.print("#-SAIR");
   vTaskDelay(80);
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -526,19 +548,19 @@ void manutencao() {
       if (key == '1') {
         preve = 1;
         vTaskDelay(30);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(prevpref, preve);
         status();
       } else if (key == '2') {
         corre = 1;
         vTaskDelay(30);
-        prefs.putInt(correpref, corre);
+        pref.putInt(correpref, corre);
         status();
       } else if (key == '#') {
         corre = 0;
         preve = 0;
         vTaskDelay(30);
-        prefs.putInt(correpref, corre);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(correpref, corre);
+        pref.putInt(prevpref, preve);
         apx();
       }
     }
@@ -558,7 +580,7 @@ void vazamento() {
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -588,7 +610,7 @@ void garfos() {
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -618,7 +640,7 @@ void emergencia() {
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -648,7 +670,7 @@ void comando() {
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -678,7 +700,7 @@ void bateria() {
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -692,7 +714,7 @@ void bateria() {
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
         delay(1000);
-        navcheck = true;  // "Mudar futuramente de 'true' para 'false' quando for para tela de funcionando", deixando true ele não zera todos para false após repetir o checklist novamente
+        opnav = true;  // "Mudar futuramente de 'true' para 'false' quando for para tela de funcionando", deixando true ele não zera todos para false após repetir o checklist novamente
         apx();
       } else if (key == '2') {
         client.publish(topic_B, "False");
@@ -702,15 +724,15 @@ void bateria() {
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
         delay(1000);
-        navcheck = true;  // "Mudar futuramente de 'true' para 'false' quando for para tela de funcionando", deixando true ele não zera todos para false após repetir o checklist novamente
+        opnav = true;  // "Mudar futuramente de 'true' para 'false' quando for para tela de funcionando", deixando true ele não zera todos para false após repetir o checklist novamente
         apx();
       }
     }
     corre = 0;
     preve = 0;
     delay(50);
-    prefs.putInt(correpref, corre);
-    prefs.putInt(prevpref, preve);
+    pref.putInt(correpref, corre);
+    pref.putInt(prevpref, preve);
   }
 }
 // -----------------------------------------------------------------
@@ -723,14 +745,14 @@ void apx() {
   lcd.setCursor(2, 2);
   lcd.print("APROXIMAR CARTAO");
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
       snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-      client.publish(topic_user, uid_buffer);
+      client.publish(Topic_user, uid_buffer);
 
       if (strcmp(uid_buffer, OpeCard.c_str()) == 0) {
         lcd.clear();
@@ -779,7 +801,7 @@ void manutencao() {
   lcd.print("#-SAIR");
   delay(80);
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -788,19 +810,19 @@ void manutencao() {
       if (key == '1') {
         preve = 1;
         delay(30);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(prevpref, preve);
         status();
       } else if (key == '2') {
         corre = 1;
         delay(30);
-        prefs.putInt(correpref, corre);
+        pref.putInt(correpref, corre);
         status();
       } else if (key == '#') {
         corre = 0;
         preve = 0;
         delay(30);
-        prefs.putInt(correpref, corre);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(correpref, corre);
+        pref.putInt(prevpref, preve);
         apx();
       }
     }
@@ -833,10 +855,10 @@ void status() {
       if (strcmp(SAIR, TecCard.c_str()) == 0) {
         corre = 0;
         preve = 0;
-        prefs.putInt(correpref, corre);
-        prefs.putInt(prevpref, preve);
+        pref.putInt(correpref, corre);
+        pref.putInt(prevpref, preve);
         client.publish(topic_TEC, " ");
-        navcheck = true;
+        opnav = true;
         delay(80);
         apx();
       }
@@ -884,7 +906,7 @@ void tag(char key) {
   if (b == 11) {
     b = 5;  // Tamanho da TAG com 6 digitos "333..."
   }
-  PassLenghtAtual++;
+  currentpasslen++;
   password.append(key);
 }
 // -----------------------------------------------------------------
@@ -902,7 +924,7 @@ void excluir() {
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-      client.publish(topic_CAD, uid_buffer);
+      client.publish(Topic_user, uid_buffer);
 
       if (strcmp(uid_buffer, PesCard.c_str()) == 0) {
         lcd.clear();
@@ -910,7 +932,7 @@ void excluir() {
         lcd.print("APAGADO");
         vTaskDelay(1000);
         PesCard = "";
-        if (navcheck == true) {
+        if (opnav == true) {
           screens();
         } else {
           telas();
@@ -922,7 +944,7 @@ void excluir() {
         lcd.setCursor(5, 2);
         lcd.print("CADASTRADO");
         vTaskDelay(1000);
-        if (navcheck == true) {
+        if (opnav == true) {
           screens();
         } else {
           telas();
@@ -974,7 +996,7 @@ void cadastrar() {
   lcd.print("#-SAIR");
   acertou = false;
 
-  while (navcheck == true) {
+  while (opnav == true) {
 
     char key = kpd.getKey();
 
@@ -995,7 +1017,7 @@ void cadastrar() {
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
       b = 5;  // Sempre que bater o RFID a proxima TAG volta ser digitada na posição 5
-      client.publish(topic_CAD, "");
+      client.publish(Topic_user, "");
       lcd.setCursor(6, 2);
       lcd.print(CAD);
       vTaskDelay(1000);
@@ -1020,7 +1042,7 @@ void CadastrarCartao() {
     cartoesCadastrados = cartoesCadastrados + conteudo;
 
 
-    prefs.putString(listapref, cartoesCadastrados);
+    pref.putString(listapref, cartoesCadastrados);
   }
 }
 // -----------------------------------------------------------------
@@ -1048,7 +1070,7 @@ void telas() {
       } else if (key == '2') {
         excluir();
       } else if (key == '#') {
-        navcheck = true;  // True, após apertar "#" ele habilita a opção para bater os RFIDs novamente para seguir com outras opções.
+        opnav = true;  // True, após apertar "#" ele habilita a opção para bater os RFIDs novamente para seguir com outras opções.
         apx();
       }
     }
@@ -1073,14 +1095,14 @@ void aprovadoPass() {
 
   currentPasswordLength = 0;
 
-  if (password.evaluate()) {
+  if (evaluate()) {
     lcd.clear();
     lcd.setCursor(7, 2);
     lcd.print("VALIDO");
     vTaskDelay(1000);
     a = 7;
     acertou = true;  // mostra que acertou, apaga a mensagem anterior e segue para a tela screens ou  telas
-    if (navcheck == true) {
+    if (opnav == true) {
       screens();
     } else {
       telas();
@@ -1146,3 +1168,12 @@ void eng() {
   }
 }
 // -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
+/* -----password verifications-----
+bool evaluate(char key, String psswd){
+  if (strcmp(key, psswd.c_str()) == 0) 
+    return true;
+  else return false;
+}
+*/ // -----------------------------------------------------------------
