@@ -105,6 +105,7 @@ const char *topic_E       =    "proto/sim/checklist/P3:";
 const char *topic_F       =    "proto/sim/checklist/P4";              
 const char *topic_B       =    "proto/sim/checklist/P5:";  
 const char *topic_TEC     =    "proto/sim/manutenção";
+const char *topic_CAD     =    "sinal/sim/Cadastro";
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
@@ -206,11 +207,12 @@ extern "C" void app_main(){
   lcd.print("INICIALIZANDO");
   vTaskDelay(500);
   
-  while(WiFi.status() != WL_CONNECTED);                                                                                               
+  if (WiFi.status() != WL_CONNECTED)
+    WiFi.reconnect();                                                                                            
 
   client.setServer(mqtt, port);           
-  while (!client.connected()){                            
-    client.connect("ESP32ClientU", user, passwd);    
+  if (!client.connected()){                            
+    client.connect("TestClient", user, passwd);    
     vTaskDelay(500);                                         
   } 
 
@@ -274,7 +276,7 @@ void xTaskTelemetry(void *pvParameters){
       if (sec >= 60){         
         sec -= 60;
         minute++;
-        if (minute == 10)
+        if (minute == 1)
           pref.putInt(minpref, minute);
         else if (minute == 20)
           pref.putInt(minpref, minute);
