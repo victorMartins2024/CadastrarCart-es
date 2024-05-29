@@ -38,9 +38,10 @@
 
 // ---------------------------------------------------------------- 
 // ---defines---
-#define SHUNT_RESISTENCE 0.75
-const byte ROWS = 4;
-const byte COLS = 4;
+#define SHUNT_RESISTENCE  0.75
+#define PCF8574
+const   byte    ROWS    = 4;
+const   byte    COLS    = 4;
 // ---------------------------------------------------------------- 
 
 // ---------------------------------------------------------------- 
@@ -119,9 +120,11 @@ void manutencao();
 void telafinal();
 void cadastrar();
 void vazamento();
+void formatar();
 void screens();
 void bateria();
 void comando();
+void excluir();
 void status();
 void garfos();
 void recon();
@@ -137,11 +140,10 @@ Preferences pref;
 WiFiClient TestClient;
 MFRC522 rfid(SS, RST);
 INA226_WE INA(INAADRESS);
+Keypad_I2C kpd(KeyAdress, SDA);  
 PubSubClient client(TestClient);
-Password password = Password("2552"); 
+Password password = Password("2552" ); 
 LiquidCrystal_I2C lcd(LCDADRESS, 20, 4);
-Keypad_I2C kpd(makeKeymap(keys), rowPins, colPins,
-                     ROWS, COLS, KeyAdress, PCF8574);  
 // ----------------------------------------------------------------
 
 // ----------------------------------------------------------------
@@ -208,7 +210,7 @@ extern "C" void app_main(){
   initArduino();
   Wire.begin(SDA, SCL);
   SPI.begin(SCK, MISO, MOSI, RST);
-  kpd.begin(makeKeymap(keys));
+  kpd.begin();
   rfid.PCD_Init();
   pref.begin("GT", false);
   WiFi.begin(ssid, pass); 
@@ -468,7 +470,7 @@ void ina226_setup(){
 
 // -----------------------------------------------------------------
 // -----dell-----
-void dell() {
+void dell(){
 
   password.reset();
   currentpasslen = 0;
@@ -483,7 +485,7 @@ void dell() {
 
 // -----------------------------------------------------------------
 // -----tag-----
-void tag(char key) {
+void tag(char key){
 
   lcd.setCursor(b, 1);
   lcd.print(key);
@@ -499,7 +501,7 @@ void tag(char key) {
 
 // -----------------------------------------------------------------
 // -----cadastro-----
-void CadastrarCartao() {
+void CadastrarCartao(){
 
   String conteudo = "";
 
@@ -518,7 +520,7 @@ void CadastrarCartao() {
 
 // -----------------------------------------------------------------
 // -----processkey-----
-void processNumberKey(char key) {
+void processNumberKey(char key){
 
   lcd.setCursor(a, 2);
   lcd.print("*");
@@ -537,7 +539,7 @@ void processNumberKey(char key) {
 
 // -----------------------------------------------------------------
 // -----resetpsswd-----
-void resetPassword() {
+void resetPassword(){
 
   password.reset();
   currentpasslen = 0;
@@ -552,7 +554,7 @@ void resetPassword() {
 
 // -----------------------------------------------------------------
 // -----aprovadoPass-----
-void aprovadoPass() {
+void aprovadoPass(){
 
   currentpasslen = 0;
 
@@ -588,7 +590,7 @@ void aprovadoPass() {
 
 // -----------------------------------------------------------------
 // -----status-----
-void status() {
+void status(){
 
   lcd.clear();
 
@@ -639,7 +641,7 @@ void status() {
 
 // -----------------------------------------------------------------
 // -----aprox-----
-void apx() {
+void apx(){
 
   lcd.clear();
   lcd.setCursor(2, 2);
@@ -688,7 +690,7 @@ void apx() {
 
 // -----------------------------------------------------------------
 // -----eng screen-----
-void eng() {
+void eng(){
 
   lcd.clear();
   lcd.setCursor(5, 1);
@@ -755,7 +757,7 @@ void screens(){
 
 // -----------------------------------------------------------------
 // -----screens-----
-void telas() {
+void telas(){
 
   lcd.clear();
   lcd.setCursor(2, 0);
@@ -788,7 +790,7 @@ void telas() {
 
 // -----------------------------------------------------------------
 // -----screens-----
-void cadastrar() {
+void cadastrar(){
   lcd.clear();
   lcd.setCursor(1, 1);
   lcd.print("TAG:");
@@ -833,7 +835,7 @@ void cadastrar() {
 
 // -----------------------------------------------------------------
 // -----screens-----
-void manutencao() {
+void manutencao(){
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("ESCOLHA A OPCAO:");
@@ -875,8 +877,84 @@ void manutencao() {
 // -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
+// -----excluir-----
+void excluir(){
+  lcd.clear();
+  lcd.setCursor(1, 2);
+  lcd.print("APROXIME O CARTAO");
+
+  while (1) {
+    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+      snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
+               rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+               rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+
+      client.publish(topic_CAD, uid_buffer);
+
+      if (strcmp(uid_buffer, PesCard.c_str()) == 0) {
+        lcd.clear();
+        lcd.setCursor(7, 2);
+        lcd.print("APAGADO");
+        vTaskDelay(1000);
+        PesCard = "";
+        if (opnav == true) {
+          screens();
+        } else {
+          telas();
+        }
+      } else {
+        lcd.clear();
+        lcd.setCursor(5, 1);
+        lcd.print("CARTAO NAO");
+        lcd.setCursor(5, 2);
+        lcd.print("CADASTRADO");
+        vTaskDelay(1000);
+        if (opnav == true) {
+          screens();
+        } else {
+          telas();
+        }
+      }
+    }
+  }
+}
+// -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
+// -----excluir-----
+void formatar(){
+
+  lcd.clear();
+  lcd.setCursor(5, 0);
+  lcd.print("FORMARTAR?");
+  lcd.setCursor(0, 2);
+  lcd.print("1 - SIM");
+  lcd.setCursor(0, 3);
+  lcd.print("2 - NAO");
+
+  while (1) {
+
+    char key = kpd.getKey();
+
+    if (key != NO_KEY) {
+      vTaskDelay(20);
+      if (key == '1') {
+        lcd.clear();
+        lcd.setCursor(5, 2);
+        lcd.print("FORMATADO");
+        vTaskDelay(1000);
+        telas();
+      } else if (key == '2') {
+        telas();
+      }
+    }  // João
+  }
+}
+// -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
 // -----Questions-----
-void vazamento() {
+void vazamento(){
   lcd.clear();
   lcd.setCursor(5, 0);
   lcd.print("VAZAMENTO?");
@@ -902,7 +980,7 @@ void vazamento() {
   }
 }
 
-void garfos() {
+void garfos(){
   lcd.clear();
   lcd.setCursor(6, 0);
   lcd.print("GARFOS?");
@@ -927,7 +1005,7 @@ void garfos() {
   }
 }
 
-void emergencia() {
+void emergencia(){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("BOTAO DE EMERGENCIA?");
@@ -952,7 +1030,7 @@ void emergencia() {
   }
 }
 
-void comando() {
+void comando(){
   lcd.clear();
   lcd.setCursor(4, 0);
   lcd.print("FRENTE E RE?");
@@ -977,7 +1055,7 @@ void comando() {
   }
 }
 
-void bateria() {
+void bateria(){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("BATERIA,CABOS,CONEC?");
@@ -1000,7 +1078,7 @@ void bateria() {
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
         vTaskDelay(1000);
-        navcheck = true;  
+        opnav = true;  
         telafinal();
       } else if (key == '2') {
         client.publish(topic_B, "False");
@@ -1010,7 +1088,7 @@ void bateria() {
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
         vTaskDelay(1000);
-        navcheck = true;  
+        opnav = true;  
         telafinal();
       }
     }
@@ -1034,17 +1112,4 @@ void telafinal(){
   lcd.print("SHOWROOM-SP");
   vTaskDelay(1500);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// -----------------------------------------------------------------

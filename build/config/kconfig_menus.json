@@ -26419,377 +26419,6 @@
                                 "children": [
                                     {
                                         "children": [],
-                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
-                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "range": null,
-                                        "title": "Dump CBOR decoded data instead of hexdump",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ESP_INSIGHTS_ENABLED",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "range": null,
-                                "title": "Enable Insights debug prints",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_INSIGHTS_ENABLED",
-                        "name": "ESP_INSIGHTS_ENABLED",
-                        "range": null,
-                        "title": "Enable ESP Insights",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
-                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
-                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "range": null,
-                        "title": "Enable core dump summary support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "range": null,
-                                "title": "MQTT",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "range": null,
-                                "title": "HTTPS",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
-                        "id": "component-config-esp-insights-insights-default-transport",
-                        "name": "ESP_INSIGHTS_TRANSPORT",
-                        "title": "Insights default transport",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                        "help": null,
-                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "range": null,
-                        "title": "Insights https host",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post min interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post max interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
-                        "id": "ESP_INSIGHTS_META_VERSION_10",
-                        "name": "ESP_INSIGHTS_META_VERSION_10",
-                        "range": null,
-                        "title": "Use older metadata format (1.0)",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-insights",
-                "title": "ESP Insights",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": null,
-                                "id": "DIAG_DATA_STORE_RTC",
-                                "name": "DIAG_DATA_STORE_RTC",
-                                "range": null,
-                                "title": "RTC memory",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": "Just a placeholder. This data store type is not supported as of now",
-                                "id": "DIAG_DATA_STORE_FLASH",
-                                "name": "DIAG_DATA_STORE_FLASH",
-                                "range": null,
-                                "title": "Flash",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
-                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
-                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
-                        "title": "Diagnostics data store destination",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
-                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "range": [
-                            50,
-                            90
-                        ],
-                        "title": "Reporting watermark percentage",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
-                                "id": "RTC_STORE_DATA_SIZE",
-                                "name": "RTC_STORE_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    7168
-                                ],
-                                "title": "RTC store data size",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
-                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    3072
-                                ],
-                                "title": "Maximum size of critical data store",
-                                "type": "int"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_RTC",
-                        "id": "component-config-diagnostics-data-store-rtc-store",
-                        "title": "RTC Store",
-                        "type": "menu"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_FLASH",
-                                "help": "Diagnostics data is stored in this partition",
-                                "id": "FLASH_STORE_PARTITION_LABEL",
-                                "name": "FLASH_STORE_PARTITION_LABEL",
-                                "range": null,
-                                "title": "Diagnostics data partition name",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_FLASH",
-                        "id": "component-config-diagnostics-data-store-flash-store",
-                        "title": "Flash Store",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics-data-store",
-                "title": "Diagnostics data store",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
-                        "help": null,
-                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "range": null,
-                        "title": null,
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_ANSI",
-                                "name": "DSP_ANSI",
-                                "range": null,
-                                "title": "ANSI C",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_OPTIMIZED",
-                                "name": "DSP_OPTIMIZED",
-                                "range": null,
-                                "title": "Optimized",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
-                        "id": "component-config-dsp-library-dsp-optimization",
-                        "name": "DSP_OPTIMIZATION",
-                        "title": "DSP Optimization",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_OPTIMIZATION",
-                        "name": "DSP_OPTIMIZATION",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_512",
-                                "name": "DSP_MAX_FFT_SIZE_512",
-                                "range": null,
-                                "title": "512",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_1024",
-                                "name": "DSP_MAX_FFT_SIZE_1024",
-                                "range": null,
-                                "title": "1024",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_2048",
-                                "name": "DSP_MAX_FFT_SIZE_2048",
-                                "range": null,
-                                "title": "2048",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_4096",
-                                "name": "DSP_MAX_FFT_SIZE_4096",
-                                "range": null,
-                                "title": "4096",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_8192",
-                                "name": "DSP_MAX_FFT_SIZE_8192",
-                                "range": null,
-                                "title": "8192",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_16384",
-                                "name": "DSP_MAX_FFT_SIZE_16384",
-                                "range": null,
-                                "title": "16384",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_32768",
-                                "name": "DSP_MAX_FFT_SIZE_32768",
-                                "range": null,
-                                "title": "32768",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This is default FFT size for internal usage.",
-                        "id": "component-config-dsp-library-maximum-fft-length",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "title": "Maximum FFT length",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_MAX_FFT_SIZE",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-dsp-library",
-                "title": "DSP Library",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
                                         "depends_on": "<choice ZB_DEVICE_TYPE>",
                                         "help": "Select this to enable Zigbee Coordinator or Router.",
                                         "id": "ZB_ZCZR",
@@ -27099,6 +26728,220 @@
                 "depends_on": null,
                 "id": "component-config-diagnostics",
                 "title": "Diagnostics",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "You can access parent node of parsed json",
+                        "id": "JSMN_PARENT_LINKS",
+                        "name": "JSMN_PARENT_LINKS",
+                        "range": null,
+                        "title": "Enable parent links",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "In strict mode primitives are: numbers and booleans",
+                        "id": "JSMN_STRICT",
+                        "name": "JSMN_STRICT",
+                        "range": null,
+                        "title": "Enable strict mode",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Declar JSMN API as static (instead of extern)",
+                        "id": "JSMN_STATIC",
+                        "name": "JSMN_STATIC",
+                        "range": null,
+                        "title": "Declare JSMN API as static",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-jsmn",
+                "title": "jsmn",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
+                        "help": null,
+                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_ANSI",
+                                "name": "DSP_ANSI",
+                                "range": null,
+                                "title": "ANSI C",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_OPTIMIZED",
+                                "name": "DSP_OPTIMIZED",
+                                "range": null,
+                                "title": "Optimized",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
+                        "id": "component-config-dsp-library-dsp-optimization",
+                        "name": "DSP_OPTIMIZATION",
+                        "title": "DSP Optimization",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_OPTIMIZATION",
+                        "name": "DSP_OPTIMIZATION",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_512",
+                                "name": "DSP_MAX_FFT_SIZE_512",
+                                "range": null,
+                                "title": "512",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_1024",
+                                "name": "DSP_MAX_FFT_SIZE_1024",
+                                "range": null,
+                                "title": "1024",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_2048",
+                                "name": "DSP_MAX_FFT_SIZE_2048",
+                                "range": null,
+                                "title": "2048",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_4096",
+                                "name": "DSP_MAX_FFT_SIZE_4096",
+                                "range": null,
+                                "title": "4096",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_8192",
+                                "name": "DSP_MAX_FFT_SIZE_8192",
+                                "range": null,
+                                "title": "8192",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_16384",
+                                "name": "DSP_MAX_FFT_SIZE_16384",
+                                "range": null,
+                                "title": "16384",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_32768",
+                                "name": "DSP_MAX_FFT_SIZE_32768",
+                                "range": null,
+                                "title": "32768",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This is default FFT size for internal usage.",
+                        "id": "component-config-dsp-library-maximum-fft-length",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "title": "Maximum FFT length",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_MAX_FFT_SIZE",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-dsp-library",
+                "title": "DSP Library",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
+                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
+                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "range": null,
+                        "title": "Enable DS peripheral support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
+                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "range": null,
+                        "title": "Enable support for legacy formats",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-secure-cert-manager",
+                "title": "ESP Secure Cert Manager",
                 "type": "menu"
             },
             {
@@ -27436,6 +27279,229 @@
             {
                 "children": [
                     {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": null,
+                                "id": "DIAG_DATA_STORE_RTC",
+                                "name": "DIAG_DATA_STORE_RTC",
+                                "range": null,
+                                "title": "RTC memory",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": "Just a placeholder. This data store type is not supported as of now",
+                                "id": "DIAG_DATA_STORE_FLASH",
+                                "name": "DIAG_DATA_STORE_FLASH",
+                                "range": null,
+                                "title": "Flash",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
+                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
+                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
+                        "title": "Diagnostics data store destination",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
+                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "range": [
+                            50,
+                            90
+                        ],
+                        "title": "Reporting watermark percentage",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
+                                "id": "RTC_STORE_DATA_SIZE",
+                                "name": "RTC_STORE_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    7168
+                                ],
+                                "title": "RTC store data size",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
+                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    3072
+                                ],
+                                "title": "Maximum size of critical data store",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_RTC",
+                        "id": "component-config-diagnostics-data-store-rtc-store",
+                        "title": "RTC Store",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_FLASH",
+                                "help": "Diagnostics data is stored in this partition",
+                                "id": "FLASH_STORE_PARTITION_LABEL",
+                                "name": "FLASH_STORE_PARTITION_LABEL",
+                                "range": null,
+                                "title": "Diagnostics data partition name",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_FLASH",
+                        "id": "component-config-diagnostics-data-store-flash-store",
+                        "title": "Flash Store",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-diagnostics-data-store",
+                "title": "Diagnostics data store",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
+                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "range": null,
+                                        "title": "Dump CBOR decoded data instead of hexdump",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ESP_INSIGHTS_ENABLED",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "range": null,
+                                "title": "Enable Insights debug prints",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_INSIGHTS_ENABLED",
+                        "name": "ESP_INSIGHTS_ENABLED",
+                        "range": null,
+                        "title": "Enable ESP Insights",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
+                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
+                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "range": null,
+                        "title": "Enable core dump summary support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "range": null,
+                                "title": "MQTT",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "range": null,
+                                "title": "HTTPS",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
+                        "id": "component-config-esp-insights-insights-default-transport",
+                        "name": "ESP_INSIGHTS_TRANSPORT",
+                        "title": "Insights default transport",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                        "help": null,
+                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "range": null,
+                        "title": "Insights https host",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post min interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post max interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
+                        "id": "ESP_INSIGHTS_META_VERSION_10",
+                        "name": "ESP_INSIGHTS_META_VERSION_10",
+                        "range": null,
+                        "title": "Use older metadata format (1.0)",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-insights",
+                "title": "ESP Insights",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
                         "children": [],
                         "depends_on": null,
                         "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
@@ -27662,72 +27728,6 @@
                 "depends_on": null,
                 "id": "component-config-mdns",
                 "title": "mDNS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "You can access parent node of parsed json",
-                        "id": "JSMN_PARENT_LINKS",
-                        "name": "JSMN_PARENT_LINKS",
-                        "range": null,
-                        "title": "Enable parent links",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "In strict mode primitives are: numbers and booleans",
-                        "id": "JSMN_STRICT",
-                        "name": "JSMN_STRICT",
-                        "range": null,
-                        "title": "Enable strict mode",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Declar JSMN API as static (instead of extern)",
-                        "id": "JSMN_STATIC",
-                        "name": "JSMN_STATIC",
-                        "range": null,
-                        "title": "Declare JSMN API as static",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-jsmn",
-                "title": "jsmn",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
-                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
-                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "range": null,
-                        "title": "Enable DS peripheral support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
-                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "range": null,
-                        "title": "Enable support for legacy formats",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-secure-cert-manager",
-                "title": "ESP Secure Cert Manager",
                 "type": "menu"
             },
             {
