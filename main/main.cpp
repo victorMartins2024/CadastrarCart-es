@@ -30,7 +30,6 @@
 #include "Arduino.h"
 #include "MFRC522.h"
 #include "INA226.h"
-#include "Keypad.h"
 #include "WiFi.h"
 #include "Wire.h"
 #include "SPI.h"
@@ -188,8 +187,8 @@ String OpeCard  =   "6379CF9A";
 String AdmCard  =   "29471BC2";  
 String TecCard  =   "D2229A1B";  
 String PesCard  =   "B2B4BF1B";
-String UIDLists =   "";
-String TAGLists =   "";
+String UIDLists =   " ";
+String TAGLists =   " ";
 // ----------------------------------------------------------------
 
 // ----------------------------------------------------------------
@@ -199,8 +198,8 @@ char CAD[32];
 bool opnav;
 bool engnav;
 bool psswdcheck;
-int  manup; //preve
-int  manuc; //corre
+int  manup =  0; //preve
+int  manuc =  0; //corre
 byte currenttaglen = 0; //PassLenghtAtual
 byte currentpasslen = 0;   //currentPasswordLength
 bool passvalue = true;
@@ -217,10 +216,6 @@ extern "C" void app_main(){
   lcd.init();
   lcd.backlight();
   ina226_setup();
-
-  lcd.home();
-  lcd.print("INICIALIZANDO");
-  vTaskDelay(500);
   
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -236,7 +231,6 @@ extern "C" void app_main(){
   hourmeter   = pref.getInt(hourpref, hourmeter); 
   hourmeterT  = pref.getInt(hourtrac, hourmeterT);
   hourmeterB  = pref.getInt(hourbomb, hourmeterB);
-
   manup = pref.getInt(prevpref, manup);
   manuc = pref.getInt(correpref, manuc);
 
@@ -246,17 +240,18 @@ extern "C" void app_main(){
                           NULL,           // input parameter
                           1,              // priority
                           NULL,           // task handle
-                          1);                // core
+                          1);             // core
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          8000,
+                          16000,
                           NULL,
-                          2,
+                          1,
                           NULL,
                           0);
 
-
+  lcd.setCursor(0, 0);
+  lcd.print("INICIALIZANDO");
   vTaskDelay(1000);  
 }
 
@@ -267,8 +262,6 @@ extern "C" void app_main(){
 // -----------------------------------------------------------------
 // -----telemetry-----
 void xTaskTelemetry(void *pvParameters){ 
-  lcd.clear(); 
-  
   char CVolt[30];
   char Ageral[30];  
   char CATrac[30];
@@ -376,7 +369,7 @@ void xTaskTelemetry(void *pvParameters){
     client.publish(topic_FHour, FullHour);
     client.publish(topic_JHour, Justhour);
 
-    lcd.setCursor(0, 0);
+    /*lcd.setCursor(0, 0);
     lcd.print("HB:");
     lcd.setCursor(4, 0);
     lcd.print(hourmeter1);
@@ -392,11 +385,9 @@ void xTaskTelemetry(void *pvParameters){
     lcd.setCursor(9, 1);
     lcd.print("V:");
     lcd.setCursor(11, 1);
-    lcd.print(Volt);
+    lcd.print(Volt);*/
 
     esp_task_wdt_reset();        // reset watchdog if dont return any error
-
-    client.loop();
     vTaskDelay(1000/ portTICK_PERIOD_MS);
   }
 } 
@@ -405,12 +396,16 @@ void xTaskTelemetry(void *pvParameters){
 // -----------------------------------------------------------------
 // -----Navgation-----
 void xTaskNav(void *pvParameters){
+  
   esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
+    lcd.clear();
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
     client.loop();
+
+    client.publish("proto/sim/teste", "conectado");
 
     char menu = kpd.getKey();
 
@@ -433,7 +428,7 @@ void xTaskNav(void *pvParameters){
       }
     }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
-    vTaskDelay(1000/ portTICK_PERIOD_MS);
+    vTaskDelay(1500);
   }
 }
 
@@ -642,11 +637,9 @@ void status(){
 // -----------------------------------------------------------------
 // -----aprox-----
 void apx(){
-
   lcd.clear();
   lcd.setCursor(2, 2);
   lcd.print("APROXIMAR CARTAO");
-
   while (opnav == true) {
 
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {

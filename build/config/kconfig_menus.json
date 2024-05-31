@@ -26414,6 +26414,1145 @@
             {
                 "children": [
                     {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Toggle SD card support\nThis requires IDF v5+ as older ESP-IDF do not support SD card erase.",
+                        "id": "LITTLEFS_SDMMC_SUPPORT",
+                        "name": "LITTLEFS_SDMMC_SUPPORT",
+                        "range": null,
+                        "title": "SDMMC support (requires ESP-IDF v5+)",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Define maximum number of partitions that can be mounted.",
+                        "id": "LITTLEFS_MAX_PARTITIONS",
+                        "name": "LITTLEFS_MAX_PARTITIONS",
+                        "range": [
+                            1,
+                            10
+                        ],
+                        "title": "Maximum Number of Partitions",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Logical page size of LITTLEFS partition, in bytes. Must be multiple\nof flash page size (which is usually 256 bytes).\nLarger page sizes reduce overhead when storing large files, and\nimprove filesystem performance when reading large files.\nSmaller page sizes reduce overhead when storing small (< page size)\nfiles.",
+                        "id": "LITTLEFS_PAGE_SIZE",
+                        "name": "LITTLEFS_PAGE_SIZE",
+                        "range": [
+                            256,
+                            1024
+                        ],
+                        "title": "LITTLEFS logical page size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Includes NULL-terminator. If flashing a prebuilt filesystem image,\nrebuild the filesystem image if this value changes.\nmklittlefs, the tool that generates the image will automatically be rebuilt.\nIf downloading a pre-built release of mklittlefs, it was most-likely\nbuilt with LFS_NAME_MAX=32 and should not be used.",
+                        "id": "LITTLEFS_OBJ_NAME_LEN",
+                        "name": "LITTLEFS_OBJ_NAME_LEN",
+                        "range": [
+                            16,
+                            1022
+                        ],
+                        "title": "Maximum object name length including NULL terminator.",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum size of a block read. All read operations will be a\nmultiple of this value.",
+                        "id": "LITTLEFS_READ_SIZE",
+                        "name": "LITTLEFS_READ_SIZE",
+                        "range": null,
+                        "title": "Minimum size of a block read.",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum size of a block program. All write operations will be a\nmultiple of this value.",
+                        "id": "LITTLEFS_WRITE_SIZE",
+                        "name": "LITTLEFS_WRITE_SIZE",
+                        "range": null,
+                        "title": "Minimum size of a block write.",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Look ahead size. Must be a multiple of 8.",
+                        "id": "LITTLEFS_LOOKAHEAD_SIZE",
+                        "name": "LITTLEFS_LOOKAHEAD_SIZE",
+                        "range": null,
+                        "title": "Look ahead size.",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Size of block caches. Each cache buffers a portion of a block in RAM.\nThe littlefs needs a read cache, a program cache, and one additional\ncache per file. Larger caches can improve performance by storing more\ndata and reducing the number of disk accesses. Must be a multiple of\nthe read and program sizes, and a factor of the block size (4096).",
+                        "id": "LITTLEFS_CACHE_SIZE",
+                        "name": "LITTLEFS_CACHE_SIZE",
+                        "range": null,
+                        "title": "Cache Size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Number of erase cycles before littlefs evicts metadata logs and moves \nthe metadata to another block. Suggested values are in the\nrange 100-1000, with large values having better performance at the cost\nof less consistent wear distribution.\nSet to -1 to disable block-level wear-leveling.",
+                        "id": "LITTLEFS_BLOCK_CYCLES",
+                        "name": "LITTLEFS_BLOCK_CYCLES",
+                        "range": [
+                            -1,
+                            1024
+                        ],
+                        "title": "LittleFS wear-leveling block cycles",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Saves timestamp on modification. Uses an additional 4bytes.",
+                        "id": "LITTLEFS_USE_MTIME",
+                        "name": "LITTLEFS_USE_MTIME",
+                        "range": null,
+                        "title": "Save file modification time",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Records the filepath only as a 32-bit hash in the file descriptor instead\nof the entire filepath. Saves approximately `sizeof(filepath)` bytes\nper file descriptor.\nIf enabled, functionality (like fstat) that requires the file path \nfrom the file descriptor will not work.\nIn rare cases, may cause unlinking or renaming issues (unlikely) if\nthere's a hash collision between an open filepath and a filepath\nto be modified.",
+                        "id": "LITTLEFS_USE_ONLY_HASH",
+                        "name": "LITTLEFS_USE_ONLY_HASH",
+                        "range": null,
+                        "title": "Don't store filepath in the file descriptor",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Converts LittleFS error codes into human readable strings.\nMay increase binary size depending on logging level.",
+                        "id": "LITTLEFS_HUMAN_READABLE",
+                        "name": "LITTLEFS_HUMAN_READABLE",
+                        "range": null,
+                        "title": "Make errno human-readable",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice LITTLEFS_MTIME>",
+                                "help": "Saves timestamp on modification.",
+                                "id": "LITTLEFS_MTIME_USE_SECONDS",
+                                "name": "LITTLEFS_MTIME_USE_SECONDS",
+                                "range": null,
+                                "title": "Use Seconds",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice LITTLEFS_MTIME>",
+                                "help": "Saves nonce on modification; intended for detecting filechanges\non systems without access to a RTC.\n\nA file who's nonce is the same as it was at a previous time has \nhigh probability of not having been modified.\n\nUpon file modification, the nonce is incremented by one. Upon file\ncreation, a random nonce is assigned.\n\nThere is a very slim chance that a file will have the same nonce if\nit is deleted and created again (approx 1 in 4 billion).",
+                                "id": "LITTLEFS_MTIME_USE_NONCE",
+                                "name": "LITTLEFS_MTIME_USE_NONCE",
+                                "range": null,
+                                "title": "Use Nonce",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": "LITTLEFS_USE_MTIME",
+                        "help": "Save an additional 4-byte attribute. Options listed below.",
+                        "id": "component-config-littlefs-mtime-attribute-options",
+                        "name": "LITTLEFS_MTIME",
+                        "title": "mtime attribute options",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enabling this feature allows for greater drop-in compatability\nwhen replacing SPIFFS. Since SPIFFS doesn't have folders, and \nfolders are just considered as part of a file name, enabling this\nwill automatically create folders as necessary to create a file\ninstead of throwing an error. Similarly, upon the deletion of the\nlast file in a folder, the folder will be deleted. It is recommended\nto only enable this flag as a stop-gap solution.",
+                        "id": "LITTLEFS_SPIFFS_COMPAT",
+                        "name": "LITTLEFS_SPIFFS_COMPAT",
+                        "range": null,
+                        "title": "Improve SPIFFS drop-in compatability",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enabling this feature extends SPIFFS capability.\nIn SPIFFS data is written immediately to the flash storage when fflush() function called.\nIn LittleFS flush() does not write data to the flash, and fsync() call needed after.\nWith this feature fflush() will write data to the storage.",
+                        "id": "LITTLEFS_FLUSH_FILE_EVERY_WRITE",
+                        "name": "LITTLEFS_FLUSH_FILE_EVERY_WRITE",
+                        "range": null,
+                        "title": "Flush file to flash after each write operation",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "!LITTLEFS_USE_ONLY_HASH && LITTLEFS_SPIFFS_COMPAT",
+                        "help": "Support opening directory by following APIs:\n\n    int fd = open(\"my_directory\", O_DIRECTORY);",
+                        "id": "LITTLEFS_OPEN_DIR",
+                        "name": "LITTLEFS_OPEN_DIR",
+                        "range": null,
+                        "title": "Support opening directory",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "LITTLEFS_FCNTL_GET_PATH",
+                                "help": "ESP-IDF's header file \"fcntl.h\" doesn't support macro \"F_GETPATH\",\nso we should define this macro here.",
+                                "id": "LITTLEFS_FCNTL_F_GETPATH_VALUE",
+                                "name": "LITTLEFS_FCNTL_F_GETPATH_VALUE",
+                                "range": null,
+                                "title": "Value of command F_GETPATH",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": "!LITTLEFS_USE_ONLY_HASH",
+                        "help": "Support getting directory by following APIs:\n\n    char buffer[MAXPATHLEN];\n\n    int fd = open(\"my_file\", flags);\n    fcntl(fd, F_GETPATH, buffer);",
+                        "id": "LITTLEFS_FCNTL_GET_PATH",
+                        "name": "LITTLEFS_FCNTL_GET_PATH",
+                        "range": null,
+                        "title": "Support get file or directory path",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
+                                        "help": null,
+                                        "id": "LITTLEFS_DISK_VERSION_MOST_RECENT",
+                                        "name": "LITTLEFS_DISK_VERSION_MOST_RECENT",
+                                        "range": null,
+                                        "title": "Write the most recent LittleFS version",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
+                                        "help": null,
+                                        "id": "LITTLEFS_DISK_VERSION_2_1",
+                                        "name": "LITTLEFS_DISK_VERSION_2_1",
+                                        "range": null,
+                                        "title": "Write LittleFS 2.1",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
+                                        "help": null,
+                                        "id": "LITTLEFS_DISK_VERSION_2_0",
+                                        "name": "LITTLEFS_DISK_VERSION_2_0",
+                                        "range": null,
+                                        "title": "Write LittleFS 2.0 (no forward-looking erase-state CRCs)",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "LITTLEFS_MULTIVERSION",
+                                "help": "See LITTLEFS_MULTIVERSION for details.",
+                                "id": "component-config-littlefs-support-selecting-the-littlefs-minor-version-to-write-to-disk-littlefs_disk_version",
+                                "name": "LITTLEFS_DISK_VERSION",
+                                "title": "LITTLEFS_DISK_VERSION",
+                                "type": "choice"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "LittleFS 2.6 bumps the on-disk minor version of littlefs from lfs2.0 -> lfs2.1.\n\nThis change is backwards-compatible, but after the first write with the new version,\nthe image on disk will no longer be mountable by older versions of littlefs.\n\nEnabling LITTLEFS_MULTIVERSION allows to select the On-disk version\nto use when writing in the form of 16-bit major version\n+ 16-bit minor version. This limiting metadata to what is supported by\nolder minor versions. Note that some features will be lost. Defaults to\nto the most recent minor version when zero.",
+                        "id": "LITTLEFS_MULTIVERSION",
+                        "name": "LITTLEFS_MULTIVERSION",
+                        "range": null,
+                        "title": "Support selecting the LittleFS minor version to write to disk",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
+                                "help": "Disallow dynamic allocation, static buffers must be provided by the calling application.",
+                                "id": "LITTLEFS_MALLOC_STRATEGY_DISABLE",
+                                "name": "LITTLEFS_MALLOC_STRATEGY_DISABLE",
+                                "range": null,
+                                "title": "Static buffers only",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
+                                "help": "Uses an automatic allocation strategy. On systems with heap in SPIRAM, if\nthe allocation size does not exceed SPIRAM_MALLOC_ALWAYSINTERNAL then internal\nheap allocation if preferred, otherwise allocation will be attempted from SPIRAM\nheap.",
+                                "id": "LITTLEFS_MALLOC_STRATEGY_DEFAULT",
+                                "name": "LITTLEFS_MALLOC_STRATEGY_DEFAULT",
+                                "range": null,
+                                "title": "Default heap selection",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
+                                "help": "Uses ESP-IDF heap_caps_malloc to allocate from internal heap.",
+                                "id": "LITTLEFS_MALLOC_STRATEGY_INTERNAL",
+                                "name": "LITTLEFS_MALLOC_STRATEGY_INTERNAL",
+                                "range": null,
+                                "title": "Internal heap",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "SPIRAM_USE_MALLOC && ESP32_SPIRAM_SUPPORT && <choice LITTLEFS_MALLOC_STRATEGY>",
+                                "help": "Uses ESP-IDF heap_caps_malloc to allocate from SPIRAM heap.",
+                                "id": "LITTLEFS_MALLOC_STRATEGY_SPIRAM",
+                                "name": "LITTLEFS_MALLOC_STRATEGY_SPIRAM",
+                                "range": null,
+                                "title": "SPIRAM heap",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Maps lfs_malloc to ESP-IDF capabilities-based memory allocator or\ndisables dynamic allocation in favour of user-provided static buffers.",
+                        "id": "component-config-littlefs-buffer-allocation-strategy",
+                        "name": "LITTLEFS_MALLOC_STRATEGY",
+                        "title": "Buffer allocation strategy",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Selects whether littlefs performs runtime assert checks.",
+                        "id": "LITTLEFS_ASSERTS",
+                        "name": "LITTLEFS_ASSERTS",
+                        "range": null,
+                        "title": "Enable asserts",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-littlefs",
+                "title": "LittleFS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
+                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "range": null,
+                                        "title": "Dump CBOR decoded data instead of hexdump",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ESP_INSIGHTS_ENABLED",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "range": null,
+                                "title": "Enable Insights debug prints",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_INSIGHTS_ENABLED",
+                        "name": "ESP_INSIGHTS_ENABLED",
+                        "range": null,
+                        "title": "Enable ESP Insights",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
+                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
+                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "range": null,
+                        "title": "Enable core dump summary support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "range": null,
+                                "title": "MQTT",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "range": null,
+                                "title": "HTTPS",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
+                        "id": "component-config-esp-insights-insights-default-transport",
+                        "name": "ESP_INSIGHTS_TRANSPORT",
+                        "title": "Insights default transport",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                        "help": null,
+                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "range": null,
+                        "title": "Insights https host",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post min interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post max interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
+                        "id": "ESP_INSIGHTS_META_VERSION_10",
+                        "name": "ESP_INSIGHTS_META_VERSION_10",
+                        "range": null,
+                        "title": "Use older metadata format (1.0)",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-insights",
+                "title": "ESP Insights",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
+                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
+                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "range": null,
+                        "title": "Enable DS peripheral support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
+                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "range": null,
+                        "title": "Enable support for legacy formats",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-secure-cert-manager",
+                "title": "ESP Secure Cert Manager",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_RMAKER_MQTT_GLUE_LIB>",
+                                "help": null,
+                                "id": "ESP_RMAKER_LIB_ESP_MQTT",
+                                "name": "ESP_RMAKER_LIB_ESP_MQTT",
+                                "range": null,
+                                "title": "ESP-MQTT",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_RMAKER_MQTT_GLUE_LIB>",
+                                "help": null,
+                                "id": "ESP_RMAKER_LIB_AWS_IOT",
+                                "name": "ESP_RMAKER_LIB_AWS_IOT",
+                                "range": null,
+                                "title": "AWS-IOT",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "MQTT Library to be used",
+                        "id": "component-config-esp-rainmaker-common-mqtt-library",
+                        "name": "ESP_RMAKER_MQTT_GLUE_LIB",
+                        "title": "MQTT Library",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_RMAKER_MQTT_GLUE_LIB",
+                        "name": "ESP_RMAKER_MQTT_GLUE_LIB",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_RMAKER_MQTT_PORT>",
+                                "help": null,
+                                "id": "ESP_RMAKER_MQTT_PORT_443",
+                                "name": "ESP_RMAKER_MQTT_PORT_443",
+                                "range": null,
+                                "title": "443",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_RMAKER_MQTT_PORT>",
+                                "help": null,
+                                "id": "ESP_RMAKER_MQTT_PORT_8883",
+                                "name": "ESP_RMAKER_MQTT_PORT_8883",
+                                "range": null,
+                                "title": "8883",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "ESP RainMaker MQTT Broker can be connected to either on Port 8883 or port 443.\nPort 443 is recommended as it is generally not blocked by any firewalls,\nsince it is standard HTTPS port.",
+                        "id": "component-config-esp-rainmaker-common-mqtt-port",
+                        "name": "ESP_RMAKER_MQTT_PORT",
+                        "title": "MQTT Port",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_RMAKER_MQTT_PORT",
+                        "name": "ESP_RMAKER_MQTT_PORT",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Use persistent MQTT sessions. This improves reliability as QOS1 messages missed\nout due to some network issue are received after the MQTT reconnects. The broker\ncaches messages for a period of upto 1 hour. However, a side-effect of this is that\nmessages can be received at unexpected time. Enable this option only if it suits\nyour use case. Please read MQTT specs to understand more about persistent sessions\nand the cleanSession flag.",
+                        "id": "ESP_RMAKER_MQTT_PERSISTENT_SESSION",
+                        "name": "ESP_RMAKER_MQTT_PERSISTENT_SESSION",
+                        "range": null,
+                        "title": "Use Persisent MQTT sessions",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
+                                "help": "Approved AWS product name. Please get in touch with your Espressif/AWS representative for more info.",
+                                "id": "ESP_RMAKER_MQTT_PRODUCT_NAME",
+                                "name": "ESP_RMAKER_MQTT_PRODUCT_NAME",
+                                "range": null,
+                                "title": "Product Name",
+                                "type": "string"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
+                                "help": "Approved AWS product version. Please get in touch with your Espressif/AWS representative for more info.",
+                                "id": "ESP_RMAKER_MQTT_PRODUCT_VERSION",
+                                "name": "ESP_RMAKER_MQTT_PRODUCT_VERSION",
+                                "range": null,
+                                "title": "Product Version",
+                                "type": "string"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
+                                "help": "Product SKU. Please get in touch with your Espressif/AWS representative for more info.",
+                                "id": "ESP_RMAKER_MQTT_PRODUCT_SKU",
+                                "name": "ESP_RMAKER_MQTT_PRODUCT_SKU",
+                                "range": null,
+                                "title": "Product SKU",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Send a Username during MQTT Connect. This is generally required only for tracking\nthe MQTT client types, platform, SDK, etc. in AWS.",
+                        "id": "ESP_RMAKER_MQTT_SEND_USERNAME",
+                        "name": "ESP_RMAKER_MQTT_SEND_USERNAME",
+                        "range": null,
+                        "title": "Send MQTT Username",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Use Certificate Bundle for server authentication. Enabling this is recommended to safeguard\nagainst any changes in the server certificates in future. This has an impact on the binary\nsize as well as heap requirement.",
+                        "id": "ESP_RMAKER_MQTT_USE_CERT_BUNDLE",
+                        "name": "ESP_RMAKER_MQTT_USE_CERT_BUNDLE",
+                        "range": null,
+                        "title": "Use Certificate Bundle",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This value controls the maximum number of topics that the device can subscribe to.",
+                        "id": "ESP_RMAKER_MAX_MQTT_SUBSCRIPTIONS",
+                        "name": "ESP_RMAKER_MAX_MQTT_SUBSCRIPTIONS",
+                        "range": null,
+                        "title": "Maximum number of MQTT Subscriptions",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "(IDF_TARGET_ESP32 || IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3 || ESP_WIFI_ENABLED) && <choice ESP_RMAKER_NETWORK_PROTOCOL_TYPE>",
+                                "help": null,
+                                "id": "ESP_RMAKER_NETWORK_OVER_WIFI",
+                                "name": "ESP_RMAKER_NETWORK_OVER_WIFI",
+                                "range": null,
+                                "title": "ESP RainMaker over Wi-Fi",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "OPENTHREAD_ENABLED && <choice ESP_RMAKER_NETWORK_PROTOCOL_TYPE>",
+                                "help": null,
+                                "id": "ESP_RMAKER_NETWORK_OVER_THREAD",
+                                "name": "ESP_RMAKER_NETWORK_OVER_THREAD",
+                                "range": null,
+                                "title": "ESP RainMaker over Thread",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Network protocol type over which the ESP RainMaker will run.",
+                        "id": "component-config-esp-rainmaker-common-esp-rainmaker-network-type",
+                        "name": "ESP_RMAKER_NETWORK_PROTOCOL_TYPE",
+                        "title": "ESP RainMaker Network Type",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Stack size for the ESP RainMaker Work Queue Task.",
+                        "id": "ESP_RMAKER_WORK_QUEUE_TASK_STACK",
+                        "name": "ESP_RMAKER_WORK_QUEUE_TASK_STACK",
+                        "range": null,
+                        "title": "ESP RainMaker Work Queue Task stack",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Priority for the ESP RainMaker Work Queue Task. Not recommended to be changed\nunless you really need it.",
+                        "id": "ESP_RMAKER_WORK_QUEUE_TASK_PRIORITY",
+                        "name": "ESP_RMAKER_WORK_QUEUE_TASK_PRIORITY",
+                        "range": null,
+                        "title": "ESP RainMaker Work Queue Task priority",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Factory NVS Partition name which will have the MQTT connectivity credentials.",
+                        "id": "ESP_RMAKER_FACTORY_PARTITION_NAME",
+                        "name": "ESP_RMAKER_FACTORY_PARTITION_NAME",
+                        "range": null,
+                        "title": "ESP RainMaker Factory Partition Name",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Namespace in the Factory NVS Partition name which will have the MQTT\nconnectivity credentials.",
+                        "id": "ESP_RMAKER_FACTORY_NAMESPACE",
+                        "name": "ESP_RMAKER_FACTORY_NAMESPACE",
+                        "range": null,
+                        "title": "ESP RainMaker Factory Namespace",
+                        "type": "string"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
+                                "help": "Label of the partition of subtype \"nvs_keys\" used for encrypting/decrypting Rainmaker factory partition.",
+                                "id": "ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME",
+                                "name": "ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME",
+                                "range": null,
+                                "title": "ESP Rainmaker Factory NVS keys partition label",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": "NVS_ENCRYPTION",
+                        "help": "Enable this option if the factory partition is pre-encrypted before flashing and the encryption keys \nare flashed in partition with subtype nvs_keys specified by CONFIG_ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME.\nIf an unencrypted factory partition is flashed, the device would not be able to read its data and \nthe partition would be considered empty.\nIf nvs encryption keys are not flashed onto device, they would be auto-generated and any previous data \nin nvs/factory partition would become invalid.",
+                        "id": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
+                        "name": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
+                        "range": null,
+                        "title": "Encrypt Rainmaker Factory partition",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Default Timezone to use. Eg. \"Asia/Shanghai\", \"America/Los_Angeles\".\nCheck documentation for complete list of valid values. This value\nwill be used only if no timezone is set using the C APIs.",
+                        "id": "ESP_RMAKER_DEF_TIMEZONE",
+                        "name": "ESP_RMAKER_DEF_TIMEZONE",
+                        "range": null,
+                        "title": "Default Timezone",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Default SNTP Server which is used for time synchronization.",
+                        "id": "ESP_RMAKER_SNTP_SERVER_NAME",
+                        "name": "ESP_RMAKER_SNTP_SERVER_NAME",
+                        "range": null,
+                        "title": "ESP RainMaker SNTP Server Name",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum number of commands supported by the command-response framework",
+                        "id": "ESP_RMAKER_MAX_COMMANDS",
+                        "name": "ESP_RMAKER_MAX_COMMANDS",
+                        "range": null,
+                        "title": "Maximum commands supported for command-response",
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-rainmaker-common",
+                "title": "ESP RainMaker Common",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
+                        "help": null,
+                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_ANSI",
+                                "name": "DSP_ANSI",
+                                "range": null,
+                                "title": "ANSI C",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_OPTIMIZED",
+                                "name": "DSP_OPTIMIZED",
+                                "range": null,
+                                "title": "Optimized",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
+                        "id": "component-config-dsp-library-dsp-optimization",
+                        "name": "DSP_OPTIMIZATION",
+                        "title": "DSP Optimization",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_OPTIMIZATION",
+                        "name": "DSP_OPTIMIZATION",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_512",
+                                "name": "DSP_MAX_FFT_SIZE_512",
+                                "range": null,
+                                "title": "512",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_1024",
+                                "name": "DSP_MAX_FFT_SIZE_1024",
+                                "range": null,
+                                "title": "1024",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_2048",
+                                "name": "DSP_MAX_FFT_SIZE_2048",
+                                "range": null,
+                                "title": "2048",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_4096",
+                                "name": "DSP_MAX_FFT_SIZE_4096",
+                                "range": null,
+                                "title": "4096",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_8192",
+                                "name": "DSP_MAX_FFT_SIZE_8192",
+                                "range": null,
+                                "title": "8192",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_16384",
+                                "name": "DSP_MAX_FFT_SIZE_16384",
+                                "range": null,
+                                "title": "16384",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_32768",
+                                "name": "DSP_MAX_FFT_SIZE_32768",
+                                "range": null,
+                                "title": "32768",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This is default FFT size for internal usage.",
+                        "id": "component-config-dsp-library-maximum-fft-length",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "title": "Maximum FFT length",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_MAX_FFT_SIZE",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-dsp-library",
+                "title": "DSP Library",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
+                        "id": "MDNS_MAX_INTERFACES",
+                        "name": "MDNS_MAX_INTERFACES",
+                        "range": [
+                            1,
+                            9
+                        ],
+                        "title": "Max number of interfaces",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
+                        "id": "MDNS_MAX_SERVICES",
+                        "name": "MDNS_MAX_SERVICES",
+                        "range": null,
+                        "title": "Max number of services",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
+                        "id": "MDNS_TASK_PRIORITY",
+                        "name": "MDNS_TASK_PRIORITY",
+                        "range": [
+                            1,
+                            255
+                        ],
+                        "title": "mDNS task priority",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting the length of mDNS action queue.",
+                        "id": "MDNS_ACTION_QUEUE_LEN",
+                        "name": "MDNS_ACTION_QUEUE_LEN",
+                        "range": [
+                            8,
+                            64
+                        ],
+                        "title": "Maximum actions pending to the server",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task stacksize.",
+                        "id": "MDNS_TASK_STACK_SIZE",
+                        "name": "MDNS_TASK_STACK_SIZE",
+                        "range": null,
+                        "title": "mDNS task stack size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "range": null,
+                                "title": "No affinity",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU0",
+                                "name": "MDNS_TASK_AFFINITY_CPU0",
+                                "range": null,
+                                "title": "CPU0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU1",
+                                "name": "MDNS_TASK_AFFINITY_CPU1",
+                                "range": null,
+                                "title": "CPU1",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
+                        "id": "component-config-mdns-mdns-task-affinity",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "title": "mDNS task affinity",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "MDNS_TASK_AFFINITY",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "range": null,
+                        "title": null,
+                        "type": "hex"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
+                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "range": [
+                            10,
+                            30000
+                        ],
+                        "title": "mDNS adding service timeout (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
+                        "id": "MDNS_TIMER_PERIOD_MS",
+                        "name": "MDNS_TIMER_PERIOD_MS",
+                        "range": [
+                            10,
+                            10000
+                        ],
+                        "title": "mDNS timer period (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
+                        "id": "MDNS_NETWORKING_SOCKET",
+                        "name": "MDNS_NETWORKING_SOCKET",
+                        "range": null,
+                        "title": "Use BSD sockets for mDNS networking",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
+                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "range": null,
+                        "title": "Skip suppressing our own packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
+                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "range": null,
+                        "title": "Enable debug prints of mDNS packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
+                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "range": null,
+                        "title": "Enable responding to IPv4 reverse queries",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables adding multiple service instances under the same service type.",
+                        "id": "MDNS_MULTIPLE_INSTANCE",
+                        "name": "MDNS_MULTIPLE_INSTANCE",
+                        "range": null,
+                        "title": "Multiple instances under the same service type",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
+                                "id": "MDNS_PREDEF_NETIF_STA",
+                                "name": "MDNS_PREDEF_NETIF_STA",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Station",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
+                                "id": "MDNS_PREDEF_NETIF_AP",
+                                "name": "MDNS_PREDEF_NETIF_AP",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Access Point",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ETH_ENABLED",
+                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
+                                "id": "MDNS_PREDEF_NETIF_ETH",
+                                "name": "MDNS_PREDEF_NETIF_ETH",
+                                "range": null,
+                                "title": "Use predefined interface for Ethernet",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-mdns-mdns-predefined-interfaces",
+                        "title": "MDNS Predefined interfaces",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-mdns",
+                "title": "mDNS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
                         "children": [
                             {
                                 "children": [
@@ -26771,514 +27910,6 @@
             {
                 "children": [
                     {
-                        "children": [],
-                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
-                        "help": null,
-                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "range": null,
-                        "title": null,
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_ANSI",
-                                "name": "DSP_ANSI",
-                                "range": null,
-                                "title": "ANSI C",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_OPTIMIZED",
-                                "name": "DSP_OPTIMIZED",
-                                "range": null,
-                                "title": "Optimized",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
-                        "id": "component-config-dsp-library-dsp-optimization",
-                        "name": "DSP_OPTIMIZATION",
-                        "title": "DSP Optimization",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_OPTIMIZATION",
-                        "name": "DSP_OPTIMIZATION",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_512",
-                                "name": "DSP_MAX_FFT_SIZE_512",
-                                "range": null,
-                                "title": "512",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_1024",
-                                "name": "DSP_MAX_FFT_SIZE_1024",
-                                "range": null,
-                                "title": "1024",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_2048",
-                                "name": "DSP_MAX_FFT_SIZE_2048",
-                                "range": null,
-                                "title": "2048",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_4096",
-                                "name": "DSP_MAX_FFT_SIZE_4096",
-                                "range": null,
-                                "title": "4096",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_8192",
-                                "name": "DSP_MAX_FFT_SIZE_8192",
-                                "range": null,
-                                "title": "8192",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_16384",
-                                "name": "DSP_MAX_FFT_SIZE_16384",
-                                "range": null,
-                                "title": "16384",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_32768",
-                                "name": "DSP_MAX_FFT_SIZE_32768",
-                                "range": null,
-                                "title": "32768",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This is default FFT size for internal usage.",
-                        "id": "component-config-dsp-library-maximum-fft-length",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "title": "Maximum FFT length",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_MAX_FFT_SIZE",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-dsp-library",
-                "title": "DSP Library",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
-                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
-                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "range": null,
-                        "title": "Enable DS peripheral support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
-                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "range": null,
-                        "title": "Enable support for legacy formats",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-secure-cert-manager",
-                "title": "ESP Secure Cert Manager",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Toggle SD card support\nThis requires IDF v5+ as older ESP-IDF do not support SD card erase.",
-                        "id": "LITTLEFS_SDMMC_SUPPORT",
-                        "name": "LITTLEFS_SDMMC_SUPPORT",
-                        "range": null,
-                        "title": "SDMMC support (requires ESP-IDF v5+)",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Define maximum number of partitions that can be mounted.",
-                        "id": "LITTLEFS_MAX_PARTITIONS",
-                        "name": "LITTLEFS_MAX_PARTITIONS",
-                        "range": [
-                            1,
-                            10
-                        ],
-                        "title": "Maximum Number of Partitions",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Logical page size of LITTLEFS partition, in bytes. Must be multiple\nof flash page size (which is usually 256 bytes).\nLarger page sizes reduce overhead when storing large files, and\nimprove filesystem performance when reading large files.\nSmaller page sizes reduce overhead when storing small (< page size)\nfiles.",
-                        "id": "LITTLEFS_PAGE_SIZE",
-                        "name": "LITTLEFS_PAGE_SIZE",
-                        "range": [
-                            256,
-                            1024
-                        ],
-                        "title": "LITTLEFS logical page size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Includes NULL-terminator. If flashing a prebuilt filesystem image,\nrebuild the filesystem image if this value changes.\nmklittlefs, the tool that generates the image will automatically be rebuilt.\nIf downloading a pre-built release of mklittlefs, it was most-likely\nbuilt with LFS_NAME_MAX=32 and should not be used.",
-                        "id": "LITTLEFS_OBJ_NAME_LEN",
-                        "name": "LITTLEFS_OBJ_NAME_LEN",
-                        "range": [
-                            16,
-                            1022
-                        ],
-                        "title": "Maximum object name length including NULL terminator.",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum size of a block read. All read operations will be a\nmultiple of this value.",
-                        "id": "LITTLEFS_READ_SIZE",
-                        "name": "LITTLEFS_READ_SIZE",
-                        "range": null,
-                        "title": "Minimum size of a block read.",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum size of a block program. All write operations will be a\nmultiple of this value.",
-                        "id": "LITTLEFS_WRITE_SIZE",
-                        "name": "LITTLEFS_WRITE_SIZE",
-                        "range": null,
-                        "title": "Minimum size of a block write.",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Look ahead size. Must be a multiple of 8.",
-                        "id": "LITTLEFS_LOOKAHEAD_SIZE",
-                        "name": "LITTLEFS_LOOKAHEAD_SIZE",
-                        "range": null,
-                        "title": "Look ahead size.",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Size of block caches. Each cache buffers a portion of a block in RAM.\nThe littlefs needs a read cache, a program cache, and one additional\ncache per file. Larger caches can improve performance by storing more\ndata and reducing the number of disk accesses. Must be a multiple of\nthe read and program sizes, and a factor of the block size (4096).",
-                        "id": "LITTLEFS_CACHE_SIZE",
-                        "name": "LITTLEFS_CACHE_SIZE",
-                        "range": null,
-                        "title": "Cache Size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Number of erase cycles before littlefs evicts metadata logs and moves \nthe metadata to another block. Suggested values are in the\nrange 100-1000, with large values having better performance at the cost\nof less consistent wear distribution.\nSet to -1 to disable block-level wear-leveling.",
-                        "id": "LITTLEFS_BLOCK_CYCLES",
-                        "name": "LITTLEFS_BLOCK_CYCLES",
-                        "range": [
-                            -1,
-                            1024
-                        ],
-                        "title": "LittleFS wear-leveling block cycles",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Saves timestamp on modification. Uses an additional 4bytes.",
-                        "id": "LITTLEFS_USE_MTIME",
-                        "name": "LITTLEFS_USE_MTIME",
-                        "range": null,
-                        "title": "Save file modification time",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Records the filepath only as a 32-bit hash in the file descriptor instead\nof the entire filepath. Saves approximately `sizeof(filepath)` bytes\nper file descriptor.\nIf enabled, functionality (like fstat) that requires the file path \nfrom the file descriptor will not work.\nIn rare cases, may cause unlinking or renaming issues (unlikely) if\nthere's a hash collision between an open filepath and a filepath\nto be modified.",
-                        "id": "LITTLEFS_USE_ONLY_HASH",
-                        "name": "LITTLEFS_USE_ONLY_HASH",
-                        "range": null,
-                        "title": "Don't store filepath in the file descriptor",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Converts LittleFS error codes into human readable strings.\nMay increase binary size depending on logging level.",
-                        "id": "LITTLEFS_HUMAN_READABLE",
-                        "name": "LITTLEFS_HUMAN_READABLE",
-                        "range": null,
-                        "title": "Make errno human-readable",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice LITTLEFS_MTIME>",
-                                "help": "Saves timestamp on modification.",
-                                "id": "LITTLEFS_MTIME_USE_SECONDS",
-                                "name": "LITTLEFS_MTIME_USE_SECONDS",
-                                "range": null,
-                                "title": "Use Seconds",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice LITTLEFS_MTIME>",
-                                "help": "Saves nonce on modification; intended for detecting filechanges\non systems without access to a RTC.\n\nA file who's nonce is the same as it was at a previous time has \nhigh probability of not having been modified.\n\nUpon file modification, the nonce is incremented by one. Upon file\ncreation, a random nonce is assigned.\n\nThere is a very slim chance that a file will have the same nonce if\nit is deleted and created again (approx 1 in 4 billion).",
-                                "id": "LITTLEFS_MTIME_USE_NONCE",
-                                "name": "LITTLEFS_MTIME_USE_NONCE",
-                                "range": null,
-                                "title": "Use Nonce",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": "LITTLEFS_USE_MTIME",
-                        "help": "Save an additional 4-byte attribute. Options listed below.",
-                        "id": "component-config-littlefs-mtime-attribute-options",
-                        "name": "LITTLEFS_MTIME",
-                        "title": "mtime attribute options",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enabling this feature allows for greater drop-in compatability\nwhen replacing SPIFFS. Since SPIFFS doesn't have folders, and \nfolders are just considered as part of a file name, enabling this\nwill automatically create folders as necessary to create a file\ninstead of throwing an error. Similarly, upon the deletion of the\nlast file in a folder, the folder will be deleted. It is recommended\nto only enable this flag as a stop-gap solution.",
-                        "id": "LITTLEFS_SPIFFS_COMPAT",
-                        "name": "LITTLEFS_SPIFFS_COMPAT",
-                        "range": null,
-                        "title": "Improve SPIFFS drop-in compatability",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enabling this feature extends SPIFFS capability.\nIn SPIFFS data is written immediately to the flash storage when fflush() function called.\nIn LittleFS flush() does not write data to the flash, and fsync() call needed after.\nWith this feature fflush() will write data to the storage.",
-                        "id": "LITTLEFS_FLUSH_FILE_EVERY_WRITE",
-                        "name": "LITTLEFS_FLUSH_FILE_EVERY_WRITE",
-                        "range": null,
-                        "title": "Flush file to flash after each write operation",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "!LITTLEFS_USE_ONLY_HASH && LITTLEFS_SPIFFS_COMPAT",
-                        "help": "Support opening directory by following APIs:\n\n    int fd = open(\"my_directory\", O_DIRECTORY);",
-                        "id": "LITTLEFS_OPEN_DIR",
-                        "name": "LITTLEFS_OPEN_DIR",
-                        "range": null,
-                        "title": "Support opening directory",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "LITTLEFS_FCNTL_GET_PATH",
-                                "help": "ESP-IDF's header file \"fcntl.h\" doesn't support macro \"F_GETPATH\",\nso we should define this macro here.",
-                                "id": "LITTLEFS_FCNTL_F_GETPATH_VALUE",
-                                "name": "LITTLEFS_FCNTL_F_GETPATH_VALUE",
-                                "range": null,
-                                "title": "Value of command F_GETPATH",
-                                "type": "int"
-                            }
-                        ],
-                        "depends_on": "!LITTLEFS_USE_ONLY_HASH",
-                        "help": "Support getting directory by following APIs:\n\n    char buffer[MAXPATHLEN];\n\n    int fd = open(\"my_file\", flags);\n    fcntl(fd, F_GETPATH, buffer);",
-                        "id": "LITTLEFS_FCNTL_GET_PATH",
-                        "name": "LITTLEFS_FCNTL_GET_PATH",
-                        "range": null,
-                        "title": "Support get file or directory path",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
-                                        "help": null,
-                                        "id": "LITTLEFS_DISK_VERSION_MOST_RECENT",
-                                        "name": "LITTLEFS_DISK_VERSION_MOST_RECENT",
-                                        "range": null,
-                                        "title": "Write the most recent LittleFS version",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
-                                        "help": null,
-                                        "id": "LITTLEFS_DISK_VERSION_2_1",
-                                        "name": "LITTLEFS_DISK_VERSION_2_1",
-                                        "range": null,
-                                        "title": "Write LittleFS 2.1",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice LITTLEFS_DISK_VERSION>",
-                                        "help": null,
-                                        "id": "LITTLEFS_DISK_VERSION_2_0",
-                                        "name": "LITTLEFS_DISK_VERSION_2_0",
-                                        "range": null,
-                                        "title": "Write LittleFS 2.0 (no forward-looking erase-state CRCs)",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "LITTLEFS_MULTIVERSION",
-                                "help": "See LITTLEFS_MULTIVERSION for details.",
-                                "id": "component-config-littlefs-support-selecting-the-littlefs-minor-version-to-write-to-disk-littlefs_disk_version",
-                                "name": "LITTLEFS_DISK_VERSION",
-                                "title": "LITTLEFS_DISK_VERSION",
-                                "type": "choice"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "LittleFS 2.6 bumps the on-disk minor version of littlefs from lfs2.0 -> lfs2.1.\n\nThis change is backwards-compatible, but after the first write with the new version,\nthe image on disk will no longer be mountable by older versions of littlefs.\n\nEnabling LITTLEFS_MULTIVERSION allows to select the On-disk version\nto use when writing in the form of 16-bit major version\n+ 16-bit minor version. This limiting metadata to what is supported by\nolder minor versions. Note that some features will be lost. Defaults to\nto the most recent minor version when zero.",
-                        "id": "LITTLEFS_MULTIVERSION",
-                        "name": "LITTLEFS_MULTIVERSION",
-                        "range": null,
-                        "title": "Support selecting the LittleFS minor version to write to disk",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
-                                "help": "Disallow dynamic allocation, static buffers must be provided by the calling application.",
-                                "id": "LITTLEFS_MALLOC_STRATEGY_DISABLE",
-                                "name": "LITTLEFS_MALLOC_STRATEGY_DISABLE",
-                                "range": null,
-                                "title": "Static buffers only",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
-                                "help": "Uses an automatic allocation strategy. On systems with heap in SPIRAM, if\nthe allocation size does not exceed SPIRAM_MALLOC_ALWAYSINTERNAL then internal\nheap allocation if preferred, otherwise allocation will be attempted from SPIRAM\nheap.",
-                                "id": "LITTLEFS_MALLOC_STRATEGY_DEFAULT",
-                                "name": "LITTLEFS_MALLOC_STRATEGY_DEFAULT",
-                                "range": null,
-                                "title": "Default heap selection",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice LITTLEFS_MALLOC_STRATEGY>",
-                                "help": "Uses ESP-IDF heap_caps_malloc to allocate from internal heap.",
-                                "id": "LITTLEFS_MALLOC_STRATEGY_INTERNAL",
-                                "name": "LITTLEFS_MALLOC_STRATEGY_INTERNAL",
-                                "range": null,
-                                "title": "Internal heap",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "SPIRAM_USE_MALLOC && ESP32_SPIRAM_SUPPORT && <choice LITTLEFS_MALLOC_STRATEGY>",
-                                "help": "Uses ESP-IDF heap_caps_malloc to allocate from SPIRAM heap.",
-                                "id": "LITTLEFS_MALLOC_STRATEGY_SPIRAM",
-                                "name": "LITTLEFS_MALLOC_STRATEGY_SPIRAM",
-                                "range": null,
-                                "title": "SPIRAM heap",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Maps lfs_malloc to ESP-IDF capabilities-based memory allocator or\ndisables dynamic allocation in favour of user-provided static buffers.",
-                        "id": "component-config-littlefs-buffer-allocation-strategy",
-                        "name": "LITTLEFS_MALLOC_STRATEGY",
-                        "title": "Buffer allocation strategy",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Selects whether littlefs performs runtime assert checks.",
-                        "id": "LITTLEFS_ASSERTS",
-                        "name": "LITTLEFS_ASSERTS",
-                        "range": null,
-                        "title": "Enable asserts",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-littlefs",
-                "title": "LittleFS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
                         "children": [
                             {
                                 "children": [],
@@ -27377,637 +28008,6 @@
                 "depends_on": null,
                 "id": "component-config-diagnostics-data-store",
                 "title": "Diagnostics data store",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
-                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "range": null,
-                                        "title": "Dump CBOR decoded data instead of hexdump",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ESP_INSIGHTS_ENABLED",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "range": null,
-                                "title": "Enable Insights debug prints",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_INSIGHTS_ENABLED",
-                        "name": "ESP_INSIGHTS_ENABLED",
-                        "range": null,
-                        "title": "Enable ESP Insights",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
-                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
-                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "range": null,
-                        "title": "Enable core dump summary support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "range": null,
-                                "title": "MQTT",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "range": null,
-                                "title": "HTTPS",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
-                        "id": "component-config-esp-insights-insights-default-transport",
-                        "name": "ESP_INSIGHTS_TRANSPORT",
-                        "title": "Insights default transport",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                        "help": null,
-                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "range": null,
-                        "title": "Insights https host",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post min interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post max interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
-                        "id": "ESP_INSIGHTS_META_VERSION_10",
-                        "name": "ESP_INSIGHTS_META_VERSION_10",
-                        "range": null,
-                        "title": "Use older metadata format (1.0)",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-insights",
-                "title": "ESP Insights",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
-                        "id": "MDNS_MAX_INTERFACES",
-                        "name": "MDNS_MAX_INTERFACES",
-                        "range": [
-                            1,
-                            9
-                        ],
-                        "title": "Max number of interfaces",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
-                        "id": "MDNS_MAX_SERVICES",
-                        "name": "MDNS_MAX_SERVICES",
-                        "range": null,
-                        "title": "Max number of services",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
-                        "id": "MDNS_TASK_PRIORITY",
-                        "name": "MDNS_TASK_PRIORITY",
-                        "range": [
-                            1,
-                            255
-                        ],
-                        "title": "mDNS task priority",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting the length of mDNS action queue.",
-                        "id": "MDNS_ACTION_QUEUE_LEN",
-                        "name": "MDNS_ACTION_QUEUE_LEN",
-                        "range": [
-                            8,
-                            64
-                        ],
-                        "title": "Maximum actions pending to the server",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task stacksize.",
-                        "id": "MDNS_TASK_STACK_SIZE",
-                        "name": "MDNS_TASK_STACK_SIZE",
-                        "range": null,
-                        "title": "mDNS task stack size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "range": null,
-                                "title": "No affinity",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU0",
-                                "name": "MDNS_TASK_AFFINITY_CPU0",
-                                "range": null,
-                                "title": "CPU0",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU1",
-                                "name": "MDNS_TASK_AFFINITY_CPU1",
-                                "range": null,
-                                "title": "CPU1",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
-                        "id": "component-config-mdns-mdns-task-affinity",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "title": "mDNS task affinity",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "MDNS_TASK_AFFINITY",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "range": null,
-                        "title": null,
-                        "type": "hex"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
-                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "range": [
-                            10,
-                            30000
-                        ],
-                        "title": "mDNS adding service timeout (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
-                        "id": "MDNS_TIMER_PERIOD_MS",
-                        "name": "MDNS_TIMER_PERIOD_MS",
-                        "range": [
-                            10,
-                            10000
-                        ],
-                        "title": "mDNS timer period (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
-                        "id": "MDNS_NETWORKING_SOCKET",
-                        "name": "MDNS_NETWORKING_SOCKET",
-                        "range": null,
-                        "title": "Use BSD sockets for mDNS networking",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
-                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "range": null,
-                        "title": "Skip suppressing our own packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
-                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "range": null,
-                        "title": "Enable debug prints of mDNS packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
-                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "range": null,
-                        "title": "Enable responding to IPv4 reverse queries",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables adding multiple service instances under the same service type.",
-                        "id": "MDNS_MULTIPLE_INSTANCE",
-                        "name": "MDNS_MULTIPLE_INSTANCE",
-                        "range": null,
-                        "title": "Multiple instances under the same service type",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
-                                "id": "MDNS_PREDEF_NETIF_STA",
-                                "name": "MDNS_PREDEF_NETIF_STA",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Station",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
-                                "id": "MDNS_PREDEF_NETIF_AP",
-                                "name": "MDNS_PREDEF_NETIF_AP",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Access Point",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "ETH_ENABLED",
-                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
-                                "id": "MDNS_PREDEF_NETIF_ETH",
-                                "name": "MDNS_PREDEF_NETIF_ETH",
-                                "range": null,
-                                "title": "Use predefined interface for Ethernet",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "id": "component-config-mdns-mdns-predefined-interfaces",
-                        "title": "MDNS Predefined interfaces",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-mdns",
-                "title": "mDNS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_RMAKER_MQTT_GLUE_LIB>",
-                                "help": null,
-                                "id": "ESP_RMAKER_LIB_ESP_MQTT",
-                                "name": "ESP_RMAKER_LIB_ESP_MQTT",
-                                "range": null,
-                                "title": "ESP-MQTT",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_RMAKER_MQTT_GLUE_LIB>",
-                                "help": null,
-                                "id": "ESP_RMAKER_LIB_AWS_IOT",
-                                "name": "ESP_RMAKER_LIB_AWS_IOT",
-                                "range": null,
-                                "title": "AWS-IOT",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "MQTT Library to be used",
-                        "id": "component-config-esp-rainmaker-common-mqtt-library",
-                        "name": "ESP_RMAKER_MQTT_GLUE_LIB",
-                        "title": "MQTT Library",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_RMAKER_MQTT_GLUE_LIB",
-                        "name": "ESP_RMAKER_MQTT_GLUE_LIB",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_RMAKER_MQTT_PORT>",
-                                "help": null,
-                                "id": "ESP_RMAKER_MQTT_PORT_443",
-                                "name": "ESP_RMAKER_MQTT_PORT_443",
-                                "range": null,
-                                "title": "443",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_RMAKER_MQTT_PORT>",
-                                "help": null,
-                                "id": "ESP_RMAKER_MQTT_PORT_8883",
-                                "name": "ESP_RMAKER_MQTT_PORT_8883",
-                                "range": null,
-                                "title": "8883",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "ESP RainMaker MQTT Broker can be connected to either on Port 8883 or port 443.\nPort 443 is recommended as it is generally not blocked by any firewalls,\nsince it is standard HTTPS port.",
-                        "id": "component-config-esp-rainmaker-common-mqtt-port",
-                        "name": "ESP_RMAKER_MQTT_PORT",
-                        "title": "MQTT Port",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_RMAKER_MQTT_PORT",
-                        "name": "ESP_RMAKER_MQTT_PORT",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Use persistent MQTT sessions. This improves reliability as QOS1 messages missed\nout due to some network issue are received after the MQTT reconnects. The broker\ncaches messages for a period of upto 1 hour. However, a side-effect of this is that\nmessages can be received at unexpected time. Enable this option only if it suits\nyour use case. Please read MQTT specs to understand more about persistent sessions\nand the cleanSession flag.",
-                        "id": "ESP_RMAKER_MQTT_PERSISTENT_SESSION",
-                        "name": "ESP_RMAKER_MQTT_PERSISTENT_SESSION",
-                        "range": null,
-                        "title": "Use Persisent MQTT sessions",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
-                                "help": "Approved AWS product name. Please get in touch with your Espressif/AWS representative for more info.",
-                                "id": "ESP_RMAKER_MQTT_PRODUCT_NAME",
-                                "name": "ESP_RMAKER_MQTT_PRODUCT_NAME",
-                                "range": null,
-                                "title": "Product Name",
-                                "type": "string"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
-                                "help": "Approved AWS product version. Please get in touch with your Espressif/AWS representative for more info.",
-                                "id": "ESP_RMAKER_MQTT_PRODUCT_VERSION",
-                                "name": "ESP_RMAKER_MQTT_PRODUCT_VERSION",
-                                "range": null,
-                                "title": "Product Version",
-                                "type": "string"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "ESP_RMAKER_MQTT_SEND_USERNAME",
-                                "help": "Product SKU. Please get in touch with your Espressif/AWS representative for more info.",
-                                "id": "ESP_RMAKER_MQTT_PRODUCT_SKU",
-                                "name": "ESP_RMAKER_MQTT_PRODUCT_SKU",
-                                "range": null,
-                                "title": "Product SKU",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Send a Username during MQTT Connect. This is generally required only for tracking\nthe MQTT client types, platform, SDK, etc. in AWS.",
-                        "id": "ESP_RMAKER_MQTT_SEND_USERNAME",
-                        "name": "ESP_RMAKER_MQTT_SEND_USERNAME",
-                        "range": null,
-                        "title": "Send MQTT Username",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Use Certificate Bundle for server authentication. Enabling this is recommended to safeguard\nagainst any changes in the server certificates in future. This has an impact on the binary\nsize as well as heap requirement.",
-                        "id": "ESP_RMAKER_MQTT_USE_CERT_BUNDLE",
-                        "name": "ESP_RMAKER_MQTT_USE_CERT_BUNDLE",
-                        "range": null,
-                        "title": "Use Certificate Bundle",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This value controls the maximum number of topics that the device can subscribe to.",
-                        "id": "ESP_RMAKER_MAX_MQTT_SUBSCRIPTIONS",
-                        "name": "ESP_RMAKER_MAX_MQTT_SUBSCRIPTIONS",
-                        "range": null,
-                        "title": "Maximum number of MQTT Subscriptions",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "(IDF_TARGET_ESP32 || IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3 || ESP_WIFI_ENABLED) && <choice ESP_RMAKER_NETWORK_PROTOCOL_TYPE>",
-                                "help": null,
-                                "id": "ESP_RMAKER_NETWORK_OVER_WIFI",
-                                "name": "ESP_RMAKER_NETWORK_OVER_WIFI",
-                                "range": null,
-                                "title": "ESP RainMaker over Wi-Fi",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "OPENTHREAD_ENABLED && <choice ESP_RMAKER_NETWORK_PROTOCOL_TYPE>",
-                                "help": null,
-                                "id": "ESP_RMAKER_NETWORK_OVER_THREAD",
-                                "name": "ESP_RMAKER_NETWORK_OVER_THREAD",
-                                "range": null,
-                                "title": "ESP RainMaker over Thread",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Network protocol type over which the ESP RainMaker will run.",
-                        "id": "component-config-esp-rainmaker-common-esp-rainmaker-network-type",
-                        "name": "ESP_RMAKER_NETWORK_PROTOCOL_TYPE",
-                        "title": "ESP RainMaker Network Type",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Stack size for the ESP RainMaker Work Queue Task.",
-                        "id": "ESP_RMAKER_WORK_QUEUE_TASK_STACK",
-                        "name": "ESP_RMAKER_WORK_QUEUE_TASK_STACK",
-                        "range": null,
-                        "title": "ESP RainMaker Work Queue Task stack",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Priority for the ESP RainMaker Work Queue Task. Not recommended to be changed\nunless you really need it.",
-                        "id": "ESP_RMAKER_WORK_QUEUE_TASK_PRIORITY",
-                        "name": "ESP_RMAKER_WORK_QUEUE_TASK_PRIORITY",
-                        "range": null,
-                        "title": "ESP RainMaker Work Queue Task priority",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Factory NVS Partition name which will have the MQTT connectivity credentials.",
-                        "id": "ESP_RMAKER_FACTORY_PARTITION_NAME",
-                        "name": "ESP_RMAKER_FACTORY_PARTITION_NAME",
-                        "range": null,
-                        "title": "ESP RainMaker Factory Partition Name",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Namespace in the Factory NVS Partition name which will have the MQTT\nconnectivity credentials.",
-                        "id": "ESP_RMAKER_FACTORY_NAMESPACE",
-                        "name": "ESP_RMAKER_FACTORY_NAMESPACE",
-                        "range": null,
-                        "title": "ESP RainMaker Factory Namespace",
-                        "type": "string"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
-                                "help": "Label of the partition of subtype \"nvs_keys\" used for encrypting/decrypting Rainmaker factory partition.",
-                                "id": "ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME",
-                                "name": "ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME",
-                                "range": null,
-                                "title": "ESP Rainmaker Factory NVS keys partition label",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": "NVS_ENCRYPTION",
-                        "help": "Enable this option if the factory partition is pre-encrypted before flashing and the encryption keys \nare flashed in partition with subtype nvs_keys specified by CONFIG_ESP_RMAKER_FACTORY_NVS_KEYS_PARTITION_NAME.\nIf an unencrypted factory partition is flashed, the device would not be able to read its data and \nthe partition would be considered empty.\nIf nvs encryption keys are not flashed onto device, they would be auto-generated and any previous data \nin nvs/factory partition would become invalid.",
-                        "id": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
-                        "name": "ESP_RMAKER_ENCRYPT_FACTORY_PARTITION",
-                        "range": null,
-                        "title": "Encrypt Rainmaker Factory partition",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Default Timezone to use. Eg. \"Asia/Shanghai\", \"America/Los_Angeles\".\nCheck documentation for complete list of valid values. This value\nwill be used only if no timezone is set using the C APIs.",
-                        "id": "ESP_RMAKER_DEF_TIMEZONE",
-                        "name": "ESP_RMAKER_DEF_TIMEZONE",
-                        "range": null,
-                        "title": "Default Timezone",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Default SNTP Server which is used for time synchronization.",
-                        "id": "ESP_RMAKER_SNTP_SERVER_NAME",
-                        "name": "ESP_RMAKER_SNTP_SERVER_NAME",
-                        "range": null,
-                        "title": "ESP RainMaker SNTP Server Name",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Maximum number of commands supported by the command-response framework",
-                        "id": "ESP_RMAKER_MAX_COMMANDS",
-                        "name": "ESP_RMAKER_MAX_COMMANDS",
-                        "range": null,
-                        "title": "Maximum commands supported for command-response",
-                        "type": "int"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-rainmaker-common",
-                "title": "ESP RainMaker Common",
                 "type": "menu"
             }
         ],
