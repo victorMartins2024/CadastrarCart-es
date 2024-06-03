@@ -38,6 +38,9 @@ Each user type has limited access to specific telemetry functions.
 7. Arduino component
 9. INA226 + shunt
 10. Raspberry pi3
+11. RFID
+12. Display
+13. Keypad
 
 # *General Information*
 
