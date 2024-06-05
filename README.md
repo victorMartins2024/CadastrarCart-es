@@ -44,7 +44,7 @@ Each user type has limited access to specific telemetry functions.
 Compiler: VsCode 1.88.1  <br/>
 MCU: ESP32  <br/>
 Board: Dev module 38 pins <br/>
-Date: 2024, May <br/>
+Date: 2024, June <br/>
 
 # *Badges*
 

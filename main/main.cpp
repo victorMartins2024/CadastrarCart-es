@@ -19,13 +19,13 @@
 // ---Libraries---
 #include "freertos/FreeRTOSConfig.h"
 #include "LiquidCrystal_I2C.h"
-#include"freertos/FreeRTOS.h"
+#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_task_wdt.h"
 #include "PubSubClient.h"
 #include "Preferences.h"
-#include "Keypad_I2C.h"
 #include "esp_system.h"
+#include "I2CKeyPad.h"
 #include "Password.h"
 #include "rtc_wdt.h"
 #include "Arduino.h"
@@ -40,17 +40,6 @@
 // ---defines---
 #define SHUNT_RESISTENCE  0.75
 char keypad[19] = "123A456B789C*0#DNF";
-const   byte    ROWS    = 4;
-const   byte    COLS    = 4;
-
-// ---------------------------------------------------------------- 
-// ----Keypad---- 
-char keys[ROWS][COLS] = {
-  { '1', '2', '3', 'A' },
-  { '4', '5', '6', 'B' },
-  { '7', '8', '9', 'C' },
-  { '*', '0', '#', 'D' }
-};
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
@@ -67,8 +56,6 @@ char keys[ROWS][COLS] = {
 #define   MOSI      15
 #define   SDA       1
 #define   SCL       3 
-byte rowPins[ROWS] = { 0, 1, 2, 3 };
-byte colPins[COLS] = { 4, 5, 6, 7 };
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
@@ -134,7 +121,7 @@ Preferences pref;
 WiFiClient TestClient;
 MFRC522 rfid(SS, RST);
 INA226_WE INA(INAADRESS);
-Keypad_I2C kpd(KeyAdress, SDA);  
+I2CKeyPad kpd(KeyAdress);
 PubSubClient client(TestClient);
 Password password = Password("2552" ); 
 LiquidCrystal_I2C lcd(LCDADRESS, 20, 4);
@@ -174,9 +161,6 @@ bool opnav;
 bool engnav;
 bool psswdcheck;
 bool passvalue = true;
-int  manup =  0; //preve
-int  manuc =  0; //corre
-bool passvalue = true;
 
 // ----------------------------------------------------------------
 // --Preferences Key---
@@ -193,7 +177,7 @@ const char *listapref =   "Cadastro Cartoes";
 
 // ----------------------------------------------------------------
 // -----UIDS-----
-String OpeCard  =   "6379CF9A";  
+String OpeCard  =   "E6A1191E";//"6379CF9A";  
 String AdmCard  =   "29471BC2";  
 String TecCard  =   "D2229A1B";  
 String PesCard  =   "B2B4BF1B";
@@ -204,15 +188,16 @@ String TAGLists =   " ";
 // ----main----
 extern "C" void app_main(){
   initArduino();
-  kpd.begin();
+  Wire.begin(SDA, SCL);
+  SPI.begin(SCK, MISO, MOSI, RST);
   lcd.init();
   rfid.PCD_Init();
   ina226_setup();
-  Wire.begin(SDA, SCL);
   WiFi.begin(ssid, pass); 
+  kpd.begin();
   pref.begin("GT", false);
-  SPI.begin(SCK, MISO, MOSI, RST);
-
+  
+  kpd.loadKeyMap(keypad);
   lcd.backlight();
 
   if(WiFi.status() != WL_CONNECTED)
@@ -377,14 +362,14 @@ void xTaskNav(void *pvParameters){
 
     client.publish("proto/sim/teste", "conectado");
 
-    char menu = kpd.getKey();
+    char menu = kpd.getChar();
 
     if (manup == 1) {
       status();
     } else if (manuc == 1) {
       status();
     } else {
-      if (menu != NO_KEY) {
+      if (kpd.isPressed() == true) {
         vTaskDelay(80);
         if (menu == '0') {
           opnav = false;  // Para tela de Engenharia
@@ -663,9 +648,9 @@ void eng(){
 
   while (1) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == 'C') {
         resetPassword();
@@ -699,9 +684,9 @@ void screens(){
 
   while (opnav == true) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         opnav = true;
@@ -732,9 +717,9 @@ void telas(){
 
   while (1) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         formatar();
@@ -762,9 +747,9 @@ void cadastrar(){
 
   while (opnav == true) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == 'C') {
         dell();
@@ -808,9 +793,9 @@ void manutencao(){
 
   while (opnav == true) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         manup = 1;
@@ -891,9 +876,9 @@ void formatar(){
 
   while (1) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         lcd.clear();
@@ -920,9 +905,9 @@ void vazamento(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         client.publish(topic_V, "True");
@@ -946,9 +931,9 @@ void garfos(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         client.publish(topic_G, "True");
@@ -971,9 +956,9 @@ void emergencia(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         client.publish(topic_E, "True");
@@ -996,9 +981,9 @@ void comando(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         client.publish(topic_F, "True");
@@ -1022,9 +1007,9 @@ void bateria(){
 
   while (opnav == true) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
 
-    if (key != NO_KEY) {
+    if (kpd.isPressed() == true) {
       vTaskDelay(20);
       if (key == '1') {
         client.publish(topic_B, "True");
