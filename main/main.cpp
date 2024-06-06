@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.5.2 main.cpp
+  Telemetry V0.5.3 main.cpp
      
   INA226
   MFRC522 
@@ -377,8 +377,6 @@ void xTaskNav(void *pvParameters){
           eng();
         }
       } else {
-        opnav = true;  // Para tela de Operação
-        engnav = false;
         apx();
       }
     }
@@ -537,8 +535,6 @@ void aprovadoPass(){
   }
   resetPassword();
 }
-
-
 /*---------------------------------------------------------------------------------
 -------------------------------------------Screens-------------------------------*/
 
@@ -593,6 +589,8 @@ void status(){
 // -----------------------------------------------------------------
 // -----aprox-----
 void apx(){
+  opnav = true;  // Para tela de Operação
+  engnav = false;
   lcd.clear();
   lcd.setCursor(2, 2);
   lcd.print("APROXIMAR CARTAO");
@@ -648,7 +646,7 @@ void eng(){
 
   while (1) {
 
-    char key = kpd.getChar();
+    char key = kpd.getKey();
 
     if (kpd.isPressed() == true) {
       vTaskDelay(20);
