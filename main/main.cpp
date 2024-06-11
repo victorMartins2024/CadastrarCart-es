@@ -1,13 +1,13 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.5.3 main.cpp
+  Telemetry V0.6.1 main.cpp
      
   INA226
   MFRC522 
   LCD 20x4 I²c 
   Keypad 4x4 I²c 
 
-  Compiler: VsCode 1.88.1
+  Compiler: VsCode 1.9.0
   MCU: ESP32
   Board: Dev module 38 pins
 
@@ -123,7 +123,7 @@ MFRC522 rfid(SS, RST);
 INA226_WE INA(INAADRESS);
 I2CKeyPad kpd(KeyAdress);
 PubSubClient client(TestClient);
-Password password = Password("2552" ); 
+Password password = Password("2552");
 LiquidCrystal_I2C lcd(LCDADRESS, 20, 4);
 
 // ----------------------------------------------------------------
@@ -158,7 +158,6 @@ char CAD[32];
 int  manup =  0; //preve
 int  manuc =  0; //corre
 bool opnav;
-bool engnav;
 bool psswdcheck;
 bool passvalue = true;
 
@@ -177,7 +176,7 @@ const char *listapref =   "Cadastro Cartoes";
 
 // ----------------------------------------------------------------
 // -----UIDS-----
-String OpeCard  =   "E6A1191E";//"6379CF9A";  
+String OpeCard  =   "6379CF9A"; //"E6A1191E"; 
 String AdmCard  =   "29471BC2";  
 String TecCard  =   "D2229A1B";  
 String PesCard  =   "B2B4BF1B";
@@ -197,8 +196,11 @@ extern "C" void app_main(){
   kpd.begin();
   pref.begin("GT", false);
   
+  kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
   lcd.backlight();
+  //lcd.noCursor();
+  //lcd.noBlink();
 
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -209,25 +211,26 @@ extern "C" void app_main(){
   
   readpref();
 
+  lcd.setCursor(3, 2);
+  lcd.print("INICIALIZANDO");
+  vTaskDelay(2000);
+
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
-                          8000,           // stack size in word
+                          3000,           // stack size in word
                           NULL,           // input parameter
                           1,              // priority
                           NULL,           // task handle
-                          1);             // core
+                          0);             // core
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          16000,
+                          6000,
                           NULL,
                           1,
                           NULL,
-                          0);
-
-  lcd.setCursor(0, 0);
-  lcd.print("INICIALIZANDO");
-  vTaskDelay(1000);                            
+                          1);
+                             
 }
 
 /*---------------------------------------------------------------------------------
@@ -331,9 +334,7 @@ void xTaskTelemetry(void *pvParameters){
     sprintf(Justhour, "{\"JustHour\":%d}", hourmeter);
     sprintf(JusthourB, "{\"TracHour\":%d}", hourmeterB);
     sprintf(JusthourT, "{\"HbombHour\":%d}", hourmeterT);
-    sprintf(Amp_buffer, "%.02f", geralA);
-    sprintf(Volt_buffer, "%.02f", Volt);
-    
+
     client.publish(topic_A,     Ageral);
     client.publish(topic_A2,    CABombH);
     client.publish(topic_A3,    CATrac);
@@ -344,7 +345,7 @@ void xTaskTelemetry(void *pvParameters){
     client.publish(topic_JHour, Justhour);
 
     esp_task_wdt_reset();        // reset watchdog if dont return any error
-    vTaskDelay(1000/ portTICK_PERIOD_MS);
+    vTaskDelay(1000);
   }
 } 
 
@@ -360,8 +361,6 @@ void xTaskNav(void *pvParameters){
       recon();
     client.loop();
 
-    client.publish("proto/sim/teste", "conectado");
-
     char menu = kpd.getChar();
 
     if (manup == 1) {
@@ -369,22 +368,21 @@ void xTaskNav(void *pvParameters){
     } else if (manuc == 1) {
       status();
     } else {
-      if (kpd.isPressed() == true) {
-        vTaskDelay(80);
+      if (menu != 'N') {
+        vTaskDelay(20);
         if (menu == '0') {
           opnav = false;  // Para tela de Engenharia
-          engnav = true;
           eng();
         }
       } else {
+        opnav = true;  // Para tela de Operação
         apx();
       }
     }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
-    vTaskDelay(1500);
+    vTaskDelay(1000);
   }
 }
-
 
 /*---------------------------------------------------------------------------------
 ---------------------------------------------Functions-------------------------------*/
@@ -405,14 +403,12 @@ void readpref(){
 // -----Reconection-----
 void recon(){
   WiFi.disconnect();        
-  vTaskDelay(1000);         
-  WiFi.begin(ssid, pass);   
-  vTaskDelay(1000);         
-    
-  vTaskDelay(500);
+  vTaskDelay(300);         
+  WiFi.begin(ssid, pass);       
+  vTaskDelay(300);
                 
   client.connect("TestClient", user, passwd);     
-  vTaskDelay(5000);                                  
+  vTaskDelay(2000);                                  
         
 }
 
@@ -429,30 +425,24 @@ void ina226_setup(){
 // -----------------------------------------------------------------
 // -----dell-----
 void dell(){
-
-  password.reset();
-  currentpasslen = 0;
+  currenttaglen = 0;
   lcd.clear();
   b = 5;
-
-  if (psswdcheck != true) {
-    cadastrar();
-  }
+  cadastrar();
 }
 
 // -----------------------------------------------------------------
 // -----tag-----
 void tag(char key){
-
   lcd.setCursor(b, 1);
   lcd.print(key);
   b++;
 
   if (b == 11) {
-    b = 5;  // Tamanho da TAG com 6 digitos "333..."
+    b = 5;  
   }
   currenttaglen++;
-  password.append(key);
+  vTaskDelay(20); 
 }
 
 // -----------------------------------------------------------------
@@ -480,9 +470,11 @@ void processNumberKey(char key){
   lcd.setCursor(a, 2);
   lcd.print("*");
   a++;
+
   if (a == 11) {
     a = 4;  // Tamanho da senha com 4 digitos "2552"
   }
+
   currentpasslen++;
   password.append(key);
 
@@ -500,9 +492,8 @@ void resetPassword(){
   lcd.clear();
   a = 7;
 
-  if (psswdcheck != true) {
-    eng();  // Mostra que errou a senha, apaga a senha sem sumir a mensagem "Password"
-  }
+  if(psswdcheck != true)
+    eng(); 
 }
 
 // -----------------------------------------------------------------
@@ -518,11 +509,10 @@ void aprovadoPass(){
     vTaskDelay(1000);
     a = 7;
     psswdcheck = true;  // mostra que psswdcheck, apaga a mensagem anterior e segue para a tela screens ou  telas
-    if (opnav == true) {
+    if (opnav == true)
       screens();
-    } else {
-      telas();
-    }
+    else
+      telas();  
   } else {
     lcd.clear();
     lcd.setCursor(6, 1);
@@ -535,9 +525,12 @@ void aprovadoPass(){
   }
   resetPassword();
 }
+
 /*---------------------------------------------------------------------------------
 -------------------------------------------Screens-------------------------------*/
 
+// -----------------------------------------------------------------
+// -----status-----
 void status(){
 
   lcd.clear();
@@ -589,8 +582,6 @@ void status(){
 // -----------------------------------------------------------------
 // -----aprox-----
 void apx(){
-  opnav = true;  // Para tela de Operação
-  engnav = false;
   lcd.clear();
   lcd.setCursor(2, 2);
   lcd.print("APROXIMAR CARTAO");
@@ -646,11 +637,13 @@ void eng(){
 
   while (1) {
 
-    char key = kpd.getKey();
+    char key = kpd.getChar();
+    vTaskDelay(90);
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {  
+      vTaskDelay(50);
       if (key == 'C') {
+        psswdcheck = false;
         resetPassword();
       } else if (key == '#') {
         apx();
@@ -659,13 +652,13 @@ void eng(){
           aprovadoPass();
           passvalue = false;
         }
-      } else {
+      } else if(key == 'A' || key == 'B' || key == '*')
+        vTaskDelay(5);
+      else 
         processNumberKey(key);
-      }
     }
   }
 }
-
 // -----------------------------------------------------------------
 // -----screens-----
 void screens(){
@@ -684,7 +677,7 @@ void screens(){
 
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
+    if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
         opnav = true;
@@ -700,7 +693,7 @@ void screens(){
 }
 
 // -----------------------------------------------------------------
-// -----screens-----
+// -----Telas-----
 void telas(){
 
   lcd.clear();
@@ -717,7 +710,7 @@ void telas(){
 
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
+    if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
         formatar();
@@ -732,7 +725,7 @@ void telas(){
 }
 
 // -----------------------------------------------------------------
-// -----screens-----
+// -----Cadastrar-----
 void cadastrar(){
   lcd.clear();
   lcd.setCursor(1, 1);
@@ -746,12 +739,14 @@ void cadastrar(){
   while (opnav == true) {
 
     char key = kpd.getChar();
+    vTaskDelay(90);
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(90);
       if (key == 'C') {
         dell();
       } else if (key == '#') {
+        vTaskDelay(20);
         b = 5;
         screens();
       } else {
@@ -776,7 +771,7 @@ void cadastrar(){
 }
 
 // -----------------------------------------------------------------
-// -----screens-----
+// -----Manutenção-----
 void manutencao(){
   lcd.clear();
   lcd.setCursor(2, 0);
@@ -793,7 +788,7 @@ void manutencao(){
 
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
+    if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
         manup = 1;
@@ -861,7 +856,7 @@ void excluir(){
 }
 
 // -----------------------------------------------------------------
-// -----excluir-----
+// -----formatar-----
 void formatar(){
 
   lcd.clear();
@@ -876,7 +871,7 @@ void formatar(){
 
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
+    if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
         lcd.clear();
@@ -903,10 +898,11 @@ void vazamento(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
+
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(50);
       if (key == '1') {
         client.publish(topic_V, "True");
         garfos();
@@ -931,8 +927,8 @@ void garfos(){
   while (opnav == true) {
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(50);
       if (key == '1') {
         client.publish(topic_G, "True");
         emergencia();
@@ -956,8 +952,8 @@ void emergencia(){
   while (opnav == true) {
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(50);
       if (key == '1') {
         client.publish(topic_E, "True");
         comando();
@@ -981,8 +977,8 @@ void comando(){
   while (opnav == true) {
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(50);
       if (key == '1') {
         client.publish(topic_F, "True");
         bateria();
@@ -1007,8 +1003,8 @@ void bateria(){
 
     char key = kpd.getChar();
 
-    if (kpd.isPressed() == true) {
-      vTaskDelay(20);
+    if (key != 'N') {
+      vTaskDelay(50);
       if (key == '1') {
         client.publish(topic_B, "True");
         lcd.clear();
@@ -1039,15 +1035,17 @@ void bateria(){
   }
 }
 
+// -----------------------------------------------------------------
+// -----final screen-----
 void telafinal(){
   lcd.clear();
-  lcd.setCursor(4, 0);
-  lcd.print("NMS-V0.3");
-  lcd.setCursor(5, 1);
+  lcd.setCursor(1, 0);
+  lcd.print("NMS-V0.8");
+  lcd.setCursor(6, 1);
   lcd.print("GREENTECH");
-  lcd.setCursor(3, 2);
-  lcd.print("OPERANDO");
-  lcd.setCursor(0, 3);
+  lcd.setCursor(1, 2);
+  lcd.print("PRONTO PARA OPERAR");
+  lcd.setCursor(5, 3);
   lcd.print("SHOWROOM-SP");
   vTaskDelay(1500);
 }
