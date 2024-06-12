@@ -304,7 +304,7 @@ void xTaskTelemetry(void *pvParameters){
         pref.putInt(hourbomb, hourmeterB);
       }
     } // --------------------------------------------------------------------------
-
+  
     if (geralA >= 13){  // ---------Trasion engine hourmeter----------------------
       secT++;
       if (secT >= 60){        
@@ -631,7 +631,7 @@ void eng(){
   lcd.print("#-SAIR");
 
   while (1) {
-
+    //pendrive do danilo
     char key = kpd.getChar();
     vTaskDelay(90);
 
