@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.6.1 main.cpp
+  Telemetry V0.6.3 main.cpp
      
   INA226
   MFRC522 
@@ -59,8 +59,8 @@ char keypad[19] = "123A456B789C*0#DNF";
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
-const char *ssid    =    "Greentech_Administrativo";             
-const char *pass    =    "Gr3enTech@2O24*";   
+const char *ssid    =    "Greentech_Visitamtes"; //"Greentech_Administrativo";             
+const char *pass    =    "Visitantes4.0";        //"Gr3enTech@2O24*";   
 const char *mqtt    =    "192.168.30.130";      // rasp nhoqui
 //const char *mqtt    =    "192.168.30.212";    // rasp eng
 const char *user    =    "greentech";                           
@@ -199,8 +199,8 @@ extern "C" void app_main(){
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
   lcd.backlight();
-  //lcd.noCursor();
-  //lcd.noBlink();
+  lcd.noCursor();
+  lcd.noBlink();
 
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -352,8 +352,8 @@ void xTaskTelemetry(void *pvParameters){
 // -----------------------------------------------------------------
 // -----Navegation task-----
 void xTaskNav(void *pvParameters){
-  
-  esp_task_wdt_add(NULL);      //  enable watchdog     
+  esp_task_wdt_add(NULL);      //  enable watchdog
+
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
     lcd.clear();
@@ -362,6 +362,7 @@ void xTaskNav(void *pvParameters){
     client.loop();
 
     char menu = kpd.getChar();
+    vTaskDelay(90);
 
     if (manup == 1) {
       status();
@@ -448,7 +449,6 @@ void tag(char key){
 // -----------------------------------------------------------------
 // -----cadastro-----
 void CadastrarCartao(){
-
   String conteudo = "";
 
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
@@ -460,19 +460,19 @@ void CadastrarCartao(){
     UIDLists = UIDLists + conteudo;
 
     pref.putString(listapref, UIDLists);
+    client.publish("test/lista de cadastro", UIDLists.c_str());
   }
 }
 
 // -----------------------------------------------------------------
 // -----processkey-----
 void processNumberKey(char key){
-
   lcd.setCursor(a, 2);
   lcd.print("*");
   a++;
 
   if (a == 11) {
-    a = 4;  // Tamanho da senha com 4 digitos "2552"
+    a = 4; 
   }
 
   currentpasslen++;
@@ -486,7 +486,6 @@ void processNumberKey(char key){
 // -----------------------------------------------------------------
 // -----resetpsswd-----
 void resetPassword(){
-
   password.reset();
   currentpasslen = 0;
   lcd.clear();
@@ -499,7 +498,6 @@ void resetPassword(){
 // -----------------------------------------------------------------
 // -----aprovadoPass-----
 void aprovadoPass(){
-
   currentpasslen = 0;
 
   if (password.evaluate()) {
@@ -532,9 +530,7 @@ void aprovadoPass(){
 // -----------------------------------------------------------------
 // -----status-----
 void status(){
-
   lcd.clear();
-
   while (1) {
 
     lcd.setCursor(6, 0);
@@ -628,7 +624,6 @@ void apx(){
 // -----------------------------------------------------------------
 // -----eng screen-----
 void eng(){
-
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("PASSWORD:");
@@ -662,7 +657,6 @@ void eng(){
 // -----------------------------------------------------------------
 // -----screens-----
 void screens(){
-
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("ESCOLHA A OPCAO:");
@@ -695,7 +689,6 @@ void screens(){
 // -----------------------------------------------------------------
 // -----Telas-----
 void telas(){
-
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("ESCOLHA A OPCAO:");
@@ -749,16 +742,17 @@ void cadastrar(){
         vTaskDelay(20);
         b = 5;
         screens();
-      } else {
-        tag(key);
-      }
+      } else if (key == 'A' || key == 'B' || key == 'D' || key == '*') 
+        vTaskDelay(5);
+      else tag(key);
     }
+    
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
       snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-      b = 5;  // Sempre que bater o RFID a proxima TAG volta ser digitada na posição 5
+      b = 5; 
       client.publish(topic_CAD, CAD);
       lcd.setCursor(6, 2);
       lcd.print(CAD);
@@ -787,6 +781,7 @@ void manutencao(){
   while (opnav == true) {
 
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
       vTaskDelay(20);
@@ -858,7 +853,6 @@ void excluir(){
 // -----------------------------------------------------------------
 // -----formatar-----
 void formatar(){
-
   lcd.clear();
   lcd.setCursor(5, 0);
   lcd.print("FORMARTAR?");

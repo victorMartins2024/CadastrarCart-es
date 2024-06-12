@@ -26417,6 +26417,160 @@
                         "children": [
                             {
                                 "children": [],
+                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
+                                "help": null,
+                                "id": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
+                                "name": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
+                                "range": null,
+                                "title": "Format arguments as TLV",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
+                                "help": null,
+                                "id": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
+                                "name": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
+                                "range": null,
+                                "title": "Format arguments as string",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "For error/warning/event logs, diagnostics module collects program counter, timestamp,\ntag, RO data pointer and log arguments. Log arguments are stored in statically allocated buffer.\nThis option configures how to format and store log arguments in buffer.\nLog arguments can be formatted as TLV or complete log string formatted using vsnprintf.\n\nIf \"TLV\" is selected, buffer contains arguments formatted as TLV.\nType - 1 byte for the type of argument, please check esp_diag_arg_type_t.\nLength - 1 byte for the size of argument, size is calculated using sizeof operator.\nValue - Size bytes for the value.\n\nIf \"STRING\" is selected, buffer contains the entire string formatted using vsnprintf.",
+                        "id": "component-config-diagnostics-diagnostics-log-argument-format",
+                        "name": "DIAG_LOG_MSG_ARG_FORMAT",
+                        "title": "Diagnostics log argument format",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Log arguments are stored in a static allocated buffer.\nThis option configures the maximum size of buffer for storing log arguments.",
+                        "id": "DIAG_LOG_MSG_ARG_MAX_SIZE",
+                        "name": "DIAG_LOG_MSG_ARG_MAX_SIZE",
+                        "range": [
+                            32,
+                            255
+                        ],
+                        "title": "Maximum size of diagnostics log argument buffer",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Every Wi-Fi log printed on the console adds three diagnostics logs.\nFor some users, Wi-Fi logs may not be that useful.\nBy default, diagnostics drops Wi-Fi logs. Set this config option to \"n\" for recording Wi-Fi logs.",
+                        "id": "DIAG_LOG_DROP_WIFI_LOGS",
+                        "name": "DIAG_LOG_DROP_WIFI_LOGS",
+                        "range": null,
+                        "title": "Drop Wi-Fi logs",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "This option configures the maximum number of metrics that can be registered.",
+                                "id": "DIAG_METRICS_MAX_COUNT",
+                                "name": "DIAG_METRICS_MAX_COUNT",
+                                "range": null,
+                                "title": "Maximum number of metrics",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "Enables the heap memory metrics. This collects free memory, largest free block,\nand minimum free memory for heaps in internal as well as external memory.",
+                                "id": "DIAG_ENABLE_HEAP_METRICS",
+                                "name": "DIAG_ENABLE_HEAP_METRICS",
+                                "range": null,
+                                "title": "Enable Heap Metrics",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_METRICS",
+                                "help": "Enables Wi-Fi metrics and collects Wi-Fi RSSI and minumum ever Wi-Fi RSSI.",
+                                "id": "DIAG_ENABLE_WIFI_METRICS",
+                                "name": "DIAG_ENABLE_WIFI_METRICS",
+                                "range": null,
+                                "title": "Enable Wi-Fi Metrics",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Diagnostics module supports recording and reporting metrics to cloud.\nThis option enables the diagnostics metrics and related functionality.",
+                        "id": "DIAG_ENABLE_METRICS",
+                        "name": "DIAG_ENABLE_METRICS",
+                        "range": null,
+                        "title": "Enable diagnostics metrics",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_ENABLE_VARIABLES",
+                                "help": "This option configures the maximum number of variables that can be registered.",
+                                "id": "DIAG_VARIABLES_MAX_COUNT",
+                                "name": "DIAG_VARIABLES_MAX_COUNT",
+                                "range": null,
+                                "title": "Maximum number of variables",
+                                "type": "int"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                        "help": "Enable more advanced network variables",
+                                        "id": "DIAG_MORE_NETWORK_VARS",
+                                        "name": "DIAG_MORE_NETWORK_VARS",
+                                        "range": null,
+                                        "title": "Enable More Advanced Network variables",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "DIAG_ENABLE_VARIABLES",
+                                "help": "Enables the Wi-Fi and IP address variables. Below variables are collected.\nFor Wi-Fi: SSID, BSSID, channel, auth mode, connection status, disconnection reason.\nFor IP: IPv4 address, netmask, and gateway of the device.",
+                                "id": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                "name": "DIAG_ENABLE_NETWORK_VARIABLES",
+                                "range": null,
+                                "title": "Enable Network variables",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Variables are similar to metrics but they represent entities where their current value\nis much more important than over a period of time.\nThis option enables the diagnostics variables and related functionality",
+                        "id": "DIAG_ENABLE_VARIABLES",
+                        "name": "DIAG_ENABLE_VARIABLES",
+                        "range": null,
+                        "title": "Enable diagnostics variables",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Diagnostics component wraps the esp_log_write and esp_log_writev APIs using `--wrap` gcc option.\nThere can be scenario where another component also wants to wrap the logging functions.\nIn that case, enable this option and use the data ingestion APIs esp_diag_log_write and esp_diag_log_writev.",
+                        "id": "DIAG_USE_EXTERNAL_LOG_WRAP",
+                        "name": "DIAG_USE_EXTERNAL_LOG_WRAP",
+                        "range": null,
+                        "title": "Use external log wrapper",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-diagnostics",
+                "title": "Diagnostics",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
                                 "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
                                 "help": null,
                                 "id": "DIAG_DATA_STORE_RTC",
@@ -26540,6 +26694,44 @@
                 "depends_on": null,
                 "id": "component-config-esp-secure-cert-manager",
                 "title": "ESP Secure Cert Manager",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "You can access parent node of parsed json",
+                        "id": "JSMN_PARENT_LINKS",
+                        "name": "JSMN_PARENT_LINKS",
+                        "range": null,
+                        "title": "Enable parent links",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "In strict mode primitives are: numbers and booleans",
+                        "id": "JSMN_STRICT",
+                        "name": "JSMN_STRICT",
+                        "range": null,
+                        "title": "Enable strict mode",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Declar JSMN API as static (instead of extern)",
+                        "id": "JSMN_STATIC",
+                        "name": "JSMN_STATIC",
+                        "range": null,
+                        "title": "Declare JSMN API as static",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-jsmn",
+                "title": "jsmn",
                 "type": "menu"
             },
             {
@@ -26771,483 +26963,6 @@
                 "depends_on": null,
                 "id": "component-config-mdns",
                 "title": "mDNS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee Coordinator or Router.",
-                                        "id": "ZB_ZCZR",
-                                        "name": "ZB_ZCZR",
-                                        "range": null,
-                                        "title": "Zigbee Coordinator or Router device",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee End Device.",
-                                        "id": "ZB_ZED",
-                                        "name": "ZB_ZED",
-                                        "range": null,
-                                        "title": "Zigbee End Device",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "SOC_IEEE802154_SUPPORTED && <choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee Green Power Device.",
-                                        "id": "ZB_ZGPD",
-                                        "name": "ZB_ZGPD",
-                                        "range": null,
-                                        "title": "Zigbee Green power device",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "help": "Configure the Zigbee device type",
-                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-device-type",
-                                "name": "ZB_DEVICE_TYPE",
-                                "title": "Configure the Zigbee device type",
-                                "type": "choice"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_RADIO_TYPE>",
-                                        "help": "Select this to use the native 15.4 radio.",
-                                        "id": "ZB_RADIO_NATIVE",
-                                        "name": "ZB_RADIO_NATIVE",
-                                        "range": null,
-                                        "title": "Native 15.4 radio",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_RADIO_TYPE>",
-                                        "help": "Select this to connect to a Radio Co-Processor via Spinel UART.",
-                                        "id": "ZB_RADIO_SPINEL_UART",
-                                        "name": "ZB_RADIO_SPINEL_UART",
-                                        "range": null,
-                                        "title": "Connect to 15.4 radio via Radio Spinel UART",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "help": null,
-                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-radio-type",
-                                "name": "ZB_RADIO_TYPE",
-                                "title": "Configure the Zigbee radio type",
-                                "type": "choice"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
-                                        "help": "when enable R22, enable zb_console_monitor input and other R22 test related function included.",
-                                        "id": "ZB_R22_ENABLE",
-                                        "name": "ZB_R22_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee R22 test enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZGPD) && SOC_IEEE802154_SUPPORTED && ZB_ENABLED",
-                                        "help": "when enable green power, example would support as green power proxy(zczr default enabled), green power combo or just green power device.",
-                                        "id": "ZB_GP_ENABLED",
-                                        "name": "ZB_GP_ENABLED",
-                                        "range": null,
-                                        "title": "Zigbee Green Power enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
-                                        "help": null,
-                                        "id": "ZB_SNIFFER_ENABLE",
-                                        "name": "ZB_SNIFFER_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee Sniffer enable",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "id": "component-config-zigbee-zigbee-enable-zigbee-example",
-                                "title": "Zigbee Example",
-                                "type": "menu"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace enable.",
-                                        "id": "ESP_ZB_TRACE_ENABLE",
-                                        "name": "ESP_ZB_TRACE_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee Trace Enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace level, normally if level set -1, it will disable trace.",
-                                        "id": "ZB_TRACE_LEVEL",
-                                        "name": "ZB_TRACE_LEVEL",
-                                        "range": null,
-                                        "title": "Zigbee stack trace level",
-                                        "type": "int"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace mask, mask please refer to `zb_trace.h`.",
-                                        "id": "ZB_TRACE_MASK",
-                                        "name": "ZB_TRACE_MASK",
-                                        "range": null,
-                                        "title": "Zigbee stack trace mask",
-                                        "type": "hex"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "id": "component-config-zigbee-zigbee-enable-zigbee-trace-log-option",
-                                "title": "Zigbee trace log option",
-                                "type": "menu"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Select this option to enable Zigbee and show the submenu with Zigbee configuration choices.",
-                        "id": "ZB_ENABLED",
-                        "name": "ZB_ENABLED",
-                        "range": null,
-                        "title": "Zigbee Enable",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-zigbee",
-                "title": "Zigbee",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
-                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "range": null,
-                                        "title": "Dump CBOR decoded data instead of hexdump",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ESP_INSIGHTS_ENABLED",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "range": null,
-                                "title": "Enable Insights debug prints",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_INSIGHTS_ENABLED",
-                        "name": "ESP_INSIGHTS_ENABLED",
-                        "range": null,
-                        "title": "Enable ESP Insights",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
-                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
-                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "range": null,
-                        "title": "Enable core dump summary support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "range": null,
-                                "title": "MQTT",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "range": null,
-                                "title": "HTTPS",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
-                        "id": "component-config-esp-insights-insights-default-transport",
-                        "name": "ESP_INSIGHTS_TRANSPORT",
-                        "title": "Insights default transport",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                        "help": null,
-                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "range": null,
-                        "title": "Insights https host",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post min interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post max interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
-                        "id": "ESP_INSIGHTS_META_VERSION_10",
-                        "name": "ESP_INSIGHTS_META_VERSION_10",
-                        "range": null,
-                        "title": "Use older metadata format (1.0)",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-insights",
-                "title": "ESP Insights",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
-                                "help": null,
-                                "id": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
-                                "name": "DIAG_LOG_MSG_ARG_FORMAT_TLV",
-                                "range": null,
-                                "title": "Format arguments as TLV",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_LOG_MSG_ARG_FORMAT>",
-                                "help": null,
-                                "id": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
-                                "name": "DIAG_LOG_MSG_ARG_FORMAT_STRING",
-                                "range": null,
-                                "title": "Format arguments as string",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "For error/warning/event logs, diagnostics module collects program counter, timestamp,\ntag, RO data pointer and log arguments. Log arguments are stored in statically allocated buffer.\nThis option configures how to format and store log arguments in buffer.\nLog arguments can be formatted as TLV or complete log string formatted using vsnprintf.\n\nIf \"TLV\" is selected, buffer contains arguments formatted as TLV.\nType - 1 byte for the type of argument, please check esp_diag_arg_type_t.\nLength - 1 byte for the size of argument, size is calculated using sizeof operator.\nValue - Size bytes for the value.\n\nIf \"STRING\" is selected, buffer contains the entire string formatted using vsnprintf.",
-                        "id": "component-config-diagnostics-diagnostics-log-argument-format",
-                        "name": "DIAG_LOG_MSG_ARG_FORMAT",
-                        "title": "Diagnostics log argument format",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Log arguments are stored in a static allocated buffer.\nThis option configures the maximum size of buffer for storing log arguments.",
-                        "id": "DIAG_LOG_MSG_ARG_MAX_SIZE",
-                        "name": "DIAG_LOG_MSG_ARG_MAX_SIZE",
-                        "range": [
-                            32,
-                            255
-                        ],
-                        "title": "Maximum size of diagnostics log argument buffer",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Every Wi-Fi log printed on the console adds three diagnostics logs.\nFor some users, Wi-Fi logs may not be that useful.\nBy default, diagnostics drops Wi-Fi logs. Set this config option to \"n\" for recording Wi-Fi logs.",
-                        "id": "DIAG_LOG_DROP_WIFI_LOGS",
-                        "name": "DIAG_LOG_DROP_WIFI_LOGS",
-                        "range": null,
-                        "title": "Drop Wi-Fi logs",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "This option configures the maximum number of metrics that can be registered.",
-                                "id": "DIAG_METRICS_MAX_COUNT",
-                                "name": "DIAG_METRICS_MAX_COUNT",
-                                "range": null,
-                                "title": "Maximum number of metrics",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "Enables the heap memory metrics. This collects free memory, largest free block,\nand minimum free memory for heaps in internal as well as external memory.",
-                                "id": "DIAG_ENABLE_HEAP_METRICS",
-                                "name": "DIAG_ENABLE_HEAP_METRICS",
-                                "range": null,
-                                "title": "Enable Heap Metrics",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_METRICS",
-                                "help": "Enables Wi-Fi metrics and collects Wi-Fi RSSI and minumum ever Wi-Fi RSSI.",
-                                "id": "DIAG_ENABLE_WIFI_METRICS",
-                                "name": "DIAG_ENABLE_WIFI_METRICS",
-                                "range": null,
-                                "title": "Enable Wi-Fi Metrics",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Diagnostics module supports recording and reporting metrics to cloud.\nThis option enables the diagnostics metrics and related functionality.",
-                        "id": "DIAG_ENABLE_METRICS",
-                        "name": "DIAG_ENABLE_METRICS",
-                        "range": null,
-                        "title": "Enable diagnostics metrics",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_ENABLE_VARIABLES",
-                                "help": "This option configures the maximum number of variables that can be registered.",
-                                "id": "DIAG_VARIABLES_MAX_COUNT",
-                                "name": "DIAG_VARIABLES_MAX_COUNT",
-                                "range": null,
-                                "title": "Maximum number of variables",
-                                "type": "int"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                        "help": "Enable more advanced network variables",
-                                        "id": "DIAG_MORE_NETWORK_VARS",
-                                        "name": "DIAG_MORE_NETWORK_VARS",
-                                        "range": null,
-                                        "title": "Enable More Advanced Network variables",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "DIAG_ENABLE_VARIABLES",
-                                "help": "Enables the Wi-Fi and IP address variables. Below variables are collected.\nFor Wi-Fi: SSID, BSSID, channel, auth mode, connection status, disconnection reason.\nFor IP: IPv4 address, netmask, and gateway of the device.",
-                                "id": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                "name": "DIAG_ENABLE_NETWORK_VARIABLES",
-                                "range": null,
-                                "title": "Enable Network variables",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Variables are similar to metrics but they represent entities where their current value\nis much more important than over a period of time.\nThis option enables the diagnostics variables and related functionality",
-                        "id": "DIAG_ENABLE_VARIABLES",
-                        "name": "DIAG_ENABLE_VARIABLES",
-                        "range": null,
-                        "title": "Enable diagnostics variables",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Diagnostics component wraps the esp_log_write and esp_log_writev APIs using `--wrap` gcc option.\nThere can be scenario where another component also wants to wrap the logging functions.\nIn that case, enable this option and use the data ingestion APIs esp_diag_log_write and esp_diag_log_writev.",
-                        "id": "DIAG_USE_EXTERNAL_LOG_WRAP",
-                        "name": "DIAG_USE_EXTERNAL_LOG_WRAP",
-                        "range": null,
-                        "title": "Use external log wrapper",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics",
-                "title": "Diagnostics",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "You can access parent node of parsed json",
-                        "id": "JSMN_PARENT_LINKS",
-                        "name": "JSMN_PARENT_LINKS",
-                        "range": null,
-                        "title": "Enable parent links",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "In strict mode primitives are: numbers and booleans",
-                        "id": "JSMN_STRICT",
-                        "name": "JSMN_STRICT",
-                        "range": null,
-                        "title": "Enable strict mode",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Declar JSMN API as static (instead of extern)",
-                        "id": "JSMN_STATIC",
-                        "name": "JSMN_STATIC",
-                        "range": null,
-                        "title": "Declare JSMN API as static",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-jsmn",
-                "title": "jsmn",
                 "type": "menu"
             },
             {
@@ -28008,6 +27723,291 @@
                 "depends_on": null,
                 "id": "component-config-esp-rainmaker-common",
                 "title": "ESP RainMaker Common",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
+                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "range": null,
+                                        "title": "Dump CBOR decoded data instead of hexdump",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ESP_INSIGHTS_ENABLED",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "range": null,
+                                "title": "Enable Insights debug prints",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_INSIGHTS_ENABLED",
+                        "name": "ESP_INSIGHTS_ENABLED",
+                        "range": null,
+                        "title": "Enable ESP Insights",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
+                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
+                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "range": null,
+                        "title": "Enable core dump summary support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "range": null,
+                                "title": "MQTT",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "range": null,
+                                "title": "HTTPS",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
+                        "id": "component-config-esp-insights-insights-default-transport",
+                        "name": "ESP_INSIGHTS_TRANSPORT",
+                        "title": "Insights default transport",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                        "help": null,
+                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "range": null,
+                        "title": "Insights https host",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post min interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post max interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
+                        "id": "ESP_INSIGHTS_META_VERSION_10",
+                        "name": "ESP_INSIGHTS_META_VERSION_10",
+                        "range": null,
+                        "title": "Use older metadata format (1.0)",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-insights",
+                "title": "ESP Insights",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee Coordinator or Router.",
+                                        "id": "ZB_ZCZR",
+                                        "name": "ZB_ZCZR",
+                                        "range": null,
+                                        "title": "Zigbee Coordinator or Router device",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee End Device.",
+                                        "id": "ZB_ZED",
+                                        "name": "ZB_ZED",
+                                        "range": null,
+                                        "title": "Zigbee End Device",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "SOC_IEEE802154_SUPPORTED && <choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee Green Power Device.",
+                                        "id": "ZB_ZGPD",
+                                        "name": "ZB_ZGPD",
+                                        "range": null,
+                                        "title": "Zigbee Green power device",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "help": "Configure the Zigbee device type",
+                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-device-type",
+                                "name": "ZB_DEVICE_TYPE",
+                                "title": "Configure the Zigbee device type",
+                                "type": "choice"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_RADIO_TYPE>",
+                                        "help": "Select this to use the native 15.4 radio.",
+                                        "id": "ZB_RADIO_NATIVE",
+                                        "name": "ZB_RADIO_NATIVE",
+                                        "range": null,
+                                        "title": "Native 15.4 radio",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_RADIO_TYPE>",
+                                        "help": "Select this to connect to a Radio Co-Processor via Spinel UART.",
+                                        "id": "ZB_RADIO_SPINEL_UART",
+                                        "name": "ZB_RADIO_SPINEL_UART",
+                                        "range": null,
+                                        "title": "Connect to 15.4 radio via Radio Spinel UART",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "help": null,
+                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-radio-type",
+                                "name": "ZB_RADIO_TYPE",
+                                "title": "Configure the Zigbee radio type",
+                                "type": "choice"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
+                                        "help": "when enable R22, enable zb_console_monitor input and other R22 test related function included.",
+                                        "id": "ZB_R22_ENABLE",
+                                        "name": "ZB_R22_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee R22 test enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZGPD) && SOC_IEEE802154_SUPPORTED && ZB_ENABLED",
+                                        "help": "when enable green power, example would support as green power proxy(zczr default enabled), green power combo or just green power device.",
+                                        "id": "ZB_GP_ENABLED",
+                                        "name": "ZB_GP_ENABLED",
+                                        "range": null,
+                                        "title": "Zigbee Green Power enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
+                                        "help": null,
+                                        "id": "ZB_SNIFFER_ENABLE",
+                                        "name": "ZB_SNIFFER_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee Sniffer enable",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "id": "component-config-zigbee-zigbee-enable-zigbee-example",
+                                "title": "Zigbee Example",
+                                "type": "menu"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace enable.",
+                                        "id": "ESP_ZB_TRACE_ENABLE",
+                                        "name": "ESP_ZB_TRACE_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee Trace Enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace level, normally if level set -1, it will disable trace.",
+                                        "id": "ZB_TRACE_LEVEL",
+                                        "name": "ZB_TRACE_LEVEL",
+                                        "range": null,
+                                        "title": "Zigbee stack trace level",
+                                        "type": "int"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace mask, mask please refer to `zb_trace.h`.",
+                                        "id": "ZB_TRACE_MASK",
+                                        "name": "ZB_TRACE_MASK",
+                                        "range": null,
+                                        "title": "Zigbee stack trace mask",
+                                        "type": "hex"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "id": "component-config-zigbee-zigbee-enable-zigbee-trace-log-option",
+                                "title": "Zigbee trace log option",
+                                "type": "menu"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Select this option to enable Zigbee and show the submenu with Zigbee configuration choices.",
+                        "id": "ZB_ENABLED",
+                        "name": "ZB_ENABLED",
+                        "range": null,
+                        "title": "Zigbee Enable",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-zigbee",
+                "title": "Zigbee",
                 "type": "menu"
             }
         ],
