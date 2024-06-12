@@ -92,6 +92,7 @@ void xTaskTelemetry(void *pvParameters);
 void xTaskNav(void *pvParameters);
 void processNumberKey(char key);
 void CadastrarCartao();
+void erease(char key);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
@@ -109,6 +110,7 @@ void comando();
 void excluir();
 void status();
 void garfos();
+void format();
 void recon();
 void telas();
 void dell();
@@ -465,6 +467,19 @@ void CadastrarCartao(){
 }
 
 // -----------------------------------------------------------------
+// -----Erease uid list-----
+void format(){
+  lcd.clear();
+  lcd.setCursor(5, 2);
+  lcd.print("FORMATADO");
+
+  UIDLists = "/0";
+  vTaskDelay(50);
+  pref.putString(listapref, UIDLists);
+  client.publish(topic_CAD, "formatado"); 
+}
+
+// -----------------------------------------------------------------
 // -----processkey-----
 void processNumberKey(char key){
   lcd.setCursor(a, 2);
@@ -522,6 +537,36 @@ void aprovadoPass(){
     psswdcheck = false;  // mostra que psswdcheck, apaga a mensagem anterior e  volta para a tela de Password e colocar a senha correta
   }
   resetPassword();
+}
+
+// -----------------------------------------------------------------
+// -----erase-----
+void erease(char key){
+  key = ' ';
+  a--;
+  lcd.setCursor(a, 2);
+  lcd.print(key);
+
+  currentpasslen--;
+  vTaskDelay(20); 
+
+  /*  if (opnav == true){
+    key = ' ';
+  a--;
+  lcd.setCursor(a, 2);
+  lcd.print(key);
+
+  currentpasslen--;
+  vTaskDelay(20); 
+  }else {
+    key = ' ';
+  a--;
+  lcd.setCursor(a, 2);    // fazer para tag
+  lcd.print(key);
+
+  currentpasslen--;
+  vTaskDelay(20); 
+  }*/
 }
 
 /*---------------------------------------------------------------------------------
@@ -639,7 +684,7 @@ void eng(){
       vTaskDelay(50);
       if (key == 'C') {
         psswdcheck = false;
-        resetPassword();
+        resetPassword(); //
       } else if (key == '#') {
         apx();
       } else if (key == 'D') {
@@ -647,7 +692,9 @@ void eng(){
           aprovadoPass();
           passvalue = false;
         }
-      } else if(key == 'A' || key == 'B' || key == '*')
+      } else if (key == '*') {
+        erease(key); 
+      }else if(key == 'A' || key == 'B')
         vTaskDelay(5);
       else 
         processNumberKey(key);
@@ -670,7 +717,7 @@ void screens(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-
+    vTaskDelay(20);
     if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
@@ -746,19 +793,21 @@ void cadastrar(){
         vTaskDelay(5);
       else tag(key);
     }
-    
-    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
-      snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-               rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-               rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+    if (b >= 10){
+      if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+        snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
+                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-      b = 5; 
-      client.publish(topic_CAD, CAD);
-      lcd.setCursor(6, 2);
-      lcd.print(CAD);
-      vTaskDelay(1000);
-      cadastrar();
+        b = 5; 
+        client.publish(topic_CAD, CAD);
+        lcd.setCursor(6, 2);
+        lcd.print(CAD);
+        vTaskDelay(1000);
+        cadastrar();
+      }
     }
+
   }
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
@@ -860,23 +909,22 @@ void formatar(){
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
+  vTaskDelay(100);
 
   while (1) {
 
     char key = kpd.getChar();
-
+    vTaskDelay(90);
     if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
-        lcd.clear();
-        lcd.setCursor(5, 2);
-        lcd.print("FORMATADO");
-        vTaskDelay(1000);
+        format();
+        vTaskDelay(2000);
         telas();
       } else if (key == '2') {
         telas();
       }
-    }  // João
+    }  
   }
 }
 
