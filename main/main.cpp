@@ -201,9 +201,6 @@ extern "C" void app_main(){
   
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
-  lcd.backlight();
-  lcd.noCursor();
-  lcd.noBlink();
 
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -359,7 +356,12 @@ void xTaskNav(void *pvParameters){
 
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
+    
+    lcd.backlight();
+    lcd.noCursor();
+    lcd.noBlink();
     lcd.clear();
+
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
     client.loop();
@@ -686,7 +688,7 @@ void eng(){
   while (1) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
+    vTaskDelay(50);
 
     if (key != 'N') {  
       vTaskDelay(50);
@@ -787,13 +789,13 @@ void cadastrar(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(150);
+    vTaskDelay(50);
 
     if (key != 'N') {
-      vTaskDelay(90);
+      vTaskDelay(50);
       if (key == 'C') {
         dell();
-      } else if ( key == 'D' && b == 11){
+      } else if ( key == 'D'){
         CadastrarCartao();
       } else if (key == '#') {
         vTaskDelay(20);
