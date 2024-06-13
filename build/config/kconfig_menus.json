@@ -26414,6 +26414,468 @@
             {
                 "children": [
                     {
+                        "children": [],
+                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
+                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
+                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "range": null,
+                        "title": "Enable DS peripheral support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
+                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "range": null,
+                        "title": "Enable support for legacy formats",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-secure-cert-manager",
+                "title": "ESP Secure Cert Manager",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
+                        "id": "MDNS_MAX_INTERFACES",
+                        "name": "MDNS_MAX_INTERFACES",
+                        "range": [
+                            1,
+                            9
+                        ],
+                        "title": "Max number of interfaces",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
+                        "id": "MDNS_MAX_SERVICES",
+                        "name": "MDNS_MAX_SERVICES",
+                        "range": null,
+                        "title": "Max number of services",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
+                        "id": "MDNS_TASK_PRIORITY",
+                        "name": "MDNS_TASK_PRIORITY",
+                        "range": [
+                            1,
+                            255
+                        ],
+                        "title": "mDNS task priority",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting the length of mDNS action queue.",
+                        "id": "MDNS_ACTION_QUEUE_LEN",
+                        "name": "MDNS_ACTION_QUEUE_LEN",
+                        "range": [
+                            8,
+                            64
+                        ],
+                        "title": "Maximum actions pending to the server",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS task stacksize.",
+                        "id": "MDNS_TASK_STACK_SIZE",
+                        "name": "MDNS_TASK_STACK_SIZE",
+                        "range": null,
+                        "title": "mDNS task stack size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
+                                "range": null,
+                                "title": "No affinity",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU0",
+                                "name": "MDNS_TASK_AFFINITY_CPU0",
+                                "range": null,
+                                "title": "CPU0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
+                                "help": null,
+                                "id": "MDNS_TASK_AFFINITY_CPU1",
+                                "name": "MDNS_TASK_AFFINITY_CPU1",
+                                "range": null,
+                                "title": "CPU1",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
+                        "id": "component-config-mdns-mdns-task-affinity",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "title": "mDNS task affinity",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "MDNS_TASK_AFFINITY",
+                        "name": "MDNS_TASK_AFFINITY",
+                        "range": null,
+                        "title": null,
+                        "type": "hex"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
+                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
+                        "range": [
+                            10,
+                            30000
+                        ],
+                        "title": "mDNS adding service timeout (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
+                        "id": "MDNS_TIMER_PERIOD_MS",
+                        "name": "MDNS_TIMER_PERIOD_MS",
+                        "range": [
+                            10,
+                            10000
+                        ],
+                        "title": "mDNS timer period (ms)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
+                        "id": "MDNS_NETWORKING_SOCKET",
+                        "name": "MDNS_NETWORKING_SOCKET",
+                        "range": null,
+                        "title": "Use BSD sockets for mDNS networking",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
+                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
+                        "range": null,
+                        "title": "Skip suppressing our own packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
+                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
+                        "range": null,
+                        "title": "Enable debug prints of mDNS packets",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
+                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
+                        "range": null,
+                        "title": "Enable responding to IPv4 reverse queries",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Enables adding multiple service instances under the same service type.",
+                        "id": "MDNS_MULTIPLE_INSTANCE",
+                        "name": "MDNS_MULTIPLE_INSTANCE",
+                        "range": null,
+                        "title": "Multiple instances under the same service type",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
+                                "id": "MDNS_PREDEF_NETIF_STA",
+                                "name": "MDNS_PREDEF_NETIF_STA",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Station",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
+                                "id": "MDNS_PREDEF_NETIF_AP",
+                                "name": "MDNS_PREDEF_NETIF_AP",
+                                "range": null,
+                                "title": "Use predefined interface for WiFi Access Point",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "ETH_ENABLED",
+                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
+                                "id": "MDNS_PREDEF_NETIF_ETH",
+                                "name": "MDNS_PREDEF_NETIF_ETH",
+                                "range": null,
+                                "title": "Use predefined interface for Ethernet",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-mdns-mdns-predefined-interfaces",
+                        "title": "MDNS Predefined interfaces",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-mdns",
+                "title": "mDNS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee Coordinator or Router.",
+                                        "id": "ZB_ZCZR",
+                                        "name": "ZB_ZCZR",
+                                        "range": null,
+                                        "title": "Zigbee Coordinator or Router device",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee End Device.",
+                                        "id": "ZB_ZED",
+                                        "name": "ZB_ZED",
+                                        "range": null,
+                                        "title": "Zigbee End Device",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "SOC_IEEE802154_SUPPORTED && <choice ZB_DEVICE_TYPE>",
+                                        "help": "Select this to enable Zigbee Green Power Device.",
+                                        "id": "ZB_ZGPD",
+                                        "name": "ZB_ZGPD",
+                                        "range": null,
+                                        "title": "Zigbee Green power device",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "help": "Configure the Zigbee device type",
+                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-device-type",
+                                "name": "ZB_DEVICE_TYPE",
+                                "title": "Configure the Zigbee device type",
+                                "type": "choice"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_RADIO_TYPE>",
+                                        "help": "Select this to use the native 15.4 radio.",
+                                        "id": "ZB_RADIO_NATIVE",
+                                        "name": "ZB_RADIO_NATIVE",
+                                        "range": null,
+                                        "title": "Native 15.4 radio",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "<choice ZB_RADIO_TYPE>",
+                                        "help": "Select this to connect to a Radio Co-Processor via Spinel UART.",
+                                        "id": "ZB_RADIO_SPINEL_UART",
+                                        "name": "ZB_RADIO_SPINEL_UART",
+                                        "range": null,
+                                        "title": "Connect to 15.4 radio via Radio Spinel UART",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "help": null,
+                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-radio-type",
+                                "name": "ZB_RADIO_TYPE",
+                                "title": "Configure the Zigbee radio type",
+                                "type": "choice"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
+                                        "help": "when enable R22, enable zb_console_monitor input and other R22 test related function included.",
+                                        "id": "ZB_R22_ENABLE",
+                                        "name": "ZB_R22_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee R22 test enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZGPD) && SOC_IEEE802154_SUPPORTED && ZB_ENABLED",
+                                        "help": "when enable green power, example would support as green power proxy(zczr default enabled), green power combo or just green power device.",
+                                        "id": "ZB_GP_ENABLED",
+                                        "name": "ZB_GP_ENABLED",
+                                        "range": null,
+                                        "title": "Zigbee Green Power enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
+                                        "help": null,
+                                        "id": "ZB_SNIFFER_ENABLE",
+                                        "name": "ZB_SNIFFER_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee Sniffer enable",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "id": "component-config-zigbee-zigbee-enable-zigbee-example",
+                                "title": "Zigbee Example",
+                                "type": "menu"
+                            },
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace enable.",
+                                        "id": "ESP_ZB_TRACE_ENABLE",
+                                        "name": "ESP_ZB_TRACE_ENABLE",
+                                        "range": null,
+                                        "title": "Zigbee Trace Enable",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace level, normally if level set -1, it will disable trace.",
+                                        "id": "ZB_TRACE_LEVEL",
+                                        "name": "ZB_TRACE_LEVEL",
+                                        "range": null,
+                                        "title": "Zigbee stack trace level",
+                                        "type": "int"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
+                                        "help": "Setting Zigbee stack trace mask, mask please refer to `zb_trace.h`.",
+                                        "id": "ZB_TRACE_MASK",
+                                        "name": "ZB_TRACE_MASK",
+                                        "range": null,
+                                        "title": "Zigbee stack trace mask",
+                                        "type": "hex"
+                                    }
+                                ],
+                                "depends_on": "ZB_ENABLED",
+                                "id": "component-config-zigbee-zigbee-enable-zigbee-trace-log-option",
+                                "title": "Zigbee trace log option",
+                                "type": "menu"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "Select this option to enable Zigbee and show the submenu with Zigbee configuration choices.",
+                        "id": "ZB_ENABLED",
+                        "name": "ZB_ENABLED",
+                        "range": null,
+                        "title": "Zigbee Enable",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-zigbee",
+                "title": "Zigbee",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "You can access parent node of parsed json",
+                        "id": "JSMN_PARENT_LINKS",
+                        "name": "JSMN_PARENT_LINKS",
+                        "range": null,
+                        "title": "Enable parent links",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "In strict mode primitives are: numbers and booleans",
+                        "id": "JSMN_STRICT",
+                        "name": "JSMN_STRICT",
+                        "range": null,
+                        "title": "Enable strict mode",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Declar JSMN API as static (instead of extern)",
+                        "id": "JSMN_STATIC",
+                        "name": "JSMN_STATIC",
+                        "range": null,
+                        "title": "Declare JSMN API as static",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-jsmn",
+                "title": "jsmn",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
                         "children": [
                             {
                                 "children": [],
@@ -26568,29 +27030,104 @@
             {
                 "children": [
                     {
-                        "children": [],
-                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
-                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
-                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "range": null,
-                        "title": "Enable DS peripheral support",
-                        "type": "bool"
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": null,
+                                "id": "DIAG_DATA_STORE_RTC",
+                                "name": "DIAG_DATA_STORE_RTC",
+                                "range": null,
+                                "title": "RTC memory",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": "Just a placeholder. This data store type is not supported as of now",
+                                "id": "DIAG_DATA_STORE_FLASH",
+                                "name": "DIAG_DATA_STORE_FLASH",
+                                "range": null,
+                                "title": "Flash",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
+                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
+                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
+                        "title": "Diagnostics data store destination",
+                        "type": "choice"
                     },
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
-                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "range": null,
-                        "title": "Enable support for legacy formats",
-                        "type": "bool"
+                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
+                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "range": [
+                            50,
+                            90
+                        ],
+                        "title": "Reporting watermark percentage",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
+                                "id": "RTC_STORE_DATA_SIZE",
+                                "name": "RTC_STORE_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    7168
+                                ],
+                                "title": "RTC store data size",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
+                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    3072
+                                ],
+                                "title": "Maximum size of critical data store",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_RTC",
+                        "id": "component-config-diagnostics-data-store-rtc-store",
+                        "title": "RTC Store",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_FLASH",
+                                "help": "Diagnostics data is stored in this partition",
+                                "id": "FLASH_STORE_PARTITION_LABEL",
+                                "name": "FLASH_STORE_PARTITION_LABEL",
+                                "range": null,
+                                "title": "Diagnostics data partition name",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_FLASH",
+                        "id": "component-config-diagnostics-data-store-flash-store",
+                        "title": "Flash Store",
+                        "type": "menu"
                     }
                 ],
                 "depends_on": null,
-                "id": "component-config-esp-secure-cert-manager",
-                "title": "ESP Secure Cert Manager",
+                "id": "component-config-diagnostics-data-store",
+                "title": "Diagnostics data store",
                 "type": "menu"
             },
             {
@@ -27024,663 +27561,6 @@
             {
                 "children": [
                     {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": null,
-                                "id": "DIAG_DATA_STORE_RTC",
-                                "name": "DIAG_DATA_STORE_RTC",
-                                "range": null,
-                                "title": "RTC memory",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": "Just a placeholder. This data store type is not supported as of now",
-                                "id": "DIAG_DATA_STORE_FLASH",
-                                "name": "DIAG_DATA_STORE_FLASH",
-                                "range": null,
-                                "title": "Flash",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
-                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
-                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
-                        "title": "Diagnostics data store destination",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
-                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "range": [
-                            50,
-                            90
-                        ],
-                        "title": "Reporting watermark percentage",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
-                                "id": "RTC_STORE_DATA_SIZE",
-                                "name": "RTC_STORE_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    7168
-                                ],
-                                "title": "RTC store data size",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
-                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    3072
-                                ],
-                                "title": "Maximum size of critical data store",
-                                "type": "int"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_RTC",
-                        "id": "component-config-diagnostics-data-store-rtc-store",
-                        "title": "RTC Store",
-                        "type": "menu"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_FLASH",
-                                "help": "Diagnostics data is stored in this partition",
-                                "id": "FLASH_STORE_PARTITION_LABEL",
-                                "name": "FLASH_STORE_PARTITION_LABEL",
-                                "range": null,
-                                "title": "Diagnostics data partition name",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_FLASH",
-                        "id": "component-config-diagnostics-data-store-flash-store",
-                        "title": "Flash Store",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics-data-store",
-                "title": "Diagnostics data store",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "You can access parent node of parsed json",
-                        "id": "JSMN_PARENT_LINKS",
-                        "name": "JSMN_PARENT_LINKS",
-                        "range": null,
-                        "title": "Enable parent links",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "In strict mode primitives are: numbers and booleans",
-                        "id": "JSMN_STRICT",
-                        "name": "JSMN_STRICT",
-                        "range": null,
-                        "title": "Enable strict mode",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Declar JSMN API as static (instead of extern)",
-                        "id": "JSMN_STATIC",
-                        "name": "JSMN_STATIC",
-                        "range": null,
-                        "title": "Declare JSMN API as static",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-jsmn",
-                "title": "jsmn",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Number of network interfaces to be served by the mDNS library.\nLowering this number helps to reduce some static RAM usage.",
-                        "id": "MDNS_MAX_INTERFACES",
-                        "name": "MDNS_MAX_INTERFACES",
-                        "range": [
-                            1,
-                            9
-                        ],
-                        "title": "Max number of interfaces",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Services take up a certain amount of memory, and allowing fewer\nservices to be open at the same time conserves memory. Specify\nthe maximum amount of services here.",
-                        "id": "MDNS_MAX_SERVICES",
-                        "name": "MDNS_MAX_SERVICES",
-                        "range": null,
-                        "title": "Max number of services",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task priority. Please do not set the task priority\nhigher than priorities of system tasks. Compile time warning/error\nwould be emitted if the chosen task priority were too high.",
-                        "id": "MDNS_TASK_PRIORITY",
-                        "name": "MDNS_TASK_PRIORITY",
-                        "range": [
-                            1,
-                            255
-                        ],
-                        "title": "mDNS task priority",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting the length of mDNS action queue.",
-                        "id": "MDNS_ACTION_QUEUE_LEN",
-                        "name": "MDNS_ACTION_QUEUE_LEN",
-                        "range": [
-                            8,
-                            64
-                        ],
-                        "title": "Maximum actions pending to the server",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS task stacksize.",
-                        "id": "MDNS_TASK_STACK_SIZE",
-                        "name": "MDNS_TASK_STACK_SIZE",
-                        "range": null,
-                        "title": "mDNS task stack size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "name": "MDNS_TASK_AFFINITY_NO_AFFINITY",
-                                "range": null,
-                                "title": "No affinity",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU0",
-                                "name": "MDNS_TASK_AFFINITY_CPU0",
-                                "range": null,
-                                "title": "CPU0",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "!FREERTOS_UNICORE && <choice MDNS_TASK_AFFINITY>",
-                                "help": null,
-                                "id": "MDNS_TASK_AFFINITY_CPU1",
-                                "name": "MDNS_TASK_AFFINITY_CPU1",
-                                "range": null,
-                                "title": "CPU1",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Allows setting mDNS tasks affinity, i.e. whether the task is pinned to\nCPU0, pinned to CPU1, or allowed to run on any CPU.",
-                        "id": "component-config-mdns-mdns-task-affinity",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "title": "mDNS task affinity",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "MDNS_TASK_AFFINITY",
-                        "name": "MDNS_TASK_AFFINITY",
-                        "range": null,
-                        "title": null,
-                        "type": "hex"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures timeout for adding a new mDNS service. Adding a service\nfails if could not be completed within this time.",
-                        "id": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "name": "MDNS_SERVICE_ADD_TIMEOUT_MS",
-                        "range": [
-                            10,
-                            30000
-                        ],
-                        "title": "mDNS adding service timeout (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Configures period of mDNS timer, which periodically transmits packets\nand schedules mDNS searches.",
-                        "id": "MDNS_TIMER_PERIOD_MS",
-                        "name": "MDNS_TIMER_PERIOD_MS",
-                        "range": [
-                            10,
-                            10000
-                        ],
-                        "title": "mDNS timer period (ms)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables optional mDNS networking implementation using BSD sockets\nin UDP multicast mode.\nThis option creates a new thread to serve receiving packets (TODO).\nThis option uses additional N sockets, where N is number of interfaces.",
-                        "id": "MDNS_NETWORKING_SOCKET",
-                        "name": "MDNS_NETWORKING_SOCKET",
-                        "range": null,
-                        "title": "Use BSD sockets for mDNS networking",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable only if the querier and the responder share the same IP address.\nThis usually happens in test mode, where we may run multiple instances of\nresponders/queriers on the same interface.",
-                        "id": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "name": "MDNS_SKIP_SUPPRESSING_OWN_QUERIES",
-                        "range": null,
-                        "title": "Skip suppressing our own packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enable for the library to log received and sent mDNS packets to stdout.",
-                        "id": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "name": "MDNS_ENABLE_DEBUG_PRINTS",
-                        "range": null,
-                        "title": "Enable debug prints of mDNS packets",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables support for IPv4 reverse lookup. If enabled, the mDNS library\nresponse to PTR queries of \"A.B.C.D.in-addr.arpa\" type.",
-                        "id": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "name": "MDNS_RESPOND_REVERSE_QUERIES",
-                        "range": null,
-                        "title": "Enable responding to IPv4 reverse queries",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Enables adding multiple service instances under the same service type.",
-                        "id": "MDNS_MULTIPLE_INSTANCE",
-                        "name": "MDNS_MULTIPLE_INSTANCE",
-                        "range": null,
-                        "title": "Multiple instances under the same service type",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi station.\nDisable this option if you do not need mDNS on default WiFi STA.",
-                                "id": "MDNS_PREDEF_NETIF_STA",
-                                "name": "MDNS_PREDEF_NETIF_STA",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Station",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Set up mDNS for the default WiFi Access Point.\nDisable this option if you do not need mDNS on default WiFi AP.",
-                                "id": "MDNS_PREDEF_NETIF_AP",
-                                "name": "MDNS_PREDEF_NETIF_AP",
-                                "range": null,
-                                "title": "Use predefined interface for WiFi Access Point",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "ETH_ENABLED",
-                                "help": "Set up mDNS for the default Ethernet interface.\nDisable this option if you do not need mDNS on default Ethernet.",
-                                "id": "MDNS_PREDEF_NETIF_ETH",
-                                "name": "MDNS_PREDEF_NETIF_ETH",
-                                "range": null,
-                                "title": "Use predefined interface for Ethernet",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "id": "component-config-mdns-mdns-predefined-interfaces",
-                        "title": "MDNS Predefined interfaces",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-mdns",
-                "title": "mDNS",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee Coordinator or Router.",
-                                        "id": "ZB_ZCZR",
-                                        "name": "ZB_ZCZR",
-                                        "range": null,
-                                        "title": "Zigbee Coordinator or Router device",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee End Device.",
-                                        "id": "ZB_ZED",
-                                        "name": "ZB_ZED",
-                                        "range": null,
-                                        "title": "Zigbee End Device",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "SOC_IEEE802154_SUPPORTED && <choice ZB_DEVICE_TYPE>",
-                                        "help": "Select this to enable Zigbee Green Power Device.",
-                                        "id": "ZB_ZGPD",
-                                        "name": "ZB_ZGPD",
-                                        "range": null,
-                                        "title": "Zigbee Green power device",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "help": "Configure the Zigbee device type",
-                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-device-type",
-                                "name": "ZB_DEVICE_TYPE",
-                                "title": "Configure the Zigbee device type",
-                                "type": "choice"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_RADIO_TYPE>",
-                                        "help": "Select this to use the native 15.4 radio.",
-                                        "id": "ZB_RADIO_NATIVE",
-                                        "name": "ZB_RADIO_NATIVE",
-                                        "range": null,
-                                        "title": "Native 15.4 radio",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "<choice ZB_RADIO_TYPE>",
-                                        "help": "Select this to connect to a Radio Co-Processor via Spinel UART.",
-                                        "id": "ZB_RADIO_SPINEL_UART",
-                                        "name": "ZB_RADIO_SPINEL_UART",
-                                        "range": null,
-                                        "title": "Connect to 15.4 radio via Radio Spinel UART",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "help": null,
-                                "id": "component-config-zigbee-zigbee-enable-configure-the-zigbee-radio-type",
-                                "name": "ZB_RADIO_TYPE",
-                                "title": "Configure the Zigbee radio type",
-                                "type": "choice"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
-                                        "help": "when enable R22, enable zb_console_monitor input and other R22 test related function included.",
-                                        "id": "ZB_R22_ENABLE",
-                                        "name": "ZB_R22_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee R22 test enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZGPD) && SOC_IEEE802154_SUPPORTED && ZB_ENABLED",
-                                        "help": "when enable green power, example would support as green power proxy(zczr default enabled), green power combo or just green power device.",
-                                        "id": "ZB_GP_ENABLED",
-                                        "name": "ZB_GP_ENABLED",
-                                        "range": null,
-                                        "title": "Zigbee Green Power enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "(ZB_ZCZR || ZB_ZED) && ZB_ENABLED",
-                                        "help": null,
-                                        "id": "ZB_SNIFFER_ENABLE",
-                                        "name": "ZB_SNIFFER_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee Sniffer enable",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "id": "component-config-zigbee-zigbee-enable-zigbee-example",
-                                "title": "Zigbee Example",
-                                "type": "menu"
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace enable.",
-                                        "id": "ESP_ZB_TRACE_ENABLE",
-                                        "name": "ESP_ZB_TRACE_ENABLE",
-                                        "range": null,
-                                        "title": "Zigbee Trace Enable",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace level, normally if level set -1, it will disable trace.",
-                                        "id": "ZB_TRACE_LEVEL",
-                                        "name": "ZB_TRACE_LEVEL",
-                                        "range": null,
-                                        "title": "Zigbee stack trace level",
-                                        "type": "int"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "ZB_ENABLED && ZB_ENABLED",
-                                        "help": "Setting Zigbee stack trace mask, mask please refer to `zb_trace.h`.",
-                                        "id": "ZB_TRACE_MASK",
-                                        "name": "ZB_TRACE_MASK",
-                                        "range": null,
-                                        "title": "Zigbee stack trace mask",
-                                        "type": "hex"
-                                    }
-                                ],
-                                "depends_on": "ZB_ENABLED",
-                                "id": "component-config-zigbee-zigbee-enable-zigbee-trace-log-option",
-                                "title": "Zigbee trace log option",
-                                "type": "menu"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "Select this option to enable Zigbee and show the submenu with Zigbee configuration choices.",
-                        "id": "ZB_ENABLED",
-                        "name": "ZB_ENABLED",
-                        "range": null,
-                        "title": "Zigbee Enable",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-zigbee",
-                "title": "Zigbee",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "children": [],
-                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
-                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
-                                        "range": null,
-                                        "title": "Dump CBOR decoded data instead of hexdump",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "depends_on": "ESP_INSIGHTS_ENABLED",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
-                                "range": null,
-                                "title": "Enable Insights debug prints",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "ESP_INSIGHTS_ENABLED",
-                        "name": "ESP_INSIGHTS_ENABLED",
-                        "range": null,
-                        "title": "Enable ESP Insights",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
-                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
-                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
-                        "range": null,
-                        "title": "Enable core dump summary support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
-                                "range": null,
-                                "title": "MQTT",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
-                                "help": null,
-                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                                "range": null,
-                                "title": "HTTPS",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
-                        "id": "component-config-esp-insights-insights-default-transport",
-                        "name": "ESP_INSIGHTS_TRANSPORT",
-                        "title": "Insights default transport",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
-                        "help": null,
-                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
-                        "range": null,
-                        "title": "Insights https host",
-                        "type": "string"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post min interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
-                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
-                        "range": null,
-                        "title": "Insights cloud post max interval (sec)",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
-                        "id": "ESP_INSIGHTS_META_VERSION_10",
-                        "name": "ESP_INSIGHTS_META_VERSION_10",
-                        "range": null,
-                        "title": "Use older metadata format (1.0)",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-insights",
-                "title": "ESP Insights",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
                         "children": [],
                         "depends_on": null,
                         "help": "Toggle SD card support\nThis requires IDF v5+ as older ESP-IDF do not support SD card erase.",
@@ -28008,6 +27888,126 @@
                 "depends_on": null,
                 "id": "component-config-littlefs",
                 "title": "LittleFS",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                        "help": "Print pretty format json data for cbor messages\nIf this option is not enabled, hexdump will be presented instead of json data",
+                                        "id": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "name": "ESP_INSIGHTS_DEBUG_PRINT_JSON",
+                                        "range": null,
+                                        "title": "Dump CBOR decoded data instead of hexdump",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "ESP_INSIGHTS_ENABLED",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "name": "ESP_INSIGHTS_DEBUG_ENABLED",
+                                "range": null,
+                                "title": "Enable Insights debug prints",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_INSIGHTS_ENABLED",
+                        "name": "ESP_INSIGHTS_ENABLED",
+                        "range": null,
+                        "title": "Enable ESP Insights",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "(ESP_COREDUMP_ENABLE_TO_FLASH && ESP_COREDUMP_DATA_FORMAT_ELF) || (ESP32_ENABLE_COREDUMP_TO_FLASH && ESP32_COREDUMP_DATA_FORMAT_ELF)",
+                        "help": "This option enables core dump summary functionality in insights.\nIn case of crash, insights sends the core dump summary to cloud on next boot.",
+                        "id": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "name": "ESP_INSIGHTS_COREDUMP_ENABLE",
+                        "range": null,
+                        "title": "Enable core dump summary support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "name": "ESP_INSIGHTS_TRANSPORT_MQTT",
+                                "range": null,
+                                "title": "MQTT",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_INSIGHTS_TRANSPORT>",
+                                "help": null,
+                                "id": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "name": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                                "range": null,
+                                "title": "HTTPS",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "By default insights can send data to cloud using MQTT and HTTPS transports.\nThis option configures the default insights transport.\nInsights transport can be overridden using esp_insights_transport_register API.",
+                        "id": "component-config-esp-insights-insights-default-transport",
+                        "name": "ESP_INSIGHTS_TRANSPORT",
+                        "title": "Insights default transport",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_INSIGHTS_TRANSPORT_HTTPS",
+                        "help": null,
+                        "id": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "name": "ESP_INSIGHTS_TRANSPORT_HTTPS_HOST",
+                        "range": null,
+                        "title": "Insights https host",
+                        "type": "string"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Minimum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MIN_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post min interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Maximum interval between two consecutive cloud posts.\nThere is a dynamic logic to decide the next timeout when the insights data will be reported.\nIt depends on whether the data was sent or not during the previous timeout.\nIf the data was sent, the next timeout is doubled and if not, it is halved.",
+                        "id": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "name": "ESP_INSIGHTS_CLOUD_POST_MAX_INTERVAL_SEC",
+                        "range": null,
+                        "title": "Insights cloud post max interval (sec)",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "For users already using older metadata, this provides an option to keep using the same.\nThis is important as the new metadata version (1.1), is not backwad compatible.",
+                        "id": "ESP_INSIGHTS_META_VERSION_10",
+                        "name": "ESP_INSIGHTS_META_VERSION_10",
+                        "range": null,
+                        "title": "Use older metadata format (1.0)",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-insights",
+                "title": "ESP Insights",
                 "type": "menu"
             }
         ],
