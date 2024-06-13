@@ -60,9 +60,9 @@ char keypad[19] = "123A456B789C*0#DNF";
 // ---------------------------------------------------------------- 
 // ---connection infos--
 const char *ssid    =    "Greentech_Visitamtes";  
-//const char *ssid    =   "Greentech_Administrativo";             
+const char *ssid    =   "Greentech_Administrativo";             
 const char *pass    =    "Visitantes4.0";        
-//const char *pass    =   "Gr3enTech@2O24*";   
+const char *pass    =   "Gr3enTech@2O24*";   
 const char *mqtt    =    "192.168.30.130";        // rasp nhoqui
 //const char *mqtt    =    "192.168.30.212";      // rasp eng
 const char *user    =    "greentech";                           
@@ -93,12 +93,11 @@ const char *topic_T       =    "proto/sim/tensao";
 void xTaskTelemetry(void *pvParameters);
 void xTaskNav(void *pvParameters);
 void erease(char key, int buffer);
-void processNumberKey(char key);
+void tag(char key, int buffer);
 void CadastrarCartao();
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
-void tag(char key);
 void emergencia();
 void manutencao();
 void telafinal();
@@ -296,9 +295,9 @@ void xTaskTelemetry(void *pvParameters){
       if (secB >= 60){        
         secB-=60;
         minuteB++;
-        if (minuteB >= 1) // normaly minuteB == 10 
+        if (minuteB >= 20) // normaly minuteB == 10 
           pref.putInt(minbomb, minuteB);
-        else if (minuteB == 20)
+        else if (minuteB == 40)
           pref.putInt(minbomb, minuteB);       
       }
       if (minuteB >= 60){
@@ -579,7 +578,8 @@ void erease(char key, int buffer){
 }
 
 /*---------------------------------------------------------------------------------
--------------------------------------------Screens-------------------------------*/
+-------------------------------------------Screens---------------------------------
+---------------------------------------------------------------------------------*/
 
 // -----------------------------------------------------------------
 // -----status-----
@@ -788,8 +788,6 @@ void cadastrar(){
 
     char key = kpd.getChar();
     vTaskDelay(150);
-    //lcd.setCursor(12, 3);
-    //lcd.print("  ");  
 
     if (key != 'N') {
       vTaskDelay(90);
