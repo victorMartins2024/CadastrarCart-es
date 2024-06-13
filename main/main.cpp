@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.6.4 main.cpp
+  Telemetry V0.6.5 main.cpp
      
   INA226
   MFRC522 
@@ -461,8 +461,13 @@ void CadastrarCartao(){
     conteudo = conteudo + ";";
     UIDLists = UIDLists + conteudo;
 
+    client.publish(topic_CAD, CAD);
+    lcd.setCursor(6, 2);
+    lcd.print(CAD);
+    b = 5;
     pref.putString(listapref, UIDLists);
     client.publish("test/lista de cadastro", UIDLists.c_str());
+    vTaskDelay(500);
   }
 }
 
@@ -793,22 +798,15 @@ void cadastrar(){
         vTaskDelay(5);
       else if (key == '*') {
         erease(key, 0);
-      }else tag(key);
+      }else {
+        tag(key);
+        if(b == 10)
+          CadastrarCartao();
+      }
     }
-    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
-      snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-            rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-           rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-      b = 5; 
-      client.publish(topic_CAD, CAD);
-      lcd.setCursor(6, 2);
-      lcd.print(CAD);
-      vTaskDelay(1000);
-      cadastrar();
-    }
+    rfid.PICC_HaltA();
+    rfid.PCD_StopCrypto1();
   }
-  rfid.PICC_HaltA();
-  rfid.PCD_StopCrypto1();
 }
 
 // -----------------------------------------------------------------
