@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.6.4 main.cpp
+  Telemetry V0.6.1 main.cpp
      
   INA226
   MFRC522 
@@ -27,6 +27,7 @@
 #include "esp_system.h"
 #include "I2CKeyPad.h"
 #include "Password.h"
+#include "Keypad.h"
 #include "rtc_wdt.h"
 #include "Arduino.h"
 #include "MFRC522.h"
@@ -59,8 +60,8 @@ char keypad[19] = "123A456B789C*0#DNF";
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
-const char *ssid    =    "Greentech_Visitamtes"; //"Greentech_Administrativo";             
-const char *pass    =    "Visitantes4.0";        //"Gr3enTech@2O24*";   
+const char *ssid    =    "Greentech_Administrativo";             
+const char *pass    =    "Gr3enTech@2O24*";   
 const char *mqtt    =    "192.168.30.130";      // rasp nhoqui
 //const char *mqtt    =    "192.168.30.212";    // rasp eng
 const char *user    =    "greentech";                           
@@ -92,7 +93,6 @@ void xTaskTelemetry(void *pvParameters);
 void xTaskNav(void *pvParameters);
 void processNumberKey(char key);
 void CadastrarCartao();
-void erease(char key);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
@@ -110,7 +110,6 @@ void comando();
 void excluir();
 void status();
 void garfos();
-void format();
 void recon();
 void telas();
 void dell();
@@ -201,8 +200,8 @@ extern "C" void app_main(){
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
   lcd.backlight();
-  lcd.noCursor();
-  lcd.noBlink();
+  //lcd.noCursor();
+  //lcd.noBlink();
 
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -306,7 +305,7 @@ void xTaskTelemetry(void *pvParameters){
         pref.putInt(hourbomb, hourmeterB);
       }
     } // --------------------------------------------------------------------------
-  
+
     if (geralA >= 13){  // ---------Trasion engine hourmeter----------------------
       secT++;
       if (secT >= 60){        
@@ -354,8 +353,8 @@ void xTaskTelemetry(void *pvParameters){
 // -----------------------------------------------------------------
 // -----Navegation task-----
 void xTaskNav(void *pvParameters){
-  esp_task_wdt_add(NULL);      //  enable watchdog
-
+  
+  esp_task_wdt_add(NULL);      //  enable watchdog     
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
     lcd.clear();
@@ -364,7 +363,6 @@ void xTaskNav(void *pvParameters){
     client.loop();
 
     char menu = kpd.getChar();
-    vTaskDelay(90);
 
     if (manup == 1) {
       status();
@@ -451,6 +449,7 @@ void tag(char key){
 // -----------------------------------------------------------------
 // -----cadastro-----
 void CadastrarCartao(){
+
   String conteudo = "";
 
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
@@ -462,32 +461,19 @@ void CadastrarCartao(){
     UIDLists = UIDLists + conteudo;
 
     pref.putString(listapref, UIDLists);
-    client.publish("test/lista de cadastro", UIDLists.c_str());
   }
-}
-
-// -----------------------------------------------------------------
-// -----Erease uid list-----
-void format(){
-  lcd.clear();
-  lcd.setCursor(5, 2);
-  lcd.print("FORMATADO");
-
-  UIDLists = "/0";
-  vTaskDelay(50);
-  pref.putString(listapref, UIDLists);
-  client.publish(topic_CAD, "formatado"); 
 }
 
 // -----------------------------------------------------------------
 // -----processkey-----
 void processNumberKey(char key){
+
   lcd.setCursor(a, 2);
   lcd.print("*");
   a++;
 
   if (a == 11) {
-    a = 4; 
+    a = 4;  // Tamanho da senha com 4 digitos "2552"
   }
 
   currentpasslen++;
@@ -501,6 +487,7 @@ void processNumberKey(char key){
 // -----------------------------------------------------------------
 // -----resetpsswd-----
 void resetPassword(){
+
   password.reset();
   currentpasslen = 0;
   lcd.clear();
@@ -513,6 +500,7 @@ void resetPassword(){
 // -----------------------------------------------------------------
 // -----aprovadoPass-----
 void aprovadoPass(){
+
   currentpasslen = 0;
 
   if (password.evaluate()) {
@@ -539,43 +527,15 @@ void aprovadoPass(){
   resetPassword();
 }
 
-// -----------------------------------------------------------------
-// -----erase-----
-void erease(char key){
-  key = ' ';
-  a--;
-  lcd.setCursor(a, 2);
-  lcd.print(key);
-
-  currentpasslen--;
-  vTaskDelay(20); 
-
-  /*  if (opnav == true){
-    key = ' ';
-  a--;
-  lcd.setCursor(a, 2);
-  lcd.print(key);
-
-  currentpasslen--;
-  vTaskDelay(20); 
-  }else {
-    key = ' ';
-  a--;
-  lcd.setCursor(a, 2);    // fazer para tag
-  lcd.print(key);
-
-  currentpasslen--;
-  vTaskDelay(20); 
-  }*/
-}
-
 /*---------------------------------------------------------------------------------
 -------------------------------------------Screens-------------------------------*/
 
 // -----------------------------------------------------------------
 // -----status-----
 void status(){
+
   lcd.clear();
+
   while (1) {
 
     lcd.setCursor(6, 0);
@@ -669,6 +629,7 @@ void apx(){
 // -----------------------------------------------------------------
 // -----eng screen-----
 void eng(){
+
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("PASSWORD:");
@@ -684,7 +645,7 @@ void eng(){
       vTaskDelay(50);
       if (key == 'C') {
         psswdcheck = false;
-        resetPassword(); //
+        resetPassword();
       } else if (key == '#') {
         apx();
       } else if (key == 'D') {
@@ -692,9 +653,7 @@ void eng(){
           aprovadoPass();
           passvalue = false;
         }
-      } else if (key == '*') {
-        erease(key); 
-      }else if(key == 'A' || key == 'B')
+      } else if(key == 'A' || key == 'B' || key == '*')
         vTaskDelay(5);
       else 
         processNumberKey(key);
@@ -704,6 +663,7 @@ void eng(){
 // -----------------------------------------------------------------
 // -----screens-----
 void screens(){
+
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("ESCOLHA A OPCAO:");
@@ -717,7 +677,7 @@ void screens(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(20);
+
     if (key != 'N') {
       vTaskDelay(20);
       if (key == '1') {
@@ -736,6 +696,7 @@ void screens(){
 // -----------------------------------------------------------------
 // -----Telas-----
 void telas(){
+
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("ESCOLHA A OPCAO:");
@@ -779,7 +740,7 @@ void cadastrar(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
+    vTaskDelay(100);
 
     if (key != 'N') {
       vTaskDelay(90);
@@ -789,25 +750,22 @@ void cadastrar(){
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B' || key == 'D' || key == '*') 
-        vTaskDelay(5);
-      else tag(key);
-    }
-    if (b >= 10){
-      if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
-        snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-
-        b = 5; 
-        client.publish(topic_CAD, CAD);
-        lcd.setCursor(6, 2);
-        lcd.print(CAD);
-        vTaskDelay(1000);
-        cadastrar();
+      } else {
+        tag(key);
       }
     }
+    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+      snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
+               rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+               rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
+      b = 5;  // Sempre que bater o RFID a proxima TAG volta ser digitada na posição 5
+      client.publish(topic_CAD, CAD);
+      lcd.setCursor(6, 2);
+      lcd.print(CAD);
+      vTaskDelay(1000);
+      cadastrar();
+    }
   }
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
@@ -830,7 +788,6 @@ void manutencao(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
 
     if (key != 'N') {
       vTaskDelay(20);
@@ -902,6 +859,7 @@ void excluir(){
 // -----------------------------------------------------------------
 // -----formatar-----
 void formatar(){
+
   lcd.clear();
   lcd.setCursor(5, 0);
   lcd.print("FORMARTAR?");
@@ -909,17 +867,19 @@ void formatar(){
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
-  vTaskDelay(100);
 
   while (1) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
+    vTaskDelay(100);
+
     if (key != 'N') {
-      vTaskDelay(20);
+      vTaskDelay(90);
       if (key == '1') {
-        format();
-        vTaskDelay(2000);
+        lcd.clear();
+        lcd.setCursor(5, 2);
+        lcd.print("FORMATADO");
+        vTaskDelay(1000);
         telas();
       } else if (key == '2') {
         telas();
@@ -942,9 +902,10 @@ void vazamento(){
   while (opnav == true) {
 
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(90);
       if (key == '1') {
         client.publish(topic_V, "True");
         garfos();
@@ -967,10 +928,12 @@ void garfos(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
+
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(90);
       if (key == '1') {
         client.publish(topic_G, "True");
         emergencia();
@@ -992,10 +955,12 @@ void emergencia(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
+
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(90);
       if (key == '1') {
         client.publish(topic_E, "True");
         comando();
@@ -1017,10 +982,12 @@ void comando(){
   lcd.print("2 - NAO");
 
   while (opnav == true) {
+
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(90);
       if (key == '1') {
         client.publish(topic_F, "True");
         bateria();
@@ -1044,9 +1011,10 @@ void bateria(){
   while (opnav == true) {
 
     char key = kpd.getChar();
+    vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(90);
       if (key == '1') {
         client.publish(topic_B, "True");
         lcd.clear();
@@ -1091,3 +1059,5 @@ void telafinal(){
   lcd.print("SHOWROOM-SP");
   vTaskDelay(1500);
 }
+
+// banana amarelo azul vermelho cinza
