@@ -90,9 +90,9 @@ const char *topic_T       =    "proto/sim/tensao";
 // -----Functions----
 void xTaskTelemetry(void *pvParameters);
 void xTaskNav(void *pvParameters);
+void erease(char key, int buffer);
 void processNumberKey(char key);
 void CadastrarCartao();
-void erease(char key);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
@@ -541,32 +541,32 @@ void aprovadoPass(){
 
 // -----------------------------------------------------------------
 // -----erase-----
-void erease(char key){
-  key = ' ';
-  a--;
-  lcd.setCursor(a, 2);
-  lcd.print(key);
+void erease(char key, int buffer){
+  if (buffer == 1){
+    if (a == 7)
+      a = 7;
+    else {
+      key = ' ';
+      a--;
+      lcd.setCursor(a, 2);
+      lcd.print(key);
+      currentpasslen--;
+      vTaskDelay(20); 
+    }
+    
+  }else{
+    if (b == 5)
+      b = 5;
+    else {
+      key = ' ';
+      b--;
+      lcd.setCursor(b, 1);    // fazer para tag
+      lcd.print(key);
+    }
 
-  currentpasslen--;
-  vTaskDelay(20); 
-
-  /*  if (opnav == true){
-    key = ' ';
-  a--;
-  lcd.setCursor(a, 2);
-  lcd.print(key);
-
-  currentpasslen--;
-  vTaskDelay(20); 
-  }else {
-    key = ' ';
-  a--;
-  lcd.setCursor(a, 2);    // fazer para tag
-  lcd.print(key);
-
-  currentpasslen--;
-  vTaskDelay(20); 
-  }*/
+    currenttaglen--;
+    vTaskDelay(20); 
+  }
 }
 
 /*---------------------------------------------------------------------------------
@@ -674,7 +674,7 @@ void eng(){
   lcd.print("PASSWORD:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
-
+  int buffer = 1;
   while (1) {
 
     char key = kpd.getChar();
@@ -693,7 +693,7 @@ void eng(){
           passvalue = false;
         }
       } else if (key == '*') {
-        erease(key); 
+        erease(key, buffer); 
       }else if(key == 'A' || key == 'B')
         vTaskDelay(5);
       else 
@@ -775,7 +775,7 @@ void cadastrar(){
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
   passvalue = false;
-
+  int buffer;
   while (opnav == true) {
 
     char key = kpd.getChar();
@@ -789,25 +789,23 @@ void cadastrar(){
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B' || key == 'D' || key == '*') 
+      } else if (key == 'A' || key == 'B' || key == 'D') 
         vTaskDelay(5);
-      else tag(key);
+      else if (key == '*') {
+        erease(key, 0);
+      }else tag(key);
     }
-    if (b >= 10){
-      if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
-        snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-
-        b = 5; 
-        client.publish(topic_CAD, CAD);
-        lcd.setCursor(6, 2);
-        lcd.print(CAD);
-        vTaskDelay(1000);
-        cadastrar();
-      }
+    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+      snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
+            rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+           rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+      b = 5; 
+      client.publish(topic_CAD, CAD);
+      lcd.setCursor(6, 2);
+      lcd.print(CAD);
+      vTaskDelay(1000);
+      cadastrar();
     }
-
   }
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
