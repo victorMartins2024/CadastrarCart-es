@@ -59,10 +59,12 @@ char keypad[19] = "123A456B789C*0#DNF";
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
-const char *ssid    =    "Greentech_Visitamtes"; //"Greentech_Administrativo";             
-const char *pass    =    "Visitantes4.0";        //"Gr3enTech@2O24*";   
-const char *mqtt    =    "192.168.30.130";      // rasp nhoqui
-//const char *mqtt    =    "192.168.30.212";    // rasp eng
+const char *ssid    =    "Greentech_Visitamtes";  
+//const char *ssid    =   "Greentech_Administrativo";             
+const char *pass    =    "Visitantes4.0";        
+//const char *pass    =   "Gr3enTech@2O24*";   
+const char *mqtt    =    "192.168.30.130";        // rasp nhoqui
+//const char *mqtt    =    "192.168.30.212";      // rasp eng
 const char *user    =    "greentech";                           
 const char *passwd  =    "Greentech@01";                       
 int         port    =    1883;    
@@ -436,16 +438,33 @@ void dell(){
 
 // -----------------------------------------------------------------
 // -----tag-----
-void tag(char key){
-  lcd.setCursor(b, 1);
-  lcd.print(key);
-  b++;
+void tag(char key, int buffer){
+  if (buffer == 1){
+    lcd.setCursor(b, 1);
+    lcd.print(key);
+    b++;
 
-  if (b == 11) {
-    b = 5;  
+    if (b == 11) {
+      b = 5;  
+    }
+    currenttaglen++;
+    vTaskDelay(20); 
+  }else{
+    lcd.setCursor(a, 2);
+    lcd.print("*");
+    a++;
+
+    if (a == 11) {
+      a = 4; 
+    }
+
+    currentpasslen++;
+    password.append(key);
+
+    if (currentpasslen == maxpasslen) {
+      aprovadoPass();
+    }
   }
-  currenttaglen++;
-  vTaskDelay(20); 
 }
 
 // -----------------------------------------------------------------
@@ -468,6 +487,10 @@ void CadastrarCartao(){
     pref.putString(listapref, UIDLists);
     client.publish("test/lista de cadastro", UIDLists.c_str());
     vTaskDelay(500);
+    lcd.clear();
+    lcd.print("Cadastrado");
+    vTaskDelay(1000);
+    cadastrar();
   }
 }
 
@@ -482,25 +505,6 @@ void format(){
   vTaskDelay(50);
   pref.putString(listapref, UIDLists);
   client.publish(topic_CAD, "formatado"); 
-}
-
-// -----------------------------------------------------------------
-// -----processkey-----
-void processNumberKey(char key){
-  lcd.setCursor(a, 2);
-  lcd.print("*");
-  a++;
-
-  if (a == 11) {
-    a = 4; 
-  }
-
-  currentpasslen++;
-  password.append(key);
-
-  if (currentpasslen == maxpasslen) {
-    aprovadoPass();
-  }
 }
 
 // -----------------------------------------------------------------
@@ -679,7 +683,6 @@ void eng(){
   lcd.print("PASSWORD:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
-  int buffer = 1;
   while (1) {
 
     char key = kpd.getChar();
@@ -690,19 +693,19 @@ void eng(){
       if (key == 'C') {
         psswdcheck = false;
         resetPassword(); //
-      } else if (key == '#') {
+      }else if (key == '#') {
         apx();
-      } else if (key == 'D') {
+      }else if (key == 'D') {
         if (passvalue == true) {
           aprovadoPass();
           passvalue = false;
         }
-      } else if (key == '*') {
-        erease(key, buffer); 
+      }else if (key == '*') {
+        erease(key, 1); 
       }else if(key == 'A' || key == 'B')
         vTaskDelay(5);
       else 
-        processNumberKey(key);
+        tag(key, 0);
     }
   }
 }
@@ -780,28 +783,30 @@ void cadastrar(){
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
   passvalue = false;
-  int buffer;
+
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
+    vTaskDelay(150);
+    //lcd.setCursor(12, 3);
+    //lcd.print("  ");  
 
     if (key != 'N') {
       vTaskDelay(90);
       if (key == 'C') {
         dell();
+      } else if ( key == 'D' && b == 11){
+        CadastrarCartao();
       } else if (key == '#') {
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B' || key == 'D') 
+      } else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
       else if (key == '*') {
         erease(key, 0);
       }else {
-        tag(key);
-        if(b == 10)
-          CadastrarCartao();
+        tag(key, 1);
       }
     }
     rfid.PICC_HaltA();
