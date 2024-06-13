@@ -59,10 +59,10 @@ char keypad[19] = "123A456B789C*0#DNF";
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
-const char *ssid    =    "Greentech_Visitamtes";  
-//const char *ssid    =   "Greentech_Administrativo";             
-const char *pass    =    "Visitantes4.0";        
-//const char *pass    =   "Gr3enTech@2O24*";   
+//const char *ssid    =    "Greentech_Visitamtes";  
+const char *ssid    =   "Greentech_Administrativo";             
+//const char *pass    =    "Visitantes4.0";        
+const char *pass    =   "Gr3enTech@2O24*";   
 const char *mqtt    =    "192.168.30.130";        // rasp nhoqui
 //const char *mqtt    =    "192.168.30.212";      // rasp eng
 const char *user    =    "greentech";                           
@@ -201,9 +201,6 @@ extern "C" void app_main(){
   
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
-  lcd.backlight();
-  lcd.noCursor();
-  lcd.noBlink();
 
   if(WiFi.status() != WL_CONNECTED)
     WiFi.reconnect();                                                                                               
@@ -295,9 +292,9 @@ void xTaskTelemetry(void *pvParameters){
       if (secB >= 60){        
         secB-=60;
         minuteB++;
-        if (minuteB >= 1) // normaly minuteB == 10 
+        if (minuteB >= 20) // normaly minuteB == 10 
           pref.putInt(minbomb, minuteB);
-        else if (minuteB == 20)
+        else if (minuteB == 40)
           pref.putInt(minbomb, minuteB);       
       }
       if (minuteB >= 60){
@@ -359,7 +356,12 @@ void xTaskNav(void *pvParameters){
 
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
+    
+    lcd.backlight();
+    lcd.noCursor();
+    lcd.noBlink();
     lcd.clear();
+
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
     client.loop();
@@ -578,7 +580,8 @@ void erease(char key, int buffer){
 }
 
 /*---------------------------------------------------------------------------------
--------------------------------------------Screens-------------------------------*/
+-------------------------------------------Screens---------------------------------
+---------------------------------------------------------------------------------*/
 
 // -----------------------------------------------------------------
 // -----status-----
@@ -685,7 +688,7 @@ void eng(){
   while (1) {
 
     char key = kpd.getChar();
-    vTaskDelay(90);
+    vTaskDelay(50);
 
     if (key != 'N') {  
       vTaskDelay(50);
@@ -786,15 +789,13 @@ void cadastrar(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(150);
-    //lcd.setCursor(12, 3);
-    //lcd.print("  ");  
+    vTaskDelay(50);
 
     if (key != 'N') {
-      vTaskDelay(90);
+      vTaskDelay(50);
       if (key == 'C') {
         dell();
-      } else if ( key == 'D' && b == 11){
+      } else if ( key == 'D'){
         CadastrarCartao();
       } else if (key == '#') {
         vTaskDelay(20);
