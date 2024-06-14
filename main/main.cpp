@@ -709,6 +709,7 @@ void eng(){
           passvalue = false;
         }
       } else if (key == 'A') {
+        lcd.clear();
         esp_restart();
       } else if (key == '*') {
         erease(key, 1); 
@@ -716,7 +717,6 @@ void eng(){
         vTaskDelay(5);
       else 
         tag(key, 0);
-        vTaskDelay(20);
     }
   }
 }
@@ -742,6 +742,7 @@ void screens(){
       vTaskDelay(20);
       if (key == '1') {
         opnav = true;
+        vTaskDelay(20);
         cadastrar();
       } else if (key == '2') {
         opnav = true;
@@ -1108,6 +1109,7 @@ void telafinal(){
     if (key != 'N'){
       vTaskDelay(70);
       if (key == 'A') {
+        lcd.clear();
         esp_restart();
       }
     }

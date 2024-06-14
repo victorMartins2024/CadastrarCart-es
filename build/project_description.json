@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "main",
-    "project_version":    "d023bf4-dirty",
+    "project_version":    "83b8897-dirty",
     "project_path":       "C:/Users/victor.martins/esp/Prototype",
     "idf_path":           "C:/Users/victor.martins/esp/v5.1.4/esp-idf",
     "build_dir":          "C:/Users/victor.martins/esp/Prototype/build",
@@ -21,7 +21,7 @@
     "monitor_toolprefix": "xtensa-esp32-elf-",
     "c_compiler":         "C:/Users/victor.martins/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc.exe",
     "config_environment" : {
-        "COMPONENT_KCONFIGS" : "C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/app_trace/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/bt/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/driver/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/efuse/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp-tls/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_adc/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_coex/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_common/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_eth/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_event/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_gdbstub/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_http_client/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_http_server/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_https_ota/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_https_server/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_hw_support/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_lcd/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_netif/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_partition/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_phy/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_pm/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_psram/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_ringbuf/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_system/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_timer/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_wifi/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/espcoredump/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/fatfs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/freertos/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/hal/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/heap/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/ieee802154/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/log/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/lwip/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/mbedtls/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/mqtt/esp-mqtt/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/newlib/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/nvs_flash/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/openthread/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/protocomm/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/pthread/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/soc/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/spi_flash/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/spiffs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/tcp_transport/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/ulp/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/unity/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/usb/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/vfs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/wear_levelling/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/wifi_provisioning/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__jsmn/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/joltwallet__littlefs/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-dsp/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_diag_data_store/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zigbee-lib/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_insights/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_diagnostics/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_modem/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_secure_cert_mgr/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__rmaker_common/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__mdns/Kconfig",
+        "COMPONENT_KCONFIGS" : "C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/app_trace/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/bt/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/driver/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/efuse/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp-tls/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_adc/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_coex/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_common/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_eth/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_event/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_gdbstub/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_http_client/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_http_server/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_https_ota/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_https_server/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_hw_support/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_lcd/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_netif/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_partition/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_phy/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_pm/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_psram/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_ringbuf/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_system/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_timer/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_wifi/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/espcoredump/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/fatfs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/freertos/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/hal/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/heap/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/ieee802154/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/log/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/lwip/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/mbedtls/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/mqtt/esp-mqtt/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/newlib/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/nvs_flash/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/openthread/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/protocomm/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/pthread/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/soc/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/spi_flash/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/spiffs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/tcp_transport/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/ulp/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/unity/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/usb/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/vfs/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/wear_levelling/Kconfig;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/wifi_provisioning/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_secure_cert_mgr/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__mdns/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__jsmn/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/joltwallet__littlefs/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-dsp/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_diag_data_store/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_diagnostics/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_modem/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_insights/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zigbee-lib/Kconfig;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__rmaker_common/Kconfig",
         "COMPONENT_KCONFIGS_PROJBUILD" : "C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/bootloader/Kconfig.projbuild;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_app_format/Kconfig.projbuild;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_rom/Kconfig.projbuild;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esptool_py/Kconfig.projbuild;C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/partition_table/Kconfig.projbuild;C:/Users/victor.martins/esp/Prototype/esp32-arduino-lib-builder/components/arduino_tinyusb/Kconfig.projbuild;C:/Users/victor.martins/esp/Prototype/components/arduino/Kconfig.projbuild;C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_rainmaker/Kconfig.projbuild"
     },
     "common_component_reqs": [ "cxx", "newlib", "freertos", "esp_hw_support", "heap", "log", "soc", "hal", "esp_rom", "esp_common", "esp_system", "xtensa" ],
@@ -2403,6 +2403,66 @@
             "managed_priv_reqs": [ "espressif__esp-dsp", "espressif__esp-zboss-lib", "espressif__esp-zigbee-lib", "espressif__esp_insights", "espressif__esp_modem", "espressif__esp_rainmaker", "espressif__mdns", "espressif__qrcode", "espressif__rmaker_common", "joltwallet__littlefs" ],
             "include_dirs": [ "variants/esp32/", "cores/esp32/", "libraries/PubSubClient/src", "libraries/ArduinoOTA/src", "libraries/AsyncUDP/src", "libraries/BLE/src", "libraries/BluetoothSerial/src", "libraries/DNSServer/src", "libraries/EEPROM/src", "libraries/ESP_I2S/src", "libraries/ESP_SR/src", "libraries/ESPmDNS/src", "libraries/Ethernet/src", "libraries/FFat/src", "libraries/FS/src", "libraries/HTTPClient/src", "libraries/HTTPUpdate/src", "libraries/Insights/src", "libraries/LittleFS/src", "libraries/NetBIOS/src", "libraries/Preferences/src", "libraries/RainMaker/src", "libraries/SD_MMC/src", "libraries/SD/src", "libraries/SimpleBLE/src", "libraries/MFRC522/src", "libraries/LiquidCrystal_I2C/src", "libraries/SPIFFS/src", "libraries/SPI/src", "libraries/Ticker/src", "libraries/Update/src", "libraries/USB/src", "libraries/WebServer/src", "libraries/WiFiClientSecure/src", "libraries/Password/src", "libraries/I2CKeyPad/src", "libraries/INA226/src", "libraries/WiFi/src", "libraries/WiFiProv/src", "libraries/Wire/src" ]
         },
+        "espressif__esp_secure_cert_mgr": {
+            "alias": "idf::espressif__esp_secure_cert_mgr",
+            "target": "___idf_espressif__esp_secure_cert_mgr",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_secure_cert_mgr",
+            "lib": "__idf_espressif__esp_secure_cert_mgr",
+            "reqs": [ "spi_flash", "mbedtls", "nvs_flash", "efuse" ],
+            "priv_reqs": [],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "include" ]
+        },
+        "espressif__esp_rainmaker": {
+            "alias": "idf::espressif__esp_rainmaker",
+            "target": "___idf_espressif__esp_rainmaker",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_rainmaker",
+            "lib": "__idf_espressif__esp_rainmaker",
+            "reqs": [ "espressif__rmaker_common" ],
+            "priv_reqs": [ "protobuf-c", "espressif__json_parser", "espressif__json_generator", "wifi_provisioning", "nvs_flash", "esp_http_client", "app_update", "esp-tls", "mbedtls", "esp_https_ota", "console", "esp_local_ctrl", "esp_https_server", "espressif__mdns", "espressif__esp_schedule", "efuse", "driver", "espressif__rmaker_common", "espressif__esp_secure_cert_mgr" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [ "espressif__esp_schedule", "espressif__esp_secure_cert_mgr", "espressif__json_generator", "espressif__json_parser", "espressif__mdns", "espressif__rmaker_common" ],
+            "include_dirs": [ "include" ]
+        },
+        "chmorgan__esp-libhelix-mp3": {
+            "alias": "idf::chmorgan__esp-libhelix-mp3",
+            "target": "___idf_chmorgan__esp-libhelix-mp3",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/chmorgan__esp-libhelix-mp3",
+            "lib": "__idf_chmorgan__esp-libhelix-mp3",
+            "reqs": [],
+            "priv_reqs": [],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "libhelix-mp3/pub" ]
+        },
+        "espressif__esp_schedule": {
+            "alias": "idf::espressif__esp_schedule",
+            "target": "___idf_espressif__esp_schedule",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_schedule",
+            "lib": "__idf_espressif__esp_schedule",
+            "reqs": [ "nvs_flash" ],
+            "priv_reqs": [ "espressif__rmaker_common" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [ "espressif__rmaker_common" ],
+            "include_dirs": [ "include" ]
+        },
+        "espressif__mdns": {
+            "alias": "idf::espressif__mdns",
+            "target": "___idf_espressif__mdns",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__mdns",
+            "lib": "__idf_espressif__mdns",
+            "reqs": [ "lwip", "console", "esp_netif" ],
+            "priv_reqs": [ "esp_timer", "esp_wifi" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "include" ]
+        },
         "espressif__jsmn": {
             "alias": "idf::espressif__jsmn",
             "target": "___idf_espressif__jsmn",
@@ -2415,6 +2475,18 @@
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
         },
+        "espressif__json_parser": {
+            "alias": "idf::espressif__json_parser",
+            "target": "___idf_espressif__json_parser",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__json_parser",
+            "lib": "__idf_espressif__json_parser",
+            "reqs": [ "espressif__jsmn" ],
+            "priv_reqs": [ "espressif__jsmn" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [ "espressif__jsmn" ],
+            "include_dirs": [ "include" ]
+        },
         "joltwallet__littlefs": {
             "alias": "idf::joltwallet__littlefs",
             "target": "___idf_joltwallet__littlefs",
@@ -2423,6 +2495,30 @@
             "lib": "__idf_joltwallet__littlefs",
             "reqs": [ "esp_partition" ],
             "priv_reqs": [ "esptool_py", "spi_flash", "vfs", "sdmmc" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "include" ]
+        },
+        "espressif__cbor": {
+            "alias": "idf::espressif__cbor",
+            "target": "___idf_espressif__cbor",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__cbor",
+            "lib": "__idf_espressif__cbor",
+            "reqs": [],
+            "priv_reqs": [],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "port/include" ]
+        },
+        "espressif__esp-zboss-lib": {
+            "alias": "idf::espressif__esp-zboss-lib",
+            "target": "___idf_espressif__esp-zboss-lib",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zboss-lib",
+            "lib": "__idf_espressif__esp-zboss-lib",
+            "reqs": [],
+            "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
@@ -2450,30 +2546,6 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "src/rtc_store", "include" ]
-        },
-        "espressif__esp-zigbee-lib": {
-            "alias": "idf::espressif__esp-zigbee-lib",
-            "target": "___idf_espressif__esp-zigbee-lib",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zigbee-lib",
-            "lib": "__idf_espressif__esp-zigbee-lib",
-            "reqs": [],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "include" ]
-        },
-        "espressif__esp_insights": {
-            "alias": "idf::espressif__esp_insights",
-            "target": "___idf_espressif__esp_insights",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_insights",
-            "lib": "__idf_espressif__esp_insights",
-            "reqs": [ "espressif__esp_diagnostics" ],
-            "priv_reqs": [ "espressif__cbor", "espressif__rmaker_common", "esptool_py", "espcoredump", "espressif__esp_diag_data_store", "nvs_flash", "esp_timer", "esp_hw_support", "esp_wifi", "espressif__esp_diagnostics" ],
-            "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__cbor", "espressif__esp_diag_data_store", "espressif__esp_diagnostics", "espressif__rmaker_common" ],
-            "include_dirs": [ "include" ]
         },
         "espressif__qrcode": {
             "alias": "idf::espressif__qrcode",
@@ -2511,90 +2583,6 @@
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
         },
-        "espressif__esp_rainmaker": {
-            "alias": "idf::espressif__esp_rainmaker",
-            "target": "___idf_espressif__esp_rainmaker",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_rainmaker",
-            "lib": "__idf_espressif__esp_rainmaker",
-            "reqs": [ "espressif__rmaker_common" ],
-            "priv_reqs": [ "protobuf-c", "espressif__json_parser", "espressif__json_generator", "wifi_provisioning", "nvs_flash", "esp_http_client", "app_update", "esp-tls", "mbedtls", "esp_https_ota", "console", "esp_local_ctrl", "esp_https_server", "espressif__mdns", "espressif__esp_schedule", "efuse", "driver", "espressif__rmaker_common", "espressif__esp_secure_cert_mgr" ],
-            "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__esp_schedule", "espressif__esp_secure_cert_mgr", "espressif__json_generator", "espressif__json_parser", "espressif__mdns", "espressif__rmaker_common" ],
-            "include_dirs": [ "include" ]
-        },
-        "espressif__esp-zboss-lib": {
-            "alias": "idf::espressif__esp-zboss-lib",
-            "target": "___idf_espressif__esp-zboss-lib",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zboss-lib",
-            "lib": "__idf_espressif__esp-zboss-lib",
-            "reqs": [],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "include" ]
-        },
-        "espressif__esp_secure_cert_mgr": {
-            "alias": "idf::espressif__esp_secure_cert_mgr",
-            "target": "___idf_espressif__esp_secure_cert_mgr",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_secure_cert_mgr",
-            "lib": "__idf_espressif__esp_secure_cert_mgr",
-            "reqs": [ "spi_flash", "mbedtls", "nvs_flash", "efuse" ],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "include" ]
-        },
-        "espressif__cbor": {
-            "alias": "idf::espressif__cbor",
-            "target": "___idf_espressif__cbor",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__cbor",
-            "lib": "__idf_espressif__cbor",
-            "reqs": [],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "port/include" ]
-        },
-        "espressif__json_parser": {
-            "alias": "idf::espressif__json_parser",
-            "target": "___idf_espressif__json_parser",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__json_parser",
-            "lib": "__idf_espressif__json_parser",
-            "reqs": [ "espressif__jsmn" ],
-            "priv_reqs": [ "espressif__jsmn" ],
-            "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__jsmn" ],
-            "include_dirs": [ "include" ]
-        },
-        "chmorgan__esp-libhelix-mp3": {
-            "alias": "idf::chmorgan__esp-libhelix-mp3",
-            "target": "___idf_chmorgan__esp-libhelix-mp3",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/chmorgan__esp-libhelix-mp3",
-            "lib": "__idf_chmorgan__esp-libhelix-mp3",
-            "reqs": [],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "libhelix-mp3/pub" ]
-        },
-        "espressif__rmaker_common": {
-            "alias": "idf::espressif__rmaker_common",
-            "target": "___idf_espressif__rmaker_common",
-            "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__rmaker_common",
-            "lib": "__idf_espressif__rmaker_common",
-            "reqs": [ "esp_event" ],
-            "priv_reqs": [ "mqtt", "nvs_flash", "console", "esp_wifi", "driver", "esp_timer" ],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "include" ]
-        },
         "espressif__json_generator": {
             "alias": "idf::espressif__json_generator",
             "target": "___idf_espressif__json_generator",
@@ -2607,28 +2595,40 @@
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
         },
-        "espressif__mdns": {
-            "alias": "idf::espressif__mdns",
-            "target": "___idf_espressif__mdns",
+        "espressif__esp_insights": {
+            "alias": "idf::espressif__esp_insights",
+            "target": "___idf_espressif__esp_insights",
             "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__mdns",
-            "lib": "__idf_espressif__mdns",
-            "reqs": [ "lwip", "console", "esp_netif" ],
-            "priv_reqs": [ "esp_timer", "esp_wifi" ],
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_insights",
+            "lib": "__idf_espressif__esp_insights",
+            "reqs": [ "espressif__esp_diagnostics" ],
+            "priv_reqs": [ "espressif__cbor", "espressif__rmaker_common", "esptool_py", "espcoredump", "espressif__esp_diag_data_store", "nvs_flash", "esp_timer", "esp_hw_support", "esp_wifi", "espressif__esp_diagnostics" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [ "espressif__cbor", "espressif__esp_diag_data_store", "espressif__esp_diagnostics", "espressif__rmaker_common" ],
+            "include_dirs": [ "include" ]
+        },
+        "espressif__esp-zigbee-lib": {
+            "alias": "idf::espressif__esp-zigbee-lib",
+            "target": "___idf_espressif__esp-zigbee-lib",
+            "prefix": "idf",
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp-zigbee-lib",
+            "lib": "__idf_espressif__esp-zigbee-lib",
+            "reqs": [],
+            "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
         },
-        "espressif__esp_schedule": {
-            "alias": "idf::espressif__esp_schedule",
-            "target": "___idf_espressif__esp_schedule",
+        "espressif__rmaker_common": {
+            "alias": "idf::espressif__rmaker_common",
+            "target": "___idf_espressif__rmaker_common",
             "prefix": "idf",
-            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_schedule",
-            "lib": "__idf_espressif__esp_schedule",
-            "reqs": [ "nvs_flash" ],
-            "priv_reqs": [ "espressif__rmaker_common" ],
+            "dir": "C:/Users/victor.martins/esp/Prototype/managed_components/espressif__rmaker_common",
+            "lib": "__idf_espressif__rmaker_common",
+            "reqs": [ "esp_event" ],
+            "priv_reqs": [ "mqtt", "nvs_flash", "console", "esp_wifi", "driver", "esp_timer" ],
             "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__rmaker_common" ],
+            "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
         }
     },
