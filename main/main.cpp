@@ -193,11 +193,13 @@ extern "C" void app_main(){
   Wire.begin(SDA, SCL);
   SPI.begin(SCK, MISO, MOSI, RST);
   lcd.init();
+  lcd.backlight();
   rfid.PCD_Init();
   ina226_setup();
   WiFi.begin(ssid, pass); 
   kpd.begin();
   pref.begin("GT", false);
+  lcd.backlight();
   
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
   kpd.loadKeyMap(keypad);
@@ -213,11 +215,11 @@ extern "C" void app_main(){
 
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
-  vTaskDelay(2000);
+
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
-                          3000,           // stack size in word
+                          2000,           // stack size in word
                           NULL,           // input parameter
                           1,              // priority
                           NULL,           // task handle
@@ -225,13 +227,15 @@ extern "C" void app_main(){
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          6000,
+                          4000,
                           NULL,
                           1,
                           NULL,
                           1);
-                             
-}
+  vTaskDelay(2500);
+  lcd.clear();
+              
+} 
 
 /*---------------------------------------------------------------------------------
 ---------------------------------------------Tasks-------------------------------*/
@@ -345,7 +349,7 @@ void xTaskTelemetry(void *pvParameters){
     client.publish(topic_JHour, Justhour);
 
     esp_task_wdt_reset();        // reset watchdog if dont return any error
-    vTaskDelay(1000);
+    vTaskDelay(500);
   }
 } 
 
@@ -357,10 +361,9 @@ void xTaskNav(void *pvParameters){
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
     
-    lcd.backlight();
     lcd.noCursor();
     lcd.noBlink();
-    lcd.clear();
+    
 
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
@@ -376,7 +379,9 @@ void xTaskNav(void *pvParameters){
     } else {
       if (menu != 'N') {
         vTaskDelay(20);
-        if (menu == '0') {
+        if (menu == 'A') { 
+          esp_restart();
+        } else if (menu == '0') {
           opnav = false;  // Para tela de Engenharia
           eng();
         }
@@ -386,7 +391,7 @@ void xTaskNav(void *pvParameters){
       }
     }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
-    vTaskDelay(1000);
+    vTaskDelay(500);
   }
 }
 
@@ -694,7 +699,7 @@ void eng(){
       vTaskDelay(50);
       if (key == 'C') {
         psswdcheck = false;
-        resetPassword(); //
+        resetPassword(); 
       }else if (key == '#') {
         apx();
       }else if (key == 'D') {
@@ -702,9 +707,11 @@ void eng(){
           aprovadoPass();
           passvalue = false;
         }
-      }else if (key == '*') {
+      } else if (key == 'A') {
+        esp_restart();
+      } else if (key == '*') {
         erease(key, 1); 
-      }else if(key == 'A' || key == 'B')
+      } else if(key == 'B')
         vTaskDelay(5);
       else 
         tag(key, 0);
@@ -789,10 +796,10 @@ void cadastrar(){
   while (opnav == true) {
 
     char key = kpd.getChar();
-    vTaskDelay(50);
+    vTaskDelay(70);
 
     if (key != 'N') {
-      vTaskDelay(50);
+      vTaskDelay(70);
       if (key == 'C') {
         dell();
       } else if ( key == 'D'){
@@ -1083,11 +1090,25 @@ void bateria(){
 void telafinal(){
   lcd.clear();
   lcd.setCursor(1, 0);
-  lcd.print("NMS-V0.8");
-  lcd.setCursor(6, 1);
+  lcd.print("NMS-V0.1");
+  lcd.setCursor(5, 1);
   lcd.print("GREENTECH");
   lcd.setCursor(1, 2);
   lcd.print("PRONTO PARA OPERAR");
   lcd.setCursor(5, 3);
   lcd.print("SHOWROOM-SP");
+
+  
+
+  while (opnav == true) { 
+
+    char key = kpd.getChar();
+
+    if (key != 'N'){
+      vTaskDelay(70);
+      if (key == 'A') {
+        esp_restart();
+      }
+    }
+  } 
 }
