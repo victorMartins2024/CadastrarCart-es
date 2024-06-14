@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.0 main.cpp
+  Telemetry V0.7.2 main.cpp
      
   INA226
   MFRC522 
@@ -716,6 +716,7 @@ void eng(){
         vTaskDelay(5);
       else 
         tag(key, 0);
+        vTaskDelay(20);
     }
   }
 }
@@ -1108,8 +1109,6 @@ void telafinal(){
       vTaskDelay(70);
       if (key == 'A') {
         esp_restart();
-        vTaskDelay(20);
-        vTaskDelay(20);
       }
     }
   } 
