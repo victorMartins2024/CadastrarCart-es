@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.6.5 main.cpp
+  Telemetry V0.6.9 main.cpp
      
   INA226
   MFRC522 
@@ -379,11 +379,10 @@ void xTaskNav(void *pvParameters){
     } else {
       if (menu != 'N') {
         vTaskDelay(20);
-        if (menu == 'A') { 
-          esp_restart();
-        } else if (menu == '0') {
+       if (menu == '0') {
           opnav = false;  // Para tela de Engenharia
           eng();
+          vTaskDelay(80);
         }
       } else {
         opnav = true;  // Para tela de Operação
@@ -503,10 +502,11 @@ void CadastrarCartao(){
 // -----------------------------------------------------------------
 // -----Erease uid list-----
 void format(){
+
   lcd.clear();
   lcd.setCursor(5, 2);
   lcd.print("FORMATADO");
-
+  
   UIDLists = "/0";
   vTaskDelay(50);
   pref.putString(listapref, UIDLists);
@@ -642,6 +642,7 @@ void apx(){
   lcd.clear();
   lcd.setCursor(2, 2);
   lcd.print("APROXIMAR CARTAO");
+  
   while (opnav == true) {
 
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
@@ -718,6 +719,7 @@ void eng(){
     }
   }
 }
+
 // -----------------------------------------------------------------
 // -----screens-----
 void screens(){
@@ -768,7 +770,7 @@ void telas(){
     char key = kpd.getChar();
 
     if (key != 'N') {
-      vTaskDelay(20);
+      vTaskDelay(30);
       if (key == '1') {
         formatar();
       } else if (key == '2') {
@@ -841,7 +843,7 @@ void manutencao(){
     vTaskDelay(90);
 
     if (key != 'N') {
-      vTaskDelay(20);
+      vTaskDelay(30);
       if (key == '1') {
         manup = 1;
         vTaskDelay(30);
@@ -917,17 +919,17 @@ void formatar(){
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
   lcd.print("2 - NAO");
-  vTaskDelay(100);
 
   while (1) {
 
     char key = kpd.getChar();
     vTaskDelay(90);
+
     if (key != 'N') {
-      vTaskDelay(20);
+      vTaskDelay(50);
       if (key == '1') {
         format();
-        vTaskDelay(2000);
+        vTaskDelay(1500);
         telas();
       } else if (key == '2') {
         telas();
@@ -1097,8 +1099,6 @@ void telafinal(){
   lcd.print("PRONTO PARA OPERAR");
   lcd.setCursor(5, 3);
   lcd.print("SHOWROOM-SP");
-
-  
 
   while (opnav == true) { 
 

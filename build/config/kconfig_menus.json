@@ -27377,6 +27377,137 @@
                 "children": [
                     {
                         "children": [],
+                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
+                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
+                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
+                        "range": null,
+                        "title": "Enable DS peripheral support",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
+                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
+                        "range": null,
+                        "title": "Enable support for legacy formats",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-secure-cert-manager",
+                "title": "ESP Secure Cert Manager",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": null,
+                                "id": "DIAG_DATA_STORE_RTC",
+                                "name": "DIAG_DATA_STORE_RTC",
+                                "range": null,
+                                "title": "RTC memory",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
+                                "help": "Just a placeholder. This data store type is not supported as of now",
+                                "id": "DIAG_DATA_STORE_FLASH",
+                                "name": "DIAG_DATA_STORE_FLASH",
+                                "range": null,
+                                "title": "Flash",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
+                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
+                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
+                        "title": "Diagnostics data store destination",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
+                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
+                        "range": [
+                            50,
+                            90
+                        ],
+                        "title": "Reporting watermark percentage",
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
+                                "id": "RTC_STORE_DATA_SIZE",
+                                "name": "RTC_STORE_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    7168
+                                ],
+                                "title": "RTC store data size",
+                                "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_RTC",
+                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
+                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
+                                "range": [
+                                    512,
+                                    3072
+                                ],
+                                "title": "Maximum size of critical data store",
+                                "type": "int"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_RTC",
+                        "id": "component-config-diagnostics-data-store-rtc-store",
+                        "title": "RTC Store",
+                        "type": "menu"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "DIAG_DATA_STORE_FLASH",
+                                "help": "Diagnostics data is stored in this partition",
+                                "id": "FLASH_STORE_PARTITION_LABEL",
+                                "name": "FLASH_STORE_PARTITION_LABEL",
+                                "range": null,
+                                "title": "Diagnostics data partition name",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": "DIAG_DATA_STORE_FLASH",
+                        "id": "component-config-diagnostics-data-store-flash-store",
+                        "title": "Flash Store",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-diagnostics-data-store",
+                "title": "Diagnostics data store",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
                         "depends_on": null,
                         "help": "Toggle SD card support\nThis requires IDF v5+ as older ESP-IDF do not support SD card erase.",
                         "id": "LITTLEFS_SDMMC_SUPPORT",
@@ -27866,354 +27997,6 @@
             {
                 "children": [
                     {
-                        "children": [],
-                        "depends_on": "!IDF_TARGET_ESP32 && !IDF_TARGET_ESP32C2",
-                        "help": "Enable the DS peripheral support. Not supported on esp32 and esp32c2.",
-                        "id": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "name": "ESP_SECURE_CERT_DS_PERIPHERAL",
-                        "range": null,
-                        "title": "Enable DS peripheral support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option enables support for the legacy formats along with\nthe current format in the esp_secure_cert component.\nThe current format is\ncust_flash_tlv\nThe legacy formats are as follows:\ncust_flash\nnvs",
-                        "id": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "name": "ESP_SECURE_CERT_SUPPORT_LEGACY_FORMATS",
-                        "range": null,
-                        "title": "Enable support for legacy formats",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-secure-cert-manager",
-                "title": "ESP Secure Cert Manager",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
-                        "help": null,
-                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
-                        "range": null,
-                        "title": null,
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_ANSI",
-                                "name": "DSP_ANSI",
-                                "range": null,
-                                "title": "ANSI C",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
-                                "help": null,
-                                "id": "DSP_OPTIMIZED",
-                                "name": "DSP_OPTIMIZED",
-                                "range": null,
-                                "title": "Optimized",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
-                        "id": "component-config-dsp-library-dsp-optimization",
-                        "name": "DSP_OPTIMIZATION",
-                        "title": "DSP Optimization",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_OPTIMIZATION",
-                        "name": "DSP_OPTIMIZATION",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_512",
-                                "name": "DSP_MAX_FFT_SIZE_512",
-                                "range": null,
-                                "title": "512",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_1024",
-                                "name": "DSP_MAX_FFT_SIZE_1024",
-                                "range": null,
-                                "title": "1024",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_2048",
-                                "name": "DSP_MAX_FFT_SIZE_2048",
-                                "range": null,
-                                "title": "2048",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_4096",
-                                "name": "DSP_MAX_FFT_SIZE_4096",
-                                "range": null,
-                                "title": "4096",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_8192",
-                                "name": "DSP_MAX_FFT_SIZE_8192",
-                                "range": null,
-                                "title": "8192",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_16384",
-                                "name": "DSP_MAX_FFT_SIZE_16384",
-                                "range": null,
-                                "title": "16384",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
-                                "help": null,
-                                "id": "DSP_MAX_FFT_SIZE_32768",
-                                "name": "DSP_MAX_FFT_SIZE_32768",
-                                "range": null,
-                                "title": "32768",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This is default FFT size for internal usage.",
-                        "id": "component-config-dsp-library-maximum-fft-length",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "title": "Maximum FFT length",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "DSP_MAX_FFT_SIZE",
-                        "name": "DSP_MAX_FFT_SIZE",
-                        "range": null,
-                        "title": null,
-                        "type": "int"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-dsp-library",
-                "title": "DSP Library",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": null,
-                                "id": "DIAG_DATA_STORE_RTC",
-                                "name": "DIAG_DATA_STORE_RTC",
-                                "range": null,
-                                "title": "RTC memory",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice DIAG_DATA_STORE_RTC_OR_FLASH>",
-                                "help": "Just a placeholder. This data store type is not supported as of now",
-                                "id": "DIAG_DATA_STORE_FLASH",
-                                "name": "DIAG_DATA_STORE_FLASH",
-                                "range": null,
-                                "title": "Flash",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "This option configures the place to store diagnostics data: RTC memory or Flash.\n\nFlash store needs an additional patition table entry.\nNOTE: Diagnostics data partition must be encrypted if Flash Encryption is enabled.",
-                        "id": "component-config-diagnostics-data-store-diagnostics-data-store-destination",
-                        "name": "DIAG_DATA_STORE_RTC_OR_FLASH",
-                        "title": "Diagnostics data store destination",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Data store has facility to post an event when buffer is filled to a configured level.\nThis option configures the reporting watermark for critical and non critical data.",
-                        "id": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "name": "DIAG_DATA_STORE_REPORTING_WATERMARK_PERCENT",
-                        "range": [
-                            50,
-                            90
-                        ],
-                        "title": "Reporting watermark percentage",
-                        "type": "int"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "RTC data store is divided into two parts to store critical and non-critical data.\nThis option configures the total size of data store.\nNOTE: On ESP32 devices, from esp-idf release v4.3 and onwards we can use all 8K RTC memory,\nso max range is specified as 7K. On releases before v4.3 we can only access maximum 4K RTC memory and\nRTC store uses few bytes for its operation so default for ESP32 is set to 3K.",
-                                "id": "RTC_STORE_DATA_SIZE",
-                                "name": "RTC_STORE_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    7168
-                                ],
-                                "title": "RTC store data size",
-                                "type": "int"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_RTC",
-                                "help": "This option configures the size of critical data buffer and remaining is used for\nnon critical data buffer.",
-                                "id": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "name": "RTC_STORE_CRITICAL_DATA_SIZE",
-                                "range": [
-                                    512,
-                                    3072
-                                ],
-                                "title": "Maximum size of critical data store",
-                                "type": "int"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_RTC",
-                        "id": "component-config-diagnostics-data-store-rtc-store",
-                        "title": "RTC Store",
-                        "type": "menu"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "DIAG_DATA_STORE_FLASH",
-                                "help": "Diagnostics data is stored in this partition",
-                                "id": "FLASH_STORE_PARTITION_LABEL",
-                                "name": "FLASH_STORE_PARTITION_LABEL",
-                                "range": null,
-                                "title": "Diagnostics data partition name",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": "DIAG_DATA_STORE_FLASH",
-                        "id": "component-config-diagnostics-data-store-flash-store",
-                        "title": "Flash Store",
-                        "type": "menu"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-diagnostics-data-store",
-                "title": "Diagnostics data store",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "If enabled (default), the esp-modem automatically defragments CMUX messages\nto only pass the completed CMUX message to higher layers.\nThis is useful for messages in command mode (if they're received fragmented).\nIt's not a problem for messages in data mode as the upper layer (PPP protocol)\ndefines message boundaries.\nKeep the default to true for most cases (as most devices use simply 1 byte CMUX\nlength, as the internal Rx buffer of size >= 256 bytes won't overflow)\nSet to false if your devices uses 2 byte CMUX payload (e.g. A7672S).\nThe operation would work without an issue in data mode, but some replies\nin command mode might come fragmented in rare cases so might need to retry\nAT commands.",
-                        "id": "ESP_MODEM_CMUX_DEFRAGMENT_PAYLOAD",
-                        "name": "ESP_MODEM_CMUX_DEFRAGMENT_PAYLOAD",
-                        "range": null,
-                        "title": "Defragment CMUX messages internally",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "If enabled we will process the ongoing AT command by growing the current\nbuffer (if we've run out the preconfigured buffer).\nIf disabled, we simply report a failure.\nUse this if additional allocation is not a problem and you need to reliably process\nall commands, usually with sporadically longer responses than the configured buffer.\nCould be also used to defragment AT replies in CMUX mode if CMUX_DEFRAGMENT_PAYLOAD=n",
-                        "id": "ESP_MODEM_USE_INFLATABLE_BUFFER_IF_NEEDED",
-                        "name": "ESP_MODEM_USE_INFLATABLE_BUFFER_IF_NEEDED",
-                        "range": null,
-                        "title": "Use inflatable buffer in DCE",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Some devices might need a pause before sending SABM command that creates\nvirtual terminal. This delay applies only to establishing a CMUX mode.\nThe typical reason for failing SABM request without a delay is that\nsome devices (SIM800) send MSC requests just after opening a new DLCI.",
-                        "id": "ESP_MODEM_CMUX_DELAY_AFTER_DLCI_SETUP",
-                        "name": "ESP_MODEM_CMUX_DELAY_AFTER_DLCI_SETUP",
-                        "range": null,
-                        "title": "Delay in ms to wait before creating another virtual terminal",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "If enabled, the CMUX protocol would only use 1 byte size field.\nYou can use this option for devices that support only short CMUX payloads\nto make the protocol more robust on noisy environments or when underlying\ntransport gets corrupted often (for example by Rx buffer overflows)",
-                        "id": "ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY",
-                        "name": "ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY",
-                        "range": null,
-                        "title": "CMUX to support only short payloads (<128 bytes)",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "ESP_MODEM_ADD_CUSTOM_MODULE",
-                                "help": "Name of the header file in the main component which implements esp_modem_create_custom_dce()\ncalled from C-API for creating esp_modem_dce object.\nThis header provides definition of the custom module with some additional and/or updated commands\nand API. It also defines creation of DCE based on this custom module, typically calling:\ndce_factory::Factory::create_unique_dce_from<CustomModule, DCE*>(dce_config, std::move(dte), netif)\nPlease refer to the pppos_client example for more details.",
-                                "id": "ESP_MODEM_CUSTOM_MODULE_HEADER",
-                                "name": "ESP_MODEM_CUSTOM_MODULE_HEADER",
-                                "range": null,
-                                "title": "Header file name which defines custom DCE creation",
-                                "type": "string"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "If enabled, we adapt the C-API to create a DCE from a user defined class",
-                        "id": "ESP_MODEM_ADD_CUSTOM_MODULE",
-                        "name": "ESP_MODEM_ADD_CUSTOM_MODULE",
-                        "range": null,
-                        "title": "Add support for custom module in C-API",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-esp-modem",
-                "title": "esp-modem",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
                         "children": [
                             {
                                 "children": [],
@@ -28489,6 +28272,223 @@
                 "depends_on": null,
                 "id": "component-config-esp-rainmaker-common",
                 "title": "ESP RainMaker Common",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3",
+                        "help": null,
+                        "id": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "name": "DSP_OPTIMIZATIONS_SUPPORTED",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_ANSI",
+                                "name": "DSP_ANSI",
+                                "range": null,
+                                "title": "ANSI C",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "DSP_OPTIMIZATIONS_SUPPORTED && <choice DSP_OPTIMIZATION>",
+                                "help": null,
+                                "id": "DSP_OPTIMIZED",
+                                "name": "DSP_OPTIMIZED",
+                                "range": null,
+                                "title": "Optimized",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "An ANSI C version could be used for verification and debug purpose,\nor for chips where an optimized version is not available.",
+                        "id": "component-config-dsp-library-dsp-optimization",
+                        "name": "DSP_OPTIMIZATION",
+                        "title": "DSP Optimization",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_OPTIMIZATION",
+                        "name": "DSP_OPTIMIZATION",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_512",
+                                "name": "DSP_MAX_FFT_SIZE_512",
+                                "range": null,
+                                "title": "512",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_1024",
+                                "name": "DSP_MAX_FFT_SIZE_1024",
+                                "range": null,
+                                "title": "1024",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_2048",
+                                "name": "DSP_MAX_FFT_SIZE_2048",
+                                "range": null,
+                                "title": "2048",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_4096",
+                                "name": "DSP_MAX_FFT_SIZE_4096",
+                                "range": null,
+                                "title": "4096",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_8192",
+                                "name": "DSP_MAX_FFT_SIZE_8192",
+                                "range": null,
+                                "title": "8192",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_16384",
+                                "name": "DSP_MAX_FFT_SIZE_16384",
+                                "range": null,
+                                "title": "16384",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice DSP_MAX_FFT_SIZE>",
+                                "help": null,
+                                "id": "DSP_MAX_FFT_SIZE_32768",
+                                "name": "DSP_MAX_FFT_SIZE_32768",
+                                "range": null,
+                                "title": "32768",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This is default FFT size for internal usage.",
+                        "id": "component-config-dsp-library-maximum-fft-length",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "title": "Maximum FFT length",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "DSP_MAX_FFT_SIZE",
+                        "name": "DSP_MAX_FFT_SIZE",
+                        "range": null,
+                        "title": null,
+                        "type": "int"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-dsp-library",
+                "title": "DSP Library",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "If enabled (default), the esp-modem automatically defragments CMUX messages\nto only pass the completed CMUX message to higher layers.\nThis is useful for messages in command mode (if they're received fragmented).\nIt's not a problem for messages in data mode as the upper layer (PPP protocol)\ndefines message boundaries.\nKeep the default to true for most cases (as most devices use simply 1 byte CMUX\nlength, as the internal Rx buffer of size >= 256 bytes won't overflow)\nSet to false if your devices uses 2 byte CMUX payload (e.g. A7672S).\nThe operation would work without an issue in data mode, but some replies\nin command mode might come fragmented in rare cases so might need to retry\nAT commands.",
+                        "id": "ESP_MODEM_CMUX_DEFRAGMENT_PAYLOAD",
+                        "name": "ESP_MODEM_CMUX_DEFRAGMENT_PAYLOAD",
+                        "range": null,
+                        "title": "Defragment CMUX messages internally",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "If enabled we will process the ongoing AT command by growing the current\nbuffer (if we've run out the preconfigured buffer).\nIf disabled, we simply report a failure.\nUse this if additional allocation is not a problem and you need to reliably process\nall commands, usually with sporadically longer responses than the configured buffer.\nCould be also used to defragment AT replies in CMUX mode if CMUX_DEFRAGMENT_PAYLOAD=n",
+                        "id": "ESP_MODEM_USE_INFLATABLE_BUFFER_IF_NEEDED",
+                        "name": "ESP_MODEM_USE_INFLATABLE_BUFFER_IF_NEEDED",
+                        "range": null,
+                        "title": "Use inflatable buffer in DCE",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Some devices might need a pause before sending SABM command that creates\nvirtual terminal. This delay applies only to establishing a CMUX mode.\nThe typical reason for failing SABM request without a delay is that\nsome devices (SIM800) send MSC requests just after opening a new DLCI.",
+                        "id": "ESP_MODEM_CMUX_DELAY_AFTER_DLCI_SETUP",
+                        "name": "ESP_MODEM_CMUX_DELAY_AFTER_DLCI_SETUP",
+                        "range": null,
+                        "title": "Delay in ms to wait before creating another virtual terminal",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "If enabled, the CMUX protocol would only use 1 byte size field.\nYou can use this option for devices that support only short CMUX payloads\nto make the protocol more robust on noisy environments or when underlying\ntransport gets corrupted often (for example by Rx buffer overflows)",
+                        "id": "ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY",
+                        "name": "ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY",
+                        "range": null,
+                        "title": "CMUX to support only short payloads (<128 bytes)",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "ESP_MODEM_ADD_CUSTOM_MODULE",
+                                "help": "Name of the header file in the main component which implements esp_modem_create_custom_dce()\ncalled from C-API for creating esp_modem_dce object.\nThis header provides definition of the custom module with some additional and/or updated commands\nand API. It also defines creation of DCE based on this custom module, typically calling:\ndce_factory::Factory::create_unique_dce_from<CustomModule, DCE*>(dce_config, std::move(dte), netif)\nPlease refer to the pppos_client example for more details.",
+                                "id": "ESP_MODEM_CUSTOM_MODULE_HEADER",
+                                "name": "ESP_MODEM_CUSTOM_MODULE_HEADER",
+                                "range": null,
+                                "title": "Header file name which defines custom DCE creation",
+                                "type": "string"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "If enabled, we adapt the C-API to create a DCE from a user defined class",
+                        "id": "ESP_MODEM_ADD_CUSTOM_MODULE",
+                        "name": "ESP_MODEM_ADD_CUSTOM_MODULE",
+                        "range": null,
+                        "title": "Add support for custom module in C-API",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-modem",
+                "title": "esp-modem",
                 "type": "menu"
             },
             {
