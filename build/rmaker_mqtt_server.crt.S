@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/joao.santos/esp/Prototipo/managed_components/espressif__esp_rainmaker/server_certs/rmaker_mqtt_server.crt
+/* * Data converted from C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_rainmaker/server_certs/rmaker_mqtt_server.crt
  * (null byte appended)
  */
 .data

@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/joao.santos/esp/v5.1.3/esp-idf/components/esp_hw_support
+# Install script for directory: C:/Users/victor.martins/esp/v5.1.4/esp-idf/components/esp_hw_support
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,11 +34,11 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "C:/Espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-objdump.exe")
+  set(CMAKE_OBJDUMP "C:/Users/victor.martins/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-objdump.exe")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/joao.santos/esp/Prototipo/build/esp-idf/esp_hw_support/port/esp32/cmake_install.cmake")
+  include("C:/Users/victor.martins/esp/Prototype/build/esp-idf/esp_hw_support/port/esp32/cmake_install.cmake")
 endif()
 

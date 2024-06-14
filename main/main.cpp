@@ -1090,5 +1090,4 @@ void telafinal(){
   lcd.print("PRONTO PARA OPERAR");
   lcd.setCursor(5, 3);
   lcd.print("SHOWROOM-SP");
-  vTaskDelay(50);
 }
