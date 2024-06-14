@@ -1108,7 +1108,8 @@ void telafinal(){
       vTaskDelay(70);
       if (key == 'A') {
         esp_restart();
-        vTaskDelay(10);
+        vTaskDelay(20);
+        vTaskDelay(20);
       }
     }
   } 
