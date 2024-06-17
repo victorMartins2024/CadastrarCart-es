@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.6 main.cpp
+  Telemetry V0.7.8 main.cpp
      
   INA226
   MFRC522 
@@ -1115,5 +1115,3 @@ void telafinal(){
     }
   } 
 }
-
-// Joao nao esta conseguindo 
