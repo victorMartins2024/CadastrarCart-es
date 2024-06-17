@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.8 main.cpp
+  Telemetry V0.7.9 main.cpp
      
   INA226
   MFRC522 
@@ -492,7 +492,8 @@ void CadastrarCartao(){
     client.publish("test/lista de cadastro", UIDLists.c_str());
     vTaskDelay(500);
     lcd.clear();
-    lcd.print("Cadastrado");
+    lcd.setCursor(5, 2);
+    lcd.print("CADASTRADO");
     vTaskDelay(1000);
     cadastrar();
   }
