@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/victor.martins/esp/Prototype/managed_components/espressif__esp_rainmaker/server_certs/rmaker_claim_service_server.crt
+/* * Data converted from C:/Users/joao.santos/esp/Prototype/managed_components/espressif__esp_rainmaker/server_certs/rmaker_claim_service_server.crt
  * (null byte appended)
  */
 .data

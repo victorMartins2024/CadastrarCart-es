@@ -364,7 +364,6 @@ void xTaskNav(void *pvParameters){
     lcd.noCursor();
     lcd.noBlink();
     
-
     if (WiFi.status() != WL_CONNECTED  || !client.connected())
       recon();
     client.loop();
@@ -502,7 +501,6 @@ void CadastrarCartao(){
 // -----------------------------------------------------------------
 // -----Erease uid list-----
 void format(){
-
   lcd.clear();
   lcd.setCursor(5, 2);
   lcd.print("FORMATADO");
@@ -804,7 +802,7 @@ void cadastrar(){
     char key = kpd.getChar();
     vTaskDelay(70);
 
-    if (key != 'N') {
+    if (key != 'N' && key != 'F') {
       vTaskDelay(70);
       if (key == 'C') {
         dell();
@@ -1111,7 +1109,7 @@ void telafinal(){
     if (key != 'N'){
       vTaskDelay(70);
       if (key == 'A') {
-        lcd.clear();
+        vTaskDelay(50);
         esp_restart();
       }
     }
