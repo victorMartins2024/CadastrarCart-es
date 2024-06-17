@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.2 main.cpp
+  Telemetry V0.7.3 main.cpp
      
   INA226
   MFRC522 
@@ -691,6 +691,7 @@ void eng(){
   lcd.print("PASSWORD:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
+
   while (1) {
 
     char key = kpd.getChar();
@@ -701,9 +702,10 @@ void eng(){
       if (key == 'C') {
         psswdcheck = false;
         resetPassword(); 
-      }else if (key == '#') {
+      } else if (key == '#') {
+        opnav = true;
         apx();
-      }else if (key == 'D') {
+      } else if (key == 'D') {
         if (passvalue == true) {
           aprovadoPass();
           passvalue = false;
