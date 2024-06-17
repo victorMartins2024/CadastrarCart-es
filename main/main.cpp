@@ -817,7 +817,7 @@ void cadastrar(){
       }else {
         tag(key, 1);
       }
-    }
+    } CadastrarCartao();
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
   }
