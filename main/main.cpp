@@ -1113,5 +1113,3 @@ void telafinal(){
     }
   } 
 }
-
-// joao pé de feijao 
