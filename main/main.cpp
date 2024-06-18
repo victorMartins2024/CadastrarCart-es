@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.9 main.cpp
+  Telemetry V0.8.0 main.cpp
      
   INA226
   MFRC522 
@@ -162,7 +162,6 @@ int  manup =  0; //preve
 int  manuc =  0; //corre
 bool opnav;
 bool psswdcheck;
-bool passvalue = true;
 
 // ----------------------------------------------------------------
 // --Preferences Key---
@@ -497,6 +496,8 @@ void CadastrarCartao(){
     vTaskDelay(1000);
     cadastrar();
   }
+   rfid.PICC_HaltA();
+   rfid.PCD_StopCrypto1();
 }
 
 // -----------------------------------------------------------------
@@ -705,10 +706,7 @@ void eng(){
         opnav = true;
         apx();
       } else if (key == 'D') {
-        if (passvalue == true) {
           aprovadoPass();
-          passvalue = false;
-        }
       } else if (key == 'A') {
         lcd.clear();
         esp_restart();
@@ -796,7 +794,7 @@ void cadastrar(){
   lcd.print("RFID:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
-  passvalue = false;
+
 
   while (opnav == true) {
 
@@ -821,8 +819,6 @@ void cadastrar(){
         tag(key, 1);
       }
     }
-    rfid.PICC_HaltA();
-    rfid.PCD_StopCrypto1();
   }
 }
 
@@ -1111,6 +1107,7 @@ void telafinal(){
       vTaskDelay(70);
       if (key == 'A') {
         vTaskDelay(50);
+        lcd.clear();
         esp_restart();
       }
     }
