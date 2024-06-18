@@ -454,7 +454,7 @@ void tag(char key, int buffer){
     }
     currenttaglen++;
     vTaskDelay(20); 
-  }else{
+  }else if(buffer == 0){
     lcd.setCursor(a, 2);
     lcd.print("*");
     a++;
@@ -469,6 +469,13 @@ void tag(char key, int buffer){
     if (currentpasslen == maxpasslen) {
       aprovadoPass();
     }
+  }else if(buffer == 2){
+    lcd.setCursor(c, 1);
+    lcd.print(key);
+    b++;
+
+    vTaskDelay(20); 
+    // sistema de andar casa do display para o horimetro
   }
 }
 
@@ -476,6 +483,7 @@ void tag(char key, int buffer){
 // -----cadastro-----
 void CadastrarCartao(){
   String conteudo = "";
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
@@ -805,24 +813,22 @@ void cadastrar(){
 
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
-      if (key == 'C') {
+      if (key == 'C')
         dell();
-      } else if ( key == 'D'){
+      else if ( key == 'D')
         CadastrarCartao();
-      } else if (key == '#') {
+      else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B') 
+      }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*') {
+      else if (key == '*') 
         erease(key, 0);
-      }else {
+      else 
         tag(key, 1);
-      }
-    } CadastrarCartao();
-    rfid.PICC_HaltA();
-    rfid.PCD_StopCrypto1();
+      
+    } 
   }
 }
 
@@ -960,14 +966,14 @@ void input(){
         hourmeter   = key;
         hourmeterT  = hourmeter;
         hourmeterB  = hourmeter;
-
-        lcd.setCursor(11, 1);
+        int c = 10;
+        lcd.setCursor(c, 0);
         lcd.print(key);
-        vTaskDelay(50);
+        c++;
+        vTaskDelay(50);     
       }
     }else if (key == '#')
-      telas();
-    
+      screens();
   }
 }
 
