@@ -40,6 +40,7 @@
 // ---defines---
 #define SHUNT_RESISTENCE  0.75
 char keypad[19] = "123A456B789C*0#DNF";
+char keypad2[19] = "123A456B789C*0#DNF";
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
@@ -54,8 +55,8 @@ char keypad[19] = "123A456B789C*0#DNF";
 #define   SCK       14
 #define   MISO      2
 #define   MOSI      15
-#define   SDA       1
-#define   SCL       3 
+#define   SDA       32
+#define   SCL       33 
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
@@ -114,6 +115,7 @@ void garfos();
 void format();
 void recon();
 void telas();
+void input();
 void dell();
 void eng();
 void apx();
@@ -214,7 +216,6 @@ extern "C" void app_main(){
 
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
-
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
@@ -452,7 +453,7 @@ void tag(char key, int buffer){
     }
     currenttaglen++;
     vTaskDelay(20); 
-  }else{
+  }else if(buffer == 0){
     lcd.setCursor(a, 2);
     lcd.print("*");
     a++;
@@ -467,6 +468,13 @@ void tag(char key, int buffer){
     if (currentpasslen == maxpasslen) {
       aprovadoPass();
     }
+  }else if(buffer == 2){
+    lcd.setCursor(c, 1);
+    lcd.print(key);
+    b++;
+
+    vTaskDelay(20); 
+    // sistema de andar casa do display para o horimetro
   }
 }
 
@@ -474,6 +482,7 @@ void tag(char key, int buffer){
 // -----cadastro-----
 void CadastrarCartao(){
   String conteudo = "";
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
@@ -731,7 +740,7 @@ void screens(){
   lcd.setCursor(0, 2);
   lcd.print("2- EXCLUIR");
   lcd.setCursor(0, 3);
-  lcd.print("#- SAIR");
+  lcd.print("3- horimetro/#- SAIR");
 
   while (opnav == true) {
 
@@ -746,7 +755,9 @@ void screens(){
       } else if (key == '2') {
         opnav = true;
         excluir();
-      } else if (key == '#') {
+      }else if (key == '3') 
+        input();  
+      else if (key == '#') {
         apx();
       }
     }
@@ -772,11 +783,11 @@ void telas(){
 
     if (key != 'N') {
       vTaskDelay(30);
-      if (key == '1') {
+      if (key == '1') 
         formatar();
-      } else if (key == '2') {
+      else if (key == '2') 
         excluir();
-      } else if (key == '#') {
+      else if (key == '#') {
         opnav = true;  
         apx();
       }
@@ -803,22 +814,22 @@ void cadastrar(){
 
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
-      if (key == 'C') {
+      if (key == 'C')
         dell();
-      } else if ( key == 'D'){
+      else if ( key == 'D')
         CadastrarCartao();
-      } else if (key == '#') {
+      else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B') 
+      }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*') {
+      else if (key == '*') 
         erease(key, 0);
-      }else {
+      else 
         tag(key, 1);
-      }
-    }
+      
+    } 
   }
 }
 
@@ -934,6 +945,36 @@ void formatar(){
         telas();
       }
     }  
+  }
+}
+
+// -----------------------------------------------------------------
+// -----Input data-----
+void input(){
+  lcd.clear();
+  lcd.setCursor(1,0);
+  lcd.print("Horimetro:");
+  lcd.setCursor(14, 3);
+  lcd.print("#-SAIR");
+
+  while (opnav == true){
+    char key = kpd.getChar();
+    vTaskDelay(50);
+
+    if (key != 'N'){
+      if (key != 'A' || key != 'B' || key != 'D'){
+        vTaskDelay(50);
+        hourmeter   = key;
+        hourmeterT  = hourmeter;
+        hourmeterB  = hourmeter;
+        int c = 10;
+        lcd.setCursor(c, 0);
+        lcd.print(key);
+        c++;
+        vTaskDelay(50);     
+      }
+    }else if (key == '#')
+      screens();
   }
 }
 
@@ -1112,4 +1153,8 @@ void telafinal(){
       }
     }
   } 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d68a488df6efb29672a8599557cf113ee7ab79cc
