@@ -1153,4 +1153,8 @@ void telafinal(){
       }
     }
   } 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d68a488df6efb29672a8599557cf113ee7ab79cc
