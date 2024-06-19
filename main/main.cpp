@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.7.2 main.cpp
+  Telemetry V0.8.0 main.cpp
      
   INA226
   MFRC522 
@@ -55,8 +55,8 @@ char keypad2[19] = "123A456B789C*0#DNF";
 #define   SCK       14
 #define   MISO      2
 #define   MOSI      15
-#define   SDA       1
-#define   SCL       3 
+#define   SDA       32
+#define   SCL       33 
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
@@ -164,7 +164,6 @@ int  manup =  0; //preve
 int  manuc =  0; //corre
 bool opnav;
 bool psswdcheck;
-bool passvalue = true;
 
 // ----------------------------------------------------------------
 // --Preferences Key---
@@ -501,10 +500,13 @@ void CadastrarCartao(){
     client.publish("test/lista de cadastro", UIDLists.c_str());
     vTaskDelay(500);
     lcd.clear();
-    lcd.print("Cadastrado");
+    lcd.setCursor(5, 2);
+    lcd.print("CADASTRADO");
     vTaskDelay(1000);
     cadastrar();
   }
+   rfid.PICC_HaltA();
+   rfid.PCD_StopCrypto1();
 }
 
 // -----------------------------------------------------------------
@@ -698,6 +700,7 @@ void eng(){
   lcd.print("PASSWORD:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
+
   while (1) {
 
     char key = kpd.getChar();
@@ -708,13 +711,11 @@ void eng(){
       if (key == 'C') {
         psswdcheck = false;
         resetPassword(); 
-      }else if (key == '#') {
+      } else if (key == '#') {
+        opnav = true;
         apx();
-      }else if (key == 'D') {
-        if (passvalue == true) {
+      } else if (key == 'D') {
           aprovadoPass();
-          passvalue = false;
-        }
       } else if (key == 'A') {
         lcd.clear();
         esp_restart();
@@ -804,7 +805,7 @@ void cadastrar(){
   lcd.print("RFID:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
-  passvalue = false;
+
 
   while (opnav == true) {
 
@@ -1147,6 +1148,7 @@ void telafinal(){
       vTaskDelay(70);
       if (key == 'A') {
         vTaskDelay(50);
+        lcd.clear();
         esp_restart();
       }
     }
