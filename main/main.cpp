@@ -96,6 +96,7 @@ void xTaskNav(void *pvParameters);
 void erease(char key, int buffer);
 void tag(char key, int buffer);
 void CadastrarCartao();
+void dell(int buffer);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
@@ -104,6 +105,7 @@ void manutencao();
 void telafinal();
 void cadastrar();
 void vazamento();
+void hourcheck();
 void readpref();
 void formatar();
 void screens();
@@ -116,7 +118,6 @@ void format();
 void recon();
 void telas();
 void input();
-void dell();
 void eng();
 void apx();
 
@@ -151,6 +152,7 @@ int hourmeterB;
 // ----Constants----
 byte a = 7;
 byte b = 5;
+byte c = 10;
 byte maxtaglen = 6; //PassLenghtMax
 byte maxpasslen = 5;  //maxPasswordLength
 
@@ -227,7 +229,7 @@ extern "C" void app_main(){
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          4000,
+                          4500,
                           NULL,
                           1,
                           NULL,
@@ -389,7 +391,7 @@ void xTaskNav(void *pvParameters){
       }
     }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
-    vTaskDelay(500);
+    vTaskDelay(1500);
   }
 }
 
@@ -433,11 +435,18 @@ void ina226_setup(){
 
 // -----------------------------------------------------------------
 // -----dell-----
-void dell(){
-  currenttaglen = 0;
+void dell(int buffer){
   lcd.clear();
-  b = 5;
-  cadastrar();
+
+  if(buffer == 1){
+    currenttaglen = 0;
+    b = 5;
+    cadastrar();
+  }else if (buffer == 2){
+    c = 10;
+    input();
+  }
+  
 }
 
 // -----------------------------------------------------------------
@@ -448,33 +457,35 @@ void tag(char key, int buffer){
     lcd.print(key);
     b++;
 
-    if (b == 11) {
+    if (b == 11) 
       b = 5;  
-    }
+
     currenttaglen++;
     vTaskDelay(20); 
+
   }else if(buffer == 0){
     lcd.setCursor(a, 2);
     lcd.print("*");
     a++;
 
-    if (a == 11) {
+    if (a == 11) 
       a = 4; 
-    }
-
+    
     currentpasslen++;
     password.append(key);
 
-    if (currentpasslen == maxpasslen) {
+    if (currentpasslen == maxpasslen) 
       aprovadoPass();
-    }
+    
   }else if(buffer == 2){
-    lcd.setCursor(c, 1);
+    lcd.setCursor(c, 0);
     lcd.print(key);
-    b++;
+    c++;
+
+    if (c == 16)
+      c = 10;
 
     vTaskDelay(20); 
-    // sistema de andar casa do display para o horimetro
   }
 }
 
@@ -577,7 +588,15 @@ void erease(char key, int buffer){
       currentpasslen--;
       vTaskDelay(20); 
     }
-    
+  }else if (buffer == 2){
+    if (c == 10)
+      c = 10;
+    else {
+      key = ' ';
+      c--;
+      lcd.setCursor(c, 0);
+      lcd.print(key);
+    }
   }else{
     if (b == 5)
       b = 5;
@@ -587,7 +606,6 @@ void erease(char key, int buffer){
       lcd.setCursor(b, 1);    // fazer para tag
       lcd.print(key);
     }
-
     currenttaglen--;
     vTaskDelay(20); 
   }
@@ -740,7 +758,7 @@ void screens(){
   lcd.setCursor(0, 2);
   lcd.print("2- EXCLUIR");
   lcd.setCursor(0, 3);
-  lcd.print("3- horimetro/#- SAIR");
+  lcd.print("3- HORIMETRO/#- SAIR");
 
   while (opnav == true) {
 
@@ -815,7 +833,7 @@ void cadastrar(){
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
       if (key == 'C')
-        dell();
+        dell(1);
       else if ( key == 'D')
         CadastrarCartao();
       else if (key == '#'){ 
@@ -952,8 +970,8 @@ void formatar(){
 // -----Input data-----
 void input(){
   lcd.clear();
-  lcd.setCursor(1,0);
-  lcd.print("Horimetro:");
+  lcd.setCursor(0, 0);
+  lcd.print("HORIMETRO:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
 
@@ -962,22 +980,45 @@ void input(){
     vTaskDelay(50);
 
     if (key != 'N'){
-      if (key != 'A' || key != 'B' || key != 'D'){
-        vTaskDelay(50);
-        hourmeter   = key;
-        hourmeterT  = hourmeter;
-        hourmeterB  = hourmeter;
-        int c = 10;
-        lcd.setCursor(c, 0);
-        lcd.print(key);
-        c++;
-        vTaskDelay(50);     
-      }
-    }else if (key == '#')
-      screens();
+      vTaskDelay(20);
+      if (key == '#'){
+        screens();
+      }else if(key == 'A' || key == 'B')
+        vTaskDelay(5);
+      else if (key == 'D')
+        hourcheck();
+      else if (key == 'C'){
+        dell(2);
+      }else if (key == '*')
+        erease(key, 2);
+      else  
+        tag(key, 2);
+    }  
   }
 }
 
+// -----------------------------------------------------------------
+// -----hourmeter check-----
+void hourcheck(){
+  lcd.setCursor(0, 0);
+  lcd.print("O HORIMETRO ESTÁ CORRETO?");
+  lcd.setCursor(0, 1);
+  lcd.print(hourmeter);
+  lcd.setCursor(0, 3);
+  lcd.print("D-CONFIRMAR");
+  lcd.setCursor(15, 3);
+  lcd.print("C-CORRIGIR");
+
+  while(opnav == true){
+    char key = kpd.getChar();
+    vTaskDelay(50);
+    if(key == 'D')  
+      screens();
+    else if (key == 'C')
+      input();
+
+  }
+}
 // -----------------------------------------------------------------
 // -----Questions-----
 void vazamento(){
@@ -1153,8 +1194,4 @@ void telafinal(){
       }
     }
   } 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> d68a488df6efb29672a8599557cf113ee7ab79cc
