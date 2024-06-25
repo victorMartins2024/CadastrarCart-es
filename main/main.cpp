@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.0 main.cpp
+  Telemetry V0.8.2 main.cpp
      
   INA226
   MFRC522 
@@ -40,6 +40,7 @@
 // ---defines---
 #define SHUNT_RESISTENCE  0.75
 char keypad[19] = "123A456B789C*0#DNF";
+char keypad2[19] = "123A456B789C*0#DNF";
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
@@ -54,8 +55,8 @@ char keypad[19] = "123A456B789C*0#DNF";
 #define   SCK       14
 #define   MISO      2
 #define   MOSI      15
-#define   SDA       1
-#define   SCL       3 
+#define   SDA       32
+#define   SCL       33 
 
 // ---------------------------------------------------------------- 
 // ---connection infos--
@@ -95,6 +96,7 @@ void xTaskNav(void *pvParameters);
 void erease(char key, int buffer);
 void tag(char key, int buffer);
 void CadastrarCartao();
+void dell(int buffer);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
@@ -103,6 +105,7 @@ void manutencao();
 void telafinal();
 void cadastrar();
 void vazamento();
+void hourcheck();
 void readpref();
 void formatar();
 void screens();
@@ -114,7 +117,7 @@ void garfos();
 void format();
 void recon();
 void telas();
-void dell();
+void input();
 void eng();
 void apx();
 
@@ -149,6 +152,7 @@ int hourmeterB;
 // ----Constants----
 byte a = 7;
 byte b = 5;
+byte c = 10;
 byte maxtaglen = 6; //PassLenghtMax
 byte maxpasslen = 5;  //maxPasswordLength
 
@@ -215,7 +219,6 @@ extern "C" void app_main(){
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
 
-
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
                           2000,           // stack size in word
@@ -226,7 +229,7 @@ extern "C" void app_main(){
 
   xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          4000,
+                          4500,
                           NULL,
                           1,
                           NULL,
@@ -388,7 +391,7 @@ void xTaskNav(void *pvParameters){
       }
     }
     esp_task_wdt_reset();            // reset watchdog if dont return any error
-    vTaskDelay(500);
+    vTaskDelay(1500);
   }
 }
 
@@ -432,11 +435,18 @@ void ina226_setup(){
 
 // -----------------------------------------------------------------
 // -----dell-----
-void dell(){
-  currenttaglen = 0;
+void dell(int buffer){
   lcd.clear();
-  b = 5;
-  cadastrar();
+
+  if(buffer == 1){
+    currenttaglen = 0;
+    b = 5;
+    cadastrar();
+  }else if (buffer == 2){
+    c = 10;
+    input();
+  }
+  
 }
 
 // -----------------------------------------------------------------
@@ -447,26 +457,35 @@ void tag(char key, int buffer){
     lcd.print(key);
     b++;
 
-    if (b == 11) {
+    if (b == 11) 
       b = 5;  
-    }
+
     currenttaglen++;
     vTaskDelay(20); 
-  }else{
+
+  }else if(buffer == 0){
     lcd.setCursor(a, 2);
     lcd.print("*");
     a++;
 
-    if (a == 11) {
+    if (a == 11) 
       a = 4; 
-    }
-
+    
     currentpasslen++;
     password.append(key);
 
-    if (currentpasslen == maxpasslen) {
+    if (currentpasslen == maxpasslen) 
       aprovadoPass();
-    }
+    
+  }else if(buffer == 2){
+    lcd.setCursor(c, 0);
+    lcd.print(key);
+    c++;
+
+    if (c == 16)
+      c = 10;
+
+    vTaskDelay(20); 
   }
 }
 
@@ -474,6 +493,7 @@ void tag(char key, int buffer){
 // -----cadastro-----
 void CadastrarCartao(){
   String conteudo = "";
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
@@ -563,12 +583,20 @@ void erease(char key, int buffer){
     else {
       key = ' ';
       a--;
-      lcd.setCursor(a, 2);
+      lcd.setCursor(a, 2); 
       lcd.print(key);
       currentpasslen--;
-      vTaskDelay(20); 
+      vTaskDelay(20); // Password
     }
-    
+  }else if (buffer == 2){
+    if (c == 10)
+      c = 10;
+    else {
+      key = ' ';
+      c--;
+      lcd.setCursor(c, 0);
+      lcd.print(key); // Horimetro 
+    }
   }else{
     if (b == 5)
       b = 5;
@@ -578,7 +606,6 @@ void erease(char key, int buffer){
       lcd.setCursor(b, 1);    // fazer para tag
       lcd.print(key);
     }
-
     currenttaglen--;
     vTaskDelay(20); 
   }
@@ -689,6 +716,8 @@ void eng(){
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("PASSWORD:");
+  lcd.setCursor(0, 3);
+  lcd.print("D-CONFIRMAR");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
 
@@ -731,7 +760,7 @@ void screens(){
   lcd.setCursor(0, 2);
   lcd.print("2- EXCLUIR");
   lcd.setCursor(0, 3);
-  lcd.print("#- SAIR");
+  lcd.print("3- HORIMETRO/#- SAIR");
 
   while (opnav == true) {
 
@@ -746,7 +775,9 @@ void screens(){
       } else if (key == '2') {
         opnav = true;
         excluir();
-      } else if (key == '#') {
+      }else if (key == '3') 
+        input();  
+      else if (key == '#') {
         apx();
       }
     }
@@ -772,11 +803,11 @@ void telas(){
 
     if (key != 'N') {
       vTaskDelay(30);
-      if (key == '1') {
+      if (key == '1') 
         formatar();
-      } else if (key == '2') {
+      else if (key == '2') 
         excluir();
-      } else if (key == '#') {
+      else if (key == '#') {
         opnav = true;  
         apx();
       }
@@ -797,28 +828,26 @@ void cadastrar(){
 
 
   while (opnav == true) {
-
     char key = kpd.getChar();
     vTaskDelay(70);
-
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
-      if (key == 'C') {
-        dell();
-      } else if ( key == 'D'){
+      if (key == 'C')
+        dell(1);
+      else if ( key == 'D')
         CadastrarCartao();
-      } else if (key == '#') {
+      else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
         screens();
-      } else if (key == 'A' || key == 'B') 
+      }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*') {
+      else if (key == '*') 
         erease(key, 0);
-      }else {
+      else 
         tag(key, 1);
-      }
-    }
+      
+    } 
   }
 }
 
@@ -937,6 +966,62 @@ void formatar(){
   }
 }
 
+// -----------------------------------------------------------------
+// -----Input data-----
+void input(){
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("HORIMETRO:");
+  lcd.setCursor(0, 3);
+  lcd.print("D-CONFIRMAR");
+  lcd.setCursor(14, 3);
+  lcd.print("#-SAIR");
+
+  while (opnav == true) {
+    char key = kpd.getChar();
+    vTaskDelay(50);
+    if (key != 'N' && key != 'F'){
+      vTaskDelay(50);
+      if (key == '#'){
+        screens();
+      }else if(key == 'A' || key == 'B')
+        vTaskDelay(5);
+      else if (key == 'D')
+        hourcheck();
+      else if (key == 'C'){
+        dell(2);
+      }else if (key == '*')
+        erease(key, 2);
+      else  
+        tag(key, 2);
+    }  
+  }
+}
+
+// -----------------------------------------------------------------
+// -----hourmeter check-----
+void hourcheck(){
+  lcd.clear();
+  lcd.setCursor(6, 0);
+  lcd.print("HORIMETRO");
+  lcd.setCursor(4, 1);
+  lcd.print("ESTA CORRETO?");
+  lcd.setCursor(6, 2);
+  lcd.print(hourmeter);
+  lcd.setCursor(0, 3);
+  lcd.print("D-CONFIRMAR");
+  lcd.setCursor(12, 3);
+  lcd.print("B-VOLTAR");
+
+  while(opnav == true){
+    char key = kpd.getChar();
+    vTaskDelay(50);
+    if(key == 'D')  
+      screens();
+    else if (key == 'B')
+      input();
+  }
+}
 // -----------------------------------------------------------------
 // -----Questions-----
 void vazamento(){
