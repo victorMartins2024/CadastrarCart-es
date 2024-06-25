@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.2 main.cpp
+  Telemetry V0.8.3 main.cpp
      
   INA226
   MFRC522 
@@ -983,6 +983,8 @@ void input(){
     if (key != 'N' && key != 'F'){
       vTaskDelay(50);
       if (key == '#'){
+        vTaskDelay(20);
+        c = 10;
         screens();
       }else if(key == 'A' || key == 'B')
         vTaskDelay(5);
