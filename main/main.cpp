@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.3 main.cpp
+  Telemetry V0.8.4 main.cpp
      
   INA226
   MFRC522 
@@ -40,7 +40,6 @@
 // ---defines---
 #define SHUNT_RESISTENCE  0.75
 char keypad[19] = "123A456B789C*0#DNF";
-char keypad2[19] = "123A456B789C*0#DNF";
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
@@ -153,7 +152,7 @@ int hourmeterB;
 byte a = 7;
 byte b = 5;
 byte c = 10;
-byte maxtaglen = 5; //PassLenghtMax
+byte maxtaglen = 6; //PassLenghtMax
 byte maxpasslen = 5;  //maxPasswordLength
 
 // ----------------------------------------------------------------
@@ -460,9 +459,6 @@ void tag(char key, int buffer){
     if (b == 11) 
       b = 5;  
 
-    if (currenttaglen == maxtaglen)
-      CadastrarCartao();
-    
     currenttaglen++;
     vTaskDelay(20); 
 
@@ -496,7 +492,7 @@ void tag(char key, int buffer){
 // -----cadastro-----
 void CadastrarCartao(){
   String conteudo = "";
-  //while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
   while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
@@ -598,7 +594,7 @@ void erease(char key, int buffer){
       key = ' ';
       c--;
       lcd.setCursor(c, 0);
-      lcd.print(key); // Horimetro 
+      lcd.print(key);
     }
   }else{
     if (b == 5)
@@ -837,6 +833,8 @@ void cadastrar(){
       vTaskDelay(70);
       if (key == 'C')
         dell(1);
+      else if ( key == 'D')
+        CadastrarCartao();
       else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
@@ -973,19 +971,16 @@ void input(){
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("HORIMETRO:");
-  lcd.setCursor(0, 3);
-  lcd.print("D-CONFIRMAR");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
 
-  while (opnav == true) {
+  while (opnav == true){
     char key = kpd.getChar();
     vTaskDelay(50);
-    if (key != 'N' && key != 'F'){
-      vTaskDelay(50);
+
+    if (key != 'N'){
+      vTaskDelay(20);
       if (key == '#'){
-        vTaskDelay(20);
-        c = 10;
         screens();
       }else if(key == 'A' || key == 'B')
         vTaskDelay(5);
@@ -1004,31 +999,25 @@ void input(){
 // -----------------------------------------------------------------
 // -----hourmeter check-----
 void hourcheck(){
-  lcd.clear();
-  lcd.setCursor(6, 0);
-  lcd.print("HORIMETRO");
-  lcd.setCursor(4, 1);
-  lcd.print("ESTA CORRETO?");
-  lcd.setCursor(6, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("O HORIMETRO ESTÁ CORRETO?");
+  lcd.setCursor(0, 1);
   lcd.print(hourmeter);
   lcd.setCursor(0, 3);
   lcd.print("D-CONFIRMAR");
-  lcd.setCursor(12, 3);
-  lcd.print("B-VOLTAR");
+  lcd.setCursor(15, 3);
+  lcd.print("C-CORRIGIR");
 
   while(opnav == true){
     char key = kpd.getChar();
     vTaskDelay(50);
-    if(key == 'D'){  
+    if(key == 'D')  
       screens();
-    }else if (key == 'B') {
-      vTaskDelay(20);
-      c = 10;
+    else if (key == 'C')
       input();
-    }
+
   }
 }
-
 // -----------------------------------------------------------------
 // -----Questions-----
 void vazamento(){
