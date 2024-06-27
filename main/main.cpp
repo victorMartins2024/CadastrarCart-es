@@ -153,7 +153,7 @@ int hourmeterB;
 byte a = 7;
 byte b = 5;
 byte c = 10;
-byte maxtaglen = 6; //PassLenghtMax
+byte maxtaglen = 5; //PassLenghtMax
 byte maxpasslen = 5;  //maxPasswordLength
 
 // ----------------------------------------------------------------
@@ -460,6 +460,9 @@ void tag(char key, int buffer){
     if (b == 11) 
       b = 5;  
 
+    if (currenttaglen == maxtaglen)
+      CadastrarCartao();
+    
     currenttaglen++;
     vTaskDelay(20); 
 
@@ -493,9 +496,9 @@ void tag(char key, int buffer){
 // -----cadastro-----
 void CadastrarCartao(){
   String conteudo = "";
-  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
+  //while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
-  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
              rfid.uid.uidByte[0], rfid.uid.uidByte[1],
              rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
@@ -834,8 +837,6 @@ void cadastrar(){
       vTaskDelay(70);
       if (key == 'C')
         dell(1);
-      else if ( key == 'D')
-        CadastrarCartao();
       else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
@@ -1018,12 +1019,16 @@ void hourcheck(){
   while(opnav == true){
     char key = kpd.getChar();
     vTaskDelay(50);
-    if(key == 'D')  
+    if(key == 'D'){  
       screens();
-    else if (key == 'B')
+    }else if (key == 'B') {
+      vTaskDelay(20);
+      c = 10;
       input();
+    }
   }
 }
+
 // -----------------------------------------------------------------
 // -----Questions-----
 void vazamento(){
