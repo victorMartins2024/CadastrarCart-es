@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.0 main.cpp
+  Telemetry V0.8.4 main.cpp
      
   INA226
   MFRC522 
@@ -40,7 +40,6 @@
 // ---defines---
 #define SHUNT_RESISTENCE  0.75
 char keypad[19] = "123A456B789C*0#DNF";
-char keypad2[19] = "123A456B789C*0#DNF";
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
@@ -492,7 +491,7 @@ void CadastrarCartao(){
   String conteudo = "";
   while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
-  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
              rfid.uid.uidByte[0], rfid.uid.uidByte[1],
              rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
@@ -580,10 +579,10 @@ void erease(char key, int buffer){
     else {
       key = ' ';
       a--;
-      lcd.setCursor(a, 2);
+      lcd.setCursor(a, 2); 
       lcd.print(key);
       currentpasslen--;
-      vTaskDelay(20); 
+      vTaskDelay(20); // Password
     }
   }else if (buffer == 2){
     if (c == 10)
@@ -713,6 +712,8 @@ void eng(){
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("PASSWORD:");
+  lcd.setCursor(0, 3);
+  lcd.print("D-CONFIRMAR");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
 
@@ -823,10 +824,8 @@ void cadastrar(){
 
 
   while (opnav == true) {
-
     char key = kpd.getChar();
     vTaskDelay(70);
-
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
       if (key == 'C')
