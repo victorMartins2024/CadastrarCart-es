@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.4 main.cpp
+  Telemetry V0.8.0 main.cpp
      
   INA226
   MFRC522 
@@ -244,6 +244,7 @@ extern "C" void app_main(){
 // -----------------------------------------------------------------
 // -----telemetry-----
 void xTaskTelemetry(void *pvParameters){ 
+  int high;
   char CVolt[30];
   char Ageral[30];  
   char CATrac[30];
@@ -253,8 +254,9 @@ void xTaskTelemetry(void *pvParameters){
   char JusthourT[30];
   char JusthourB[30];
   char Amp_buffer[30];
-  char Volt_buffer[30];
   char hourmeter1[30];
+  char Volt_buffer[30];
+  static int numleituras = 5;
 
   esp_task_wdt_add(NULL);        //  enable watchdog     
   while(1){  
@@ -328,6 +330,11 @@ void xTaskTelemetry(void *pvParameters){
       }
     } // -----------------------------------------------------------------------
     
+    for (int i = 0; i < numleituras; i++){
+      if (geralA > 10.0)
+        high++;
+    }
+
     sprintf(CABombH, "{\"Corrente Bomba\":%.02f}", ABombH);
     sprintf(Ageral, "{\"Corrente geral\":%.02f}", geralA);
     sprintf(CATrac, "{\"Corrente tracao\":%.02f}", ATrac);
@@ -394,8 +401,17 @@ void xTaskNav(void *pvParameters){
   }
 }
 
-/*---------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------------
 ---------------------------------------------Functions-------------------------------*/
+
+// -----------------------------------------------------------------
+// -----count high-----
+void algo(){
+
+
+
+
+}
 
 // -----------------------------------------------------------------
 // -----read flash memory-----
@@ -413,12 +429,12 @@ void readpref(){
 // -----Reconection-----
 void recon(){
   WiFi.disconnect();        
-  vTaskDelay(300);         
+  vTaskDelay(250);         
   WiFi.begin(ssid, pass);       
-  vTaskDelay(300);
+  vTaskDelay(250);
                 
   client.connect("TestClient", user, passwd);     
-  vTaskDelay(2000);                                     
+  vTaskDelay(1500);                                     
 }
 
 // -----------------------------------------------------------------
@@ -491,7 +507,7 @@ void CadastrarCartao(){
   String conteudo = "";
   while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
 
-  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial()) {
+  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
              rfid.uid.uidByte[0], rfid.uid.uidByte[1],
              rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
@@ -579,10 +595,10 @@ void erease(char key, int buffer){
     else {
       key = ' ';
       a--;
-      lcd.setCursor(a, 2); 
+      lcd.setCursor(a, 2);
       lcd.print(key);
       currentpasslen--;
-      vTaskDelay(20); // Password
+      vTaskDelay(20); 
     }
   }else if (buffer == 2){
     if (c == 10)
@@ -712,8 +728,6 @@ void eng(){
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("PASSWORD:");
-  lcd.setCursor(0, 3);
-  lcd.print("D-CONFIRMAR");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
 
@@ -824,8 +838,10 @@ void cadastrar(){
 
 
   while (opnav == true) {
+
     char key = kpd.getChar();
     vTaskDelay(70);
+
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
       if (key == 'C')
@@ -838,11 +854,10 @@ void cadastrar(){
         screens();
       }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*') 
+      else if (key == '*')
         erease(key, 0);
       else 
         tag(key, 1);
-      
     } 
   }
 }
