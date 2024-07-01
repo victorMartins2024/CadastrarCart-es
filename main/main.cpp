@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.8.6 main.cpp
+  Telemetry V0.8.7 main.cpp
      
   INA226
   MFRC522 
@@ -220,15 +220,15 @@ extern "C" void app_main(){
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
-                          2000,           // stack size in word
+                          2500,           // stack size in word
                           NULL,           // input parameter
                           1,              // priority
                           NULL,           // task handle
                           0);             // core
 
-  xTaskCreatePinnedToCore(xTaskNav,
+    xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          4500,
+                          3000,
                           NULL,
                           1,
                           NULL,
@@ -252,8 +252,6 @@ void xTaskTelemetry(void *pvParameters){
   char FullHour[30];
   char JusthourT[30];
   char JusthourB[30];
-  char Amp_buffer[30];
-  char Volt_buffer[30];
   char hourmeter1[30];
 
   esp_task_wdt_add(NULL);        //  enable watchdog     
