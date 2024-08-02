@@ -40,7 +40,8 @@ Each user type has limited access to specific telemetry functions.
 
 # *General Information*
 
-Compiler: VsCode 1.88.1  <br/>
+Compiler: VsCode 1.91 <br/>
+Espressif: 5.1.4 <br/>
 MCU: ESP32  <br/>
 Board: Dev module 38 pins <br/>
 Date: 2024, June <br/>
