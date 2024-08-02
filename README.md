@@ -1,5 +1,6 @@
-# **Telemetria Greentech**
-Badge em Desenvolvimento
+<h1 align="center"> Telemetria Greentech </h1>
+
+![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
 
 # *Project Description*
 The objective is to create a monitoring system for forklifts and other equipment that allows the company to track the voltage and current readings of a machine, as well as the time it is in use. It works by reading analog data from a shunt, which is published to an MQTT broker in JSON format. The data can be exported to Prometheus and visualized on a Grafana dashboard. In addition to the machine readings, the project also includes a navigation system for four types of users:
@@ -8,11 +9,6 @@ The objective is to create a monitoring system for forklifts and other equipment
     *Operations administration
     *Technician
 Each user type has limited access to specific telemetry functions.
-
-
-# *Authors*
-1. [@joaouzeda](https://github.com/joaouzeda)
-2. [@victorMartins2024](https://github.com/victorMartins2024)
 
 # *Project Features*
 
@@ -44,10 +40,16 @@ Each user type has limited access to specific telemetry functions.
 
 # *General Information*
 
-Compiler: VsCode 1.88.1  <br/>
+Compiler: VsCode 1.91 <br/>
+Espressif: 5.1.4 <br/>
 MCU: ESP32  <br/>
 Board: Dev module 38 pins <br/>
 Date: 2024, June <br/>
+
+# Autores
+
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/55409817?v=4" width=115><br><sub>João Uzêda</sub>](https://github.com/joaouzeda) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/162138511?v=4" width=115><br><sub>Victor Martins</sub>](https://github.com/victorMartins2024) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/167223272?v=4" width=115><br><sub>Fernando Nhoqui</sub>](https://github.com/FernandoNhoqui) |
+| :---: | :---: | :---: |
 
 # *Badges*
 
