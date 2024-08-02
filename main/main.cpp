@@ -215,15 +215,15 @@ extern "C" void app_main(){
 
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
-                          2000,           // stack size in word
+                          2500,           // stack size in word
                           NULL,           // input parameter
                           1,              // priority
                           NULL,           // task handle
                           0);             // core
 
-  xTaskCreatePinnedToCore(xTaskNav,
+    xTaskCreatePinnedToCore(xTaskNav,
                           "Navegation",
-                          4500,
+                          3000,
                           NULL,
                           1,
                           NULL,
