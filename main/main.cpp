@@ -120,13 +120,12 @@ float General_Current;
 float Current_Hidraulic_Bomb;
 float Current_Traction_Engine;
 float Voltage;
-
-int General_Sec;
-int Sec_Traction_Engine;
-int Sec_Hidraulic_Bomb;
-int General_Minute;
-int Minute_Traction_Engine;
-int Minute_Hidraulic_Bomb;
+uint8_t General_Sec;
+uint8_t Sec_Traction_Engine;
+uint8_t Sec_Hidraulic_Bomb;
+uint8_t General_Minute;
+uint8_t Minute_Traction_Engine;
+uint8_t Minute_Hidraulic_Bomb;
 int General_Hourmeter;
 int Hourmeter_Traction_Engine;
 int Hourmeter_Hidraulic_Bomb;
@@ -145,23 +144,23 @@ byte currentpasslen = 0;   //currentPasswordLength
 byte currenttaglen = 0; //PassLenghtAtual
 char uid_buffer[32];
 char CAD[32];
-int  manup =  0; //preve
-int  manuc =  0; //corre
+uint8_t manup =  0; //preve
+uint8_t manuc =  0; //corre
 bool opnav;
 bool psswdcheck;
 
 // ----------------------------------------------------------------
 // --Preferences Key---
-const char *Minute_preference   =   "min";
-const char *Minute_Engine_Preference   =   "trac";
-const char *Minute_Hidraulic_Preference   =   "Minute_Hidraulic_Preference";
-const char *Hourmeter_Preference  =   "hour";
-const char *Hourmeter_Engine_Preference  =   "Hourmeter_Engine_Preference";
+const char *Minute_preference               =   "min";
+const char *Hourmeter_Preference            =   "hour";
+const char *Minute_Engine_Preference        =   "trac";
+const char *cadaspref                       =   "Cadastro";
+const char *prevpref                        =   "Manupreve";
+const char *correpref                       =   "Manucorre";
+const char *listapref                       =   "Cadastro Cartoes";
+const char *Hourmeter_Engine_Preference     =   "Hourmeter_Engine_Preference";
+const char *Minute_Hidraulic_Preference     =   "Minute_Hidraulic_Preference";
 const char *Hourmeter_Hidraulic_Preference  =   "Hourmeter_Hidraulic_Preference";
-const char *prevpref  =   "Manupreve";
-const char *correpref =   "Manucorre";
-const char *cadaspref =   "Cadastro";
-const char *listapref =   "Cadastro Cartoes";
 
 // ----------------------------------------------------------------
 // -----UIDS-----
@@ -171,10 +170,6 @@ String TecCard  =   "D2229A1B";
 String PesCard  =   "B2B4BF1B";
 String UIDLists =   " ";
 String TAGLists =   " ";
-
-// ----------------------------------------------------------------
-// -----Queue and Semaphore----
-
 
 // ----------------------------------------------------------------
 // ----main----
@@ -212,7 +207,6 @@ extern "C" void app_main(){
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
 
-
   xTaskCreatePinnedToCore(xTaskTelemetry, // function name
                           "Telemetry",    // task name
                           2500,           // stack size in word
@@ -231,7 +225,7 @@ extern "C" void app_main(){
   
   xTaskCreatePinnedToCore(xTaskSend,
                           "LoRa",
-                          4500,
+                          2000,
                           NULL,
                           2,
                           NULL,
@@ -301,7 +295,6 @@ void xTaskTelemetry(void *pvParameters){
         pref.putInt(Hourmeter_Hidraulic_Preference, Hourmeter_Hidraulic_Bomb);
       }
     } // --------------------------------------------------------------------------
-  
     if (General_Current >= 13){  // ---------Trasion engine General_Hourmeter----------------------
       Sec_Traction_Engine++;
       if (Sec_Traction_Engine >= 60){        
@@ -329,7 +322,6 @@ void xTaskTelemetry(void *pvParameters){
 // -----Navegation task-----
 void xTaskNav(void *pvParameters){
   esp_task_wdt_add(NULL);      //  enable watchdog
-
   while(1){
     rtc_wdt_feed();                  //  feed watchdog 
     
