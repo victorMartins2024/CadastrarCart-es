@@ -120,15 +120,22 @@ float General_Current;
 float Current_Hidraulic_Bomb;
 float Current_Traction_Engine;
 float Voltage;
-uint8_t General_Sec;
-uint8_t Sec_Traction_Engine;
-uint8_t Sec_Hidraulic_Bomb;
-uint8_t General_Minute;
-uint8_t Minute_Traction_Engine;
-uint8_t Minute_Hidraulic_Bomb;
+
+byte General_Sec;
+byte Sec_Traction_Engine;
+byte Sec_Hidraulic_Bomb;
+byte General_Minute;
+byte Minute_Traction_Engine;
+byte Minute_Hidraulic_Bomb;
 int General_Hourmeter;
 int Hourmeter_Traction_Engine;
 int Hourmeter_Hidraulic_Bomb;
+
+byte Answer_1;
+byte Answer_2;
+byte Answer_3;
+byte Answer_4;
+byte Answer_5;
 
 // ----------------------------------------------------------------
 // ----Constants----
@@ -137,6 +144,7 @@ byte b = 5;
 byte c = 10;
 byte maxtaglen = 6; //PassLenghtMax
 byte maxpasslen = 5;  //maxPasswordLength
+byte priority = 0;
 
 // ----------------------------------------------------------------
 // ----Buffers----
@@ -144,8 +152,8 @@ byte currentpasslen = 0;   //currentPasswordLength
 byte currenttaglen = 0; //PassLenghtAtual
 char uid_buffer[32];
 char CAD[32];
-uint8_t manup =  0; //preve
-uint8_t manuc =  0; //corre
+byte manup =  0; //preve
+byte manuc =  0; //corre
 bool opnav;
 bool psswdcheck;
 
@@ -273,24 +281,25 @@ void xTaskTelemetry(void *pvParameters){
       if (General_Minute >= 60){
         General_Minute -= 60;
         General_Hourmeter++;
+        priority = 1;
         pref.remove(Minute_preference);
         pref.putInt(Hourmeter_Preference, General_Hourmeter);
       }                     
     } // -----------------------------------------------------------------------   
-
     if (Current_Hidraulic_Bomb >= 13){  // --------Hidraulic bomb General_Hourmeter----------------------
       Sec_Hidraulic_Bomb++;
       if (Sec_Hidraulic_Bomb >= 60){        
         Sec_Hidraulic_Bomb-=60;
         Minute_Hidraulic_Bomb++;
-        if (Minute_Hidraulic_Bomb >= 20) // normaly Minute_Hidraulic_Bomb == 10 
+        if (Minute_Hidraulic_Bomb >= 10) // normaly Minute_Hidraulic_Bomb == 10 
           pref.putInt(Minute_Hidraulic_Preference, Minute_Hidraulic_Bomb);
-        else if (Minute_Hidraulic_Bomb == 40)
+        else if (Minute_Hidraulic_Bomb == 30)
           pref.putInt(Minute_Hidraulic_Preference, Minute_Hidraulic_Bomb);       
       }
       if (Minute_Hidraulic_Bomb >= 60){
         Minute_Hidraulic_Bomb-=60;
         Hourmeter_Hidraulic_Bomb++;
+        priority = 1;
         pref.remove(Minute_Hidraulic_Preference);
         pref.putInt(Hourmeter_Hidraulic_Preference, Hourmeter_Hidraulic_Bomb);
       }
@@ -308,6 +317,7 @@ void xTaskTelemetry(void *pvParameters){
       if (Minute_Traction_Engine >= 60){
         Minute_Traction_Engine-=60;
         Hourmeter_Traction_Engine++;
+        priority = 1;
         pref.remove(Minute_Engine_Preference);
         pref.putInt(Hourmeter_Engine_Preference, Hourmeter_Traction_Engine);
       }
@@ -353,20 +363,43 @@ void xTaskNav(void *pvParameters){
   }
 }
 
+// -----------------------------------------------------------------
+// -----LoRa-----
 void xTaskSend(void *pvParameters){   
   esp_task_wdt_add(NULL);
   while (1){
     rtc_wdt_feed();  
-    LoRa.beginPacket();
-    LoRa.println(Voltage);
-    LoRa.println(General_Current);
-    LoRa.println(Current_Hidraulic_Bomb);
-    LoRa.println(Current_Traction_Engine);
-    LoRa.println(General_Hourmeter);
-    LoRa.println(Hourmeter_Traction_Engine);
-    LoRa.println(Hourmeter_Hidraulic_Bomb);
-    LoRa.endPacket();
 
+    if (priority == 0){
+      LoRa.beginPacket();
+      LoRa.print(Voltage);
+      LoRa.print(Current_Hidraulic_Bomb);
+      LoRa.print(Current_Traction_Engine);
+      LoRa.print(General_Current);
+      LoRa.endPacket();
+      priority = 0;
+    }else if (priority == 1){
+      LoRa.beginPacket();
+      LoRa.println(General_Hourmeter);
+      LoRa.println(Hourmeter_Traction_Engine);
+      LoRa.println(Hourmeter_Hidraulic_Bomb);
+      LoRa.endPacket();
+      priority = 0;
+    }else if(priority == 2){
+      LoRa.beginPacket();
+      LoRa.print(uid_buffer);
+      LoRa.endPacket();
+      priority = 0;
+    }else if (priority == 3){
+      LoRa.begin();
+      LoRa.print(Answer_1);
+      LoRa.print(Answer_2);
+      LoRa.print(Answer_3);
+      LoRa.print(Answer_4);
+      LoRa.print(Answer_5);
+      LoRa.endPacket();
+      priority = 0;
+    }
     esp_task_wdt_reset(); 
     vTaskDelay(1000);
   }  
@@ -375,7 +408,6 @@ void xTaskSend(void *pvParameters){
 /*------------------------------------------------------------------------------------
 --------------------------------------Functions---------------------------------------
 ------------------------------------------------------------------------------------*/
-
 
 // -----------------------------------------------------------------
 // -----read flash memory-----
@@ -576,7 +608,7 @@ void erease(char key, int buffer){
 -------------------------------------------Screens---------------------------------
 ---------------------------------------------------------------------------------*/
 
-// ---exis--------------------------------------------------------------
+// -----------------------------------------------------------------
 // -----status-----
 void status(){
   lcd.clear();
@@ -633,6 +665,7 @@ void apx(){
       snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+      priority = 2;
 
       if (strcmp(uid_buffer, OpeCard.c_str()) == 0) {
         lcd.clear();
@@ -989,8 +1022,10 @@ void vazamento(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
+        Answer_1 = 1;
         garfos();
       } else if (key == '2') {
+        Answer_1 = 2;
         garfos();
       }
     }
@@ -1013,8 +1048,10 @@ void garfos(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
+        Answer_2 = 1;
         emergencia();
       } else if (key == '2') {
+        Answer_2 = 2;
         emergencia();
       }
     }
@@ -1036,8 +1073,10 @@ void emergencia(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
+        Answer_3 = 1;
         comando();
       } else if (key == '2') {
+        Answer_3 = 2;
         comando();
       }
     }
@@ -1059,8 +1098,10 @@ void comando(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
+        Answer_4 = 1;
         bateria();
       } else if (key == '2') {
+        Answer_4 = 2;
         bateria();
       }
     }
@@ -1082,13 +1123,15 @@ void bateria(){
 
     if (key != 'N') {
       vTaskDelay(50);
+      priority = 3;
       if (key == '1') {
         lcd.clear();
         lcd.setCursor(6, 1);
         lcd.print("CONCLUIDO");
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
-        vTaskDelay(1000);
+        Answer_5 = 1;
+        vTaskDlay(1000);
         opnav = true;  
         telafinal();
       } else if (key == '2') {
@@ -1097,6 +1140,7 @@ void bateria(){
         lcd.print("CONCLUIDO");
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
+        Answer_5 = 2;
         vTaskDelay(1000);
         opnav = true;  
         telafinal();
