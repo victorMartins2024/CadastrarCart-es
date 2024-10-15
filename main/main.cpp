@@ -1,18 +1,68 @@
 /*----------------------------------------------------------------
 
-  Telemetry V0.9.0 main.cpp
-     
-  INA226
-  MFRC522 
-  LCD 20x4 I²c 
-  Keypad 4x4 I²c 
+  Telemetry V1.0.1 main.cpp
 
-  Compiler: VsCode 1.92
+  Notes: 
+
+  Features:
+    1. Inserir um jeito de calcular o desvio padrão e comparar com
+    o desvio padrão do efeito hall informado pelo fabricante junto 
+    com a comparação da leitura do shunt e assegurar a saude do 
+    sensor
+
+      
+      # float buf[10];
+      # for (int i = 0; i <10; i++){
+      #     buf[i] = leitura;
+      #     delay(10);
+      # }
+      #
+      # float valormedio = 0;
+      # for  (int i = 0; i < 10; i++){
+      #    valormedio += buf[i];
+      # }    
+      #
+      # corrente = valormedio / 6.0
+      #
+      # dp = (corrente)*(1/2)
+
+    2. Efeito Hall on/off para saber qual corrente o shunt ta lendo
+    
+  Notes: 
+
+  Features:
+    1. Inserir um jeito de calcular o desvio padrão e comparar com
+    o desvio padrão do efeito hall informado pelo fabricante junto 
+    com a comparação da leitura do shunt e assegurar a saude do 
+    sensor
+
+      
+      # float buf[10];
+      # for (int i = 0; i <10; i++){
+      #     buf[i] = leitura;
+      #     delay(10);
+      # }
+      #
+      # float valormedio = 0;
+      # for  (int i = 0; i < 10; i++){
+      #    valormedio += buf[i];
+      # }    
+      #
+      # corrente = valormedio / 6.0
+      #
+      # dp = (corrente)*(1/2)
+
+    2. Efeito Hall on/off para saber qual corrente o shunt ta lendo
+    
+
+  Compiler: VsCode 1.94.1
   MCU: ESP32
+  Espressif: 5.3.1
+  Arduino Component: 3.1.0
   Board: Dev module 38 pins
 
   Author: João  G. Uzêda & Victor Hugo
-  date: 2024, June
+  date: 2024, Set
 -----------------------------------------------------------------*/
 
 // ---------------------------------------------------------------- 
@@ -33,64 +83,71 @@
 #include "MFRC522.h"
 #include "INA226.h"
 #include "stdio.h"
-#include "Wire.h"
 #include "LoRa.h"
+#include "Wire.h"
 #include "SPI.h"
 
 // ---------------------------------------------------------------- 
-// ---LoRa Settings---
-#define   SF            9
-#define   FREQ          915E6
-#define   SBW           62.5E3	
-#define   SYNC_WORD     0x34
-#define   TX_POWER_DB   17
-
-// ---------------------------------------------------------------- 
 // ---defines---
-#define SHUNT_RESISTENCE  0.75
+#define   SF                      9
+#define   FREQ                    915E6
+#define   SBW                     62.5E3	
+#define   SYNC_WORD               0x34
+#define   TX_POWER_DB             17
+#define   PREAMBLE_LENGTH         8
+#define   SHUNT_RESISTENCE        0.75
+#define   CODING_RATE_DENOMINATOR 5
+
 char keypad[19] = "123A456B789C*0#DNF";
 
 // ----------------------------------------------------------------  
 //----I²C Adresses------
-#define LCDADRESS 0x27 
-#define INAADRESS 0x40 
-#define KeyAdress 0x21
+#define LCD_ADRESS 0x27 
+#define INA_ADRESS 0x40 
+#define Key_Adress 0x21
 
 // ----------------------------------------------------------------  
 //----pins------
-#define   RFID_SS       22
+#define   RFID_CS       22
 #define   RFID_RST      5
-#define   RFID_SCK      14
-#define   RFID_MISO     2
-#define   RFID_MOSI     15
-#define   INA_SDA       32
-#define   INA_SCL       33 
-#define   LORA_SS       19  
+
+#define   SPI_SCK       14
+#define   SPI_MISO      2
+#define   SPI_MOSI      15
+
+#define   I2C_SDA       32
+#define   I2C_SCL       33 
+
+#define   LORA_CS       19
 #define   LORA_RST      18 
-#define   LORA_SCK      25 
-#define   LORA_MISO     26 
-#define   LORA_MOSI     27
 
 // ----------------------------------------------------------------
-// -----Functions----
+// -----Tasks----
 void xTaskTelemetry(void *pvParameters);
-void xTaskSend(void *pvParameters);
 void xTaskNav(void *pvParameters);
+void xTaskSend(void *pvParameters);
+
+// ----------------------------------------------------------------
+// -----Func. Prototype----
 void erease(char key, int buffer);
 void tag(char key, int buffer);
+//void CarregarCartoesCadastrados();
 void CadastrarCartao();
 void dell(int buffer);
 void resetPassword();
 void aprovadoPass();
 void ina226_setup();
 void emergencia();
+void RFIDConfig();
 void manutencao();
+void LoRaconfig();
 void telafinal();
 void cadastrar();
 void vazamento();
 void hourcheck();
 void readpref();
 void formatar();
+void Taskconf();
 void screens();
 void bateria();
 void comando();
@@ -100,75 +157,96 @@ void garfos();
 void format();
 void telas();
 void input();
+void recon();
 void eng();
 void apx();
 
 // ----------------------------------------------------------------
 // -----Objects----
 Preferences pref;
-SPIClass *vspi = NULL;
-SPIClass *hspi = NULL;
-INA226_WE INA(INAADRESS);
-I2CKeyPad kpd(KeyAdress);
-MFRC522 rfid(SS, RFID_RST);
-Password password = Password("2552");
-LiquidCrystal_I2C lcd(LCDADRESS, 20, 4);
+INA226_WE INA(INA_ADRESS);
+I2CKeyPad kpd(Key_Adress);
+MFRC522 rfid(RFID_CS, RFID_RST);
+LiquidCrystal_I2C lcd(LCD_ADRESS, 20, 4);
+Password password = Password((char*)"2552");
 
 // ----------------------------------------------------------------
 // ----Variables----
-float General_Current;
-float Current_Hidraulic_Bomb;
-float Current_Traction_Engine;
+typedef struct  {
+  unsigned Hour   : 20;
+  unsigned minute : 6;
+  unsigned sec    : 6; 
+} HourmeterTractionEngine;
+
+HourmeterTractionEngine THour;
+
+typedef struct {
+  unsigned Hour;
+  unsigned minute;
+  unsigned sec; 
+} GeneralHourmeter;
+
+GeneralHourmeter GHour;
+
+typedef struct {
+  unsigned Hour;
+  unsigned minute;
+  unsigned sec; 
+} HourmeterHidraulicBomb; 
+
+HourmeterHidraulicBomb BHour;
+
+typedef struct {
+  unsigned Answer1 : 1;
+  unsigned Answer2 : 1;
+  unsigned Answer3 : 1;
+  unsigned Answer4 : 1;
+  unsigned Answer5 : 1;
+} Answers;
+
+Answers  Ans;
+
+float GeneralCurrent;
+float CurrentHidraulicBomb;
+float CurrentTractionEngine;
 float Voltage;
 
-byte General_Sec;
-byte Sec_Traction_Engine;
-byte Sec_Hidraulic_Bomb;
-byte General_Minute;
-byte Minute_Traction_Engine;
-byte Minute_Hidraulic_Bomb;
-int General_Hourmeter;
-int Hourmeter_Traction_Engine;
-int Hourmeter_Hidraulic_Bomb;
-
-byte Answer_1;
-byte Answer_2;
-byte Answer_3;
-byte Answer_4;
-byte Answer_5;
+uint8_t priority = 0;
 
 // ----------------------------------------------------------------
 // ----Constants----
 byte a = 7;
 byte b = 5;
 byte c = 10;
-byte maxtaglen = 6; //PassLenghtMax
-byte maxpasslen = 5;  //maxPasswordLength
-byte priority = 0;
+byte maxtaglen = 6; 
+byte maxpasslen = 5;  
+uint8_t MID = 150;
 
 // ----------------------------------------------------------------
 // ----Buffers----
-byte currentpasslen = 0;   //currentPasswordLength
-byte currenttaglen = 0; //PassLenghtAtual
+byte currentpasslen = 0;  
+byte currenttaglen = 0;
 char uid_buffer[32];
 char CAD[32];
-byte manup =  0; //preve
-byte manuc =  0; //corre
+int  manup =  0; 
+int  manuc =  0; 
 bool opnav;
 bool psswdcheck;
+String cartoesCadastrados[2000]; // Defina o tamanho da lista
+int savecard = 0; // Variável para controlar o índice da lista
 
 // ----------------------------------------------------------------
 // --Preferences Key---
-const char *Minute_preference               =   "min";
-const char *Hourmeter_Preference            =   "hour";
-const char *Minute_Engine_Preference        =   "trac";
-const char *cadaspref                       =   "Cadastro";
-const char *prevpref                        =   "Manupreve";
-const char *correpref                       =   "Manucorre";
-const char *listapref                       =   "Cadastro Cartoes";
-const char *Hourmeter_Engine_Preference     =   "Hourmeter_Engine_Preference";
-const char *Minute_Hidraulic_Preference     =   "Minute_Hidraulic_Preference";
-const char *Hourmeter_Hidraulic_Preference  =   "Hourmeter_Hidraulic_Preference";
+const char *cadaspref =   "Cadastro";
+const char *prevpref  =   "Manupreve";
+const char *correpref =   "Manucorre";
+const char *HourmeterPreference  =   "hour";
+const char *listapref      =   "Cadastro Cartoes";
+const char *GenerealMinutePreference      =   "min";
+const char *MinuteEnginePreference        =   "trac";
+const char *MinuteHidraulicPreference     =   "minbomb";
+const char *HourmeterEnginePreference     =   "hourtrac";
+const char *HourmeterHidraulicPreference  =   "hourbomb";
 
 // ----------------------------------------------------------------
 // -----UIDS-----
@@ -178,169 +256,137 @@ String TecCard  =   "D2229A1B";
 String PesCard  =   "B2B4BF1B";
 String UIDLists =   " ";
 String TAGLists =   " ";
+String listaCartoes = "";
+
+TaskHandle_t SenderHandle;
 
 // ----------------------------------------------------------------
-// ----main----
+// -----Main Func-----
 extern "C" void app_main(){
   initArduino();
-  vspi = new SPIClass(VSPI);
-  hspi = new SPIClass(HSPI);
-  Wire.begin(INA_SDA, INA_SCL);
-  vspi->begin(RFID_SCK, RFID_MISO, RFID_MOSI, RFID_RST);
-  hspi->begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_RST);
+  Serial.begin(115200);
+  Wire.begin(I2C_SDA, I2C_SCL);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
   lcd.init();
-  lcd.backlight();
-  rfid.PCD_Init();
   ina226_setup();
+  RFIDConfig();
+  LoRaconfig();
   kpd.begin();
   pref.begin("GT", false);
-  lcd.backlight();
+  //CarregarCartoesCadastrados();
   
-  pinMode(RFID_SS, OUTPUT);
-  pinMode(LORA_SS, OUTPUT);
-  LoRa.setPins(LORA_SS, LORA_RST);
   kpd.setKeyPadMode(I2C_KEYPAD_4x4);
-  kpd.loadKeyMap(keypad); 
 
-  while(!LoRa.begin(FREQ))
-    Serial.println("Failed to start LoRa");
-  
+  kpd.loadKeyMap(keypad);
+  lcd.backlight();
+  lcd.noCursor();
+  lcd.noBlink();
+
   readpref();
-    
-  LoRa.setSyncWord(SYNC_WORD);              
-  LoRa.setTxPower(TX_POWER_DB); 
-  LoRa.setSignalBandwidth(SBW);
-  LoRa.setSpreadingFactor(SF);   
 
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
+  Serial.println("System Initizalized");
 
-  xTaskCreatePinnedToCore(xTaskTelemetry, // function name
-                          "Telemetry",    // task name
-                          2500,           // stack size in word
-                          NULL,           // input parameter
-                          1,              // priority
-                          NULL,           // task handle
-                          0);             // core
+  Taskconf();
 
-    xTaskCreatePinnedToCore(xTaskNav,
-                          "Navegation",
-                          3000,
-                          NULL,
-                          1,
-                          NULL,
-                          1);
-  
-  xTaskCreatePinnedToCore(xTaskSend,
-                          "LoRa",
-                          2000,
-                          NULL,
-                          2,
-                          NULL,
-                          1);
-  
   vTaskDelay(2500);
-  lcd.clear();             
-} 
+  lcd.clear();      
+}
 
 /*---------------------------------------------------------------------------------
--------------------------------------Tasks-----------------------------------------
+--------------------------------------Tasks----------------------------------------
 ---------------------------------------------------------------------------------*/
 
 // -----------------------------------------------------------------
 // -----telemetry-----
-void xTaskTelemetry(void *pvParameters){ 
-  esp_task_wdt_add(NULL);        //  enable watchdog     
+void xTaskTelemetry(void *pvParameters){            
+  esp_task_wdt_add(NULL);
   while(1){  
-    rtc_wdt_feed();    //  feed watchdog 
+    rtc_wdt_feed();   
 
     INA.readAndClearFlags();
 
     Voltage = INA.getBusVoltage_V();
-    General_Current = INA.getShuntVoltage_mV() / SHUNT_RESISTENCE;
+    GeneralCurrent = INA.getShuntVoltage_mV() / SHUNT_RESISTENCE;
 
-    Current_Hidraulic_Bomb = General_Current - 1.5;
-    Current_Traction_Engine = General_Current - 2.5;
+    CurrentHidraulicBomb = GeneralCurrent - 1.5;
+    CurrentTractionEngine = GeneralCurrent - 2.5;
 
-    if (General_Current >= 3.5){ // --------------General General_Hourmeter--------------------------
-      General_Sec++;   
-      if (General_Sec >= 60){         
-        General_Sec -= 60;
-        General_Minute++;
-        if (General_Minute == 10)
-          pref.putInt(Minute_preference, General_Minute);
-        else if (General_Minute == 20)
-          pref.putInt(Minute_preference, General_Minute);
-        else if (General_Minute == 30)
-          pref.putInt(Minute_preference, General_Minute);
-        else if (General_Minute == 40)
-          pref.putInt(Minute_preference, General_Minute);
-        else if (General_Minute == 50)
-          pref.putInt(Minute_preference, General_Minute);
+    if (GeneralCurrent >= 3.5){ 
+      GHour.sec++;   
+      if (GHour.sec >= 60){         
+        GHour.sec -= 60;
+        GHour.minute++;
+        if (GHour.minute == 10)
+          pref.putInt(GenerealMinutePreference, GHour.minute);
+        else if (GHour.minute == 20)
+          pref.putInt(GenerealMinutePreference, GHour.minute);
+        else if (GHour.minute == 30)
+          pref.putInt(GenerealMinutePreference, GHour.minute);
+        else if (GHour.minute == 40)
+          pref.putInt(GenerealMinutePreference, GHour.minute);
+        else if (GHour.minute == 50)
+          pref.putInt(GenerealMinutePreference, GHour.minute);
       }                       
-      if (General_Minute >= 60){
-        General_Minute -= 60;
-        General_Hourmeter++;
+      if (GHour.minute >= 60){
+        GHour.minute -= 60;
+        GHour.Hour++;
         priority = 1;
-        pref.remove(Minute_preference);
-        pref.putInt(Hourmeter_Preference, General_Hourmeter);
+        pref.remove(GenerealMinutePreference);
+        pref.putInt(HourmeterPreference, GHour.Hour);
       }                     
-    } // -----------------------------------------------------------------------   
-    if (Current_Hidraulic_Bomb >= 13){  // --------Hidraulic bomb General_Hourmeter----------------------
-      Sec_Hidraulic_Bomb++;
-      if (Sec_Hidraulic_Bomb >= 60){        
-        Sec_Hidraulic_Bomb-=60;
-        Minute_Hidraulic_Bomb++;
-        if (Minute_Hidraulic_Bomb >= 10) // normaly Minute_Hidraulic_Bomb == 10 
-          pref.putInt(Minute_Hidraulic_Preference, Minute_Hidraulic_Bomb);
-        else if (Minute_Hidraulic_Bomb == 30)
-          pref.putInt(Minute_Hidraulic_Preference, Minute_Hidraulic_Bomb);       
+    } 
+    if (CurrentHidraulicBomb >= 13){ 
+      BHour.sec++;
+      if (BHour.sec >= 60){        
+        BHour.sec-=60;
+        BHour.minute++;
+        if (BHour.minute >= 10)
+          pref.putInt(MinuteHidraulicPreference, BHour.minute);
+        else if (BHour.minute == 30)
+          pref.putInt(MinuteHidraulicPreference, BHour.minute);       
       }
-      if (Minute_Hidraulic_Bomb >= 60){
-        Minute_Hidraulic_Bomb-=60;
-        Hourmeter_Hidraulic_Bomb++;
+      if (BHour.minute >= 60){
+        BHour.minute-=60;
+        BHour.Hour++;
         priority = 1;
-        pref.remove(Minute_Hidraulic_Preference);
-        pref.putInt(Hourmeter_Hidraulic_Preference, Hourmeter_Hidraulic_Bomb);
+        pref.remove(MinuteHidraulicPreference);
+        pref.putInt(MinuteHidraulicPreference, BHour.Hour);
       }
-    } // --------------------------------------------------------------------------
-    if (General_Current >= 13){  // ---------Trasion engine General_Hourmeter----------------------
-      Sec_Traction_Engine++;
-      if (Sec_Traction_Engine >= 60){        
-        Sec_Traction_Engine-=60;
-        Minute_Traction_Engine++;
-        if (Minute_Traction_Engine == 20)
-          pref.putInt(Minute_Engine_Preference, Minute_Traction_Engine);
-        else if (Minute_Traction_Engine == 40)
-          pref.putInt(Minute_Engine_Preference, Minute_Traction_Engine);
+    } 
+    if (GeneralCurrent >= 13){ 
+      THour.sec++;
+      if (THour.sec >= 60){        
+        THour.sec-=60;
+        THour.minute++;
+        if (THour.minute == 20)
+          pref.putInt(MinuteEnginePreference, THour.minute);
+        else if (THour.minute == 40)
+          pref.putInt(MinuteEnginePreference, THour.minute);
       }
-      if (Minute_Traction_Engine >= 60){
-        Minute_Traction_Engine-=60;
-        Hourmeter_Traction_Engine++;
+      if (THour.minute >= 60){
+        THour.minute-=60;
+        THour.Hour++;
         priority = 1;
-        pref.remove(Minute_Engine_Preference);
-        pref.putInt(Hourmeter_Engine_Preference, Hourmeter_Traction_Engine);
+        pref.remove(MinuteEnginePreference);
+        pref.putInt(HourmeterEnginePreference, THour.Hour);
       }
-    } // -----------------------------------------------------------------------
-
-    esp_task_wdt_reset();        // reset watchdog if dont return any error
-    vTaskDelay(1000);
+    } 
+    esp_task_wdt_reset();       
+    vTaskDelay(500);
   }
 } 
 
 // -----------------------------------------------------------------
 // -----Navegation task-----
-void xTaskNav(void *pvParameters){
-  esp_task_wdt_add(NULL);      //  enable watchdog
+void xTaskNav(void *pvParameters){ 
+  esp_task_wdt_add(NULL); 
   while(1){
-    rtc_wdt_feed();                  //  feed watchdog 
-    
-    lcd.noCursor();
-    lcd.noBlink();
-
+    rtc_wdt_feed();
+    digitalWrite(RFID_CS, LOW);                 
     char menu = kpd.getChar();
     vTaskDelay(90);
-
     if (manup == 1) {
       status();
     } else if (manuc == 1) {
@@ -349,76 +395,140 @@ void xTaskNav(void *pvParameters){
       if (menu != 'N') {
         vTaskDelay(20);
        if (menu == '0') {
-          opnav = false;  // Para tela de Engenharia
-          eng();
+          opnav = false; 
           vTaskDelay(80);
+          eng();        
         }
-      } else {
-        opnav = true;  // Para tela de Operação
+      }else {
+        opnav = true; 
         apx();
       }
     }
-    esp_task_wdt_reset();            // reset watchdog if dont return any error
+    
+    esp_task_wdt_reset(); 
     vTaskDelay(1500);
   }
 }
 
 // -----------------------------------------------------------------
-// -----LoRa-----
-void xTaskSend(void *pvParameters){   
-  esp_task_wdt_add(NULL);
-  while (1){
-    rtc_wdt_feed();  
-
-    if (priority == 0){
-      LoRa.beginPacket();
-      LoRa.print(Voltage);
-      LoRa.print(Current_Hidraulic_Bomb);
-      LoRa.print(Current_Traction_Engine);
-      LoRa.print(General_Current);
-      LoRa.endPacket();
-      priority = 0;
-    }else if (priority == 1){
-      LoRa.beginPacket();
-      LoRa.println(General_Hourmeter);
-      LoRa.println(Hourmeter_Traction_Engine);
-      LoRa.println(Hourmeter_Hidraulic_Bomb);
-      LoRa.endPacket();
-      priority = 0;
-    }else if(priority == 2){
-      LoRa.beginPacket();
-      LoRa.print(uid_buffer);
-      LoRa.endPacket();
-      priority = 0;
-    }else if (priority == 3){
-      LoRa.begin();
-      LoRa.print(Answer_1);
-      LoRa.print(Answer_2);
-      LoRa.print(Answer_3);
-      LoRa.print(Answer_4);
-      LoRa.print(Answer_5);
-      LoRa.endPacket();
-      priority = 0;
-    }
-    esp_task_wdt_reset(); 
+// -----Send data task-----
+void xTaskSend(void *pvParameters){
+  //esp_task_wdt_add(NULL);
+  while(1){
+    //rtc_wdt_feed();
+    if (LoRa.available()){
+      Serial.print("Lora disponivel");
+      if (priority == 0){
+        LoRa.beginPacket();
+        LoRa.print(0);
+        LoRa.print("OPA!");
+        LoRa.endPacket();
+      }else if (priority == 1){
+        LoRa.beginPacket();
+        LoRa.print(1);
+        LoRa.print("OPA!");
+        LoRa.endPacket();
+        Serial.printf("Horimetro1: %d\nHorimetro2: %d\nHorimetro3: %d", GHour.Hour, 
+        THour.Hour, BHour.Hour);
+      }else if(priority == 2){
+        LoRa.beginPacket();
+        LoRa.print(2);
+        LoRa.println(uid_buffer);
+        Serial.print(uid_buffer);
+        LoRa.endPacket();
+        priority = 0;
+      }else if (priority == 3){
+       LoRa.beginPacket();
+        LoRa.print(3);
+        LoRa.print("OPA!");
+        LoRa.endPacket();
+      }
+    }else recon();
     vTaskDelay(1000);
-  }  
+  }
 }
 
-/*------------------------------------------------------------------------------------
---------------------------------------Functions---------------------------------------
-------------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------
+-------------------------------------Functions-------------------------------------
+---------------------------------------------------------------------------------*/
+
+// -----------------------------------------------------------------
+// -----LCD config-----
+void Taskconf(){
+  xTaskCreatePinnedToCore(xTaskTelemetry, // function name
+                          "Telemetry",    // task name
+                          2000,           // stack size in word
+                          NULL,           // input parameter
+                          1,              // priority
+                          NULL,           // task handle
+                          0);             // core
+
+  xTaskCreatePinnedToCore(xTaskNav,
+                          "Navegation",
+                          4500,
+                          NULL,
+                          1,
+                          NULL,
+                          1);
+
+  xTaskCreatePinnedToCore(xTaskSend,
+                          "LoRa",
+                          2500,
+                          NULL,
+                          2,
+                          NULL,
+                          0);
+
+}
+
+// -----------------------------------------------------------------
+// -----LoRa config-----
+void LoRaconfig(){
+  LoRa.setPins(LORA_CS, LORA_RST);
+
+  pinMode(LORA_CS, OUTPUT);
+  pinMode(LORA_RST, OUTPUT);
+
+  if (!LoRa.begin(FREQ)){
+    LoRa.begin(FREQ);
+    Serial.println("Starting LoRa failed!");
+  }
+
+  LoRa.setSyncWord(SYNC_WORD);
+  LoRa.setSpreadingFactor(SF);
+  LoRa.setSignalBandwidth(SBW);
+  LoRa.setTxPower(TX_POWER_DB); 
+  LoRa.setPreambleLength(PREAMBLE_LENGTH);
+  LoRa.setCodingRate4(CODING_RATE_DENOMINATOR);
+  Serial.println("LoRa Initizalized!");
+}
+
+// -----------------------------------------------------------------
+// -----RFID config-----
+void RFIDConfig(){
+  rfid.PCD_Init();
+  Serial.println("RFID Initizalized");
+}
 
 // -----------------------------------------------------------------
 // -----read flash memory-----
 void readpref(){
-  Minute_Hidraulic_Bomb     = pref.getInt(Minute_Hidraulic_Preference, Minute_Hidraulic_Bomb);
-  General_Minute      = pref.getInt(Minute_preference, General_Minute);
-  General_Hourmeter   = pref.getInt(Hourmeter_Preference, General_Hourmeter); 
-  Hourmeter_Traction_Engine  = pref.getInt(Hourmeter_Engine_Preference, Hourmeter_Traction_Engine);
-  Hourmeter_Hidraulic_Bomb  = pref.getInt(Hourmeter_Hidraulic_Preference, Hourmeter_Hidraulic_Bomb);
-  manup       = pref.getInt(prevpref, manup);
-  manuc       = pref.getInt(correpref, manuc);
+  GHour.Hour         =   pref.getInt(HourmeterPreference, GHour.Hour); 
+  GHour.minute       =   pref.getInt(GenerealMinutePreference, GHour.minute);
+  THour.Hour         =   pref.getInt(HourmeterEnginePreference, THour.Hour);
+  THour.minute       =   pref.getInt(MinuteEnginePreference, THour.minute);
+  BHour.Hour         =   pref.getInt(MinuteHidraulicPreference, BHour.Hour);
+  BHour.minute       =   pref.getInt(HourmeterHidraulicPreference, BHour.minute);
+  manuc              =   pref.getInt(correpref, manuc);
+  manup              =   pref.getInt(prevpref, manup);
+  listaCartoes       =   pref.getString(listapref,  listaCartoes);
+
+}
+
+// -----------------------------------------------------------------
+// -----Reconection-----
+void recon(){
+  LoRa.begin(FREQ);        
 }
 
 // -----------------------------------------------------------------
@@ -429,6 +539,7 @@ void ina226_setup(){
   INA.setConversionTime(CONV_TIME_1100); 
   INA.setResistorRange(SHUNT_RESISTENCE, 300.0); 
   INA.waitUntilConversionCompleted(); 	
+  Serial.println("INA Initizalized");
 }
 
 // -----------------------------------------------------------------
@@ -457,7 +568,6 @@ void tag(char key, int buffer){
       b = 5;  
 
     currenttaglen++;
-    vTaskDelay(20); 
 
   }else if(buffer == 0){
     lcd.setCursor(a, 2);
@@ -480,38 +590,78 @@ void tag(char key, int buffer){
 
     if (c == 16)
       c = 10;
-
-    vTaskDelay(20); 
   }
 }
 
 // -----------------------------------------------------------------
 // -----cadastro-----
-void CadastrarCartao(){
-  String conteudo = "";
-  while(!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial());
+/* void CarregarCartoesCadastrados() {
+  //String conteudo = pref.getString(listapref, "");
+  int indice = 0;
+  String cartao = "";
 
+  for (int i = 0; i < conteudo.length(); i++) {
+    if (conteudo[i] == ';') {
+      cartoesCadastrados[indice] = cartao;
+      indice++;
+      cartao = "";
+    } else {
+      cartao += conteudo[i];
+    }
+  }
+
+  savecard = indice;
+} */
+
+void CadastrarCartao() {
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-             rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-             rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
-    conteudo.concat(CAD);  // Juntando os valores do CAD no conteudo
-    conteudo = conteudo + ";";
-    UIDLists = UIDLists + conteudo;
+              rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+              rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-    lcd.setCursor(6, 2);
-    lcd.print(CAD);
-    b = 5;
-    pref.putString(listapref, UIDLists);
-    vTaskDelay(500);
-    lcd.clear();
-    lcd.setCursor(5, 2);
-    lcd.print("CADASTRADO");
-    vTaskDelay(1000);
-    cadastrar();
+    // Verifica se o cartão já existe na lista de cartões cadastrados
+    bool cartaoJaCadastrado = false;
+    for (int i = 0; i < savecard; i++) {
+      if  (cartoesCadastrados[i] == CAD) {
+        cartaoJaCadastrado = true;
+        break;
+      }
+    }
+
+    if (cartaoJaCadastrado) {
+      // Exibe mensagem de cartão já cadastrado
+      lcd.clear();
+      lcd.setCursor(1, 1);
+      lcd.print("CARTAO JA CADASTRADO!");
+      delay(1500);
+      lcd.clear();
+      cadastrar();
+    } else {
+        // Adiciona o cartão à lista de cartões cadastrados
+        cartoesCadastrados[savecard] = CAD;
+        savecard++;
+
+        // Salva a lista de cartões cadastrados na EEPROM
+        
+        for (int i = 0; i < savecard; i++) {
+        listaCartoes += cartoesCadastrados[i];
+        if (i < savecard - 1) {
+        listaCartoes += ";";
+        }
+      }
+      pref.putString(listapref, listaCartoes);
+
+        // Atualiza a exibição no LCD
+      lcd.clear();
+      lcd.setCursor(1, 1);
+      lcd.print("CARTAO CADASTRADO:");
+      lcd.setCursor(1, 2);
+      lcd.print(CAD);
+      delay(1000);
+      lcd.clear();
+      cadastrar();
+    }
   }
-   rfid.PICC_HaltA();
-   rfid.PCD_StopCrypto1();
 }
 
 // -----------------------------------------------------------------
@@ -522,7 +672,6 @@ void format(){
   lcd.print("FORMATADO");
   
   UIDLists = "/0";
-  vTaskDelay(50);
   pref.putString(listapref, UIDLists);
 }
 
@@ -562,7 +711,7 @@ void aprovadoPass(){
     lcd.print("TENTE NOVAMENTE");
     vTaskDelay(1000);
     a = 7;
-    psswdcheck = false;  // mostra que psswdcheck, apaga a mensagem anterior e  Voltagea para a tela de Password e colocar a senha correta
+    psswdcheck = false;  // mostra que psswdcheck, apaga a mensagem anterior e  volta para a tela de Password e colocar a senha correta
   }
   resetPassword();
 }
@@ -613,7 +762,7 @@ void erease(char key, int buffer){
 void status(){
   lcd.clear();
   while (1) {
-
+    //esp_task_wdt_reset();
     lcd.setCursor(6, 0);
     lcd.print("MAQUINA");
     lcd.setCursor(9, 1);
@@ -623,8 +772,9 @@ void status(){
 
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
       snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
-               rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-               rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+                        rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+                        rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+      priority = 2;
 
       if (strcmp(uid_buffer, TecCard.c_str()) == 0) {
         manuc = 0;
@@ -637,7 +787,7 @@ void status(){
       }
     } else if (!rfid.PICC_IsNewCardPresent() && !rfid.PICC_ReadCardSerial()) {
 
-      if (manup == 1) {
+      if (manup == 1) {;
         lcd.setCursor(5, 3);
         lcd.print("PREVENTIVA");
         vTaskDelay(40);
@@ -654,17 +804,17 @@ void status(){
 
 // -----------------------------------------------------------------
 // -----aprox-----
-void apx(){
+void apx(){ 
   lcd.clear();
-  lcd.setCursor(2, 2);
-  lcd.print("APROXIMAR CARTAO");
-  
   while (opnav == true) {
-
+    lcd.setCursor(2, 2);
+    lcd.print("APROXIMAR CARTAO");
+    //esp_task_wdt_reset();
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
       snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
-               rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-               rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+                        rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+                        rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+
       priority = 2;
 
       if (strcmp(uid_buffer, OpeCard.c_str()) == 0) {
@@ -673,7 +823,7 @@ void apx(){
         lcd.print("OPERADOR");
         lcd.setCursor(4, 2);
         lcd.print("IDENTIFICADO");
-        vTaskDelay(1000);
+        vTaskDelay(500);
         vazamento();
       } else if (strcmp(uid_buffer, TecCard.c_str()) == 0) {
         lcd.clear();
@@ -681,7 +831,7 @@ void apx(){
         lcd.print("TECNICO");
         lcd.setCursor(4, 2);
         lcd.print("IDENTIFICADO");
-        vTaskDelay(1000);
+        vTaskDelay(500);
         manutencao();
       } else if (strcmp(uid_buffer, AdmCard.c_str()) == 0) {
         lcd.clear();
@@ -689,10 +839,11 @@ void apx(){
         lcd.print("ADMINISTRADOR");
         lcd.setCursor(4, 2);
         lcd.print("IDENTIFICADO");
-        vTaskDelay(1000);
+        vTaskDelay(500);
         eng();
       }
     }
+    vTaskDelay(500);
   }
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
@@ -706,9 +857,7 @@ void eng(){
   lcd.print("PASSWORD:");
   lcd.setCursor(14, 3);
   lcd.print("#-SAIR");
-
   while (1) {
-
     char key = kpd.getChar();
     vTaskDelay(50);
 
@@ -729,8 +878,7 @@ void eng(){
         erease(key, 1); 
       } else if(key == 'B')
         vTaskDelay(5);
-      else 
-        tag(key, 0);
+      else tag(key, 0);
     }
   }
 }
@@ -749,7 +897,6 @@ void screens(){
   lcd.print("3- HORIMETRO/#- SAIR");
 
   while (opnav == true) {
-
     char key = kpd.getChar();
     vTaskDelay(20);
     if (key != 'N') {
@@ -805,8 +952,8 @@ void telas(){
 // -----Cadastrar-----
 void cadastrar(){
   lcd.clear();
-  lcd.setCursor(1, 1);
-  lcd.print("TAG:");
+  /* lcd.setCursor(1, 1);
+  lcd.print("TAG:"); */
   lcd.setCursor(1, 2);
   lcd.print("RFID:");
   lcd.setCursor(14, 3);
@@ -815,27 +962,29 @@ void cadastrar(){
 
   while (opnav == true) {
 
-    char key = kpd.getChar();
+   char key = kpd.getChar();
     vTaskDelay(70);
 
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
       if (key == 'C')
         dell(1);
-      else if ( key == 'D')
-        CadastrarCartao();
       else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
         screens();
       }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*')
+      else if (key == '*') 
         erease(key, 0);
       else 
-        tag(key, 1);
+        tag(key, 1); 
     } 
+      // Aqui chamamos a função para cadastrar o cartão
+        CadastrarCartao();
   }
+    rfid.PICC_HaltA();
+    rfid.PCD_StopCrypto1();
 }
 
 // -----------------------------------------------------------------
@@ -893,6 +1042,7 @@ void excluir(){
       snprintf(uid_buffer, sizeof(uid_buffer), "%02X%02X%02X%02X",
                rfid.uid.uidByte[0], rfid.uid.uidByte[1],
                rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+      priority = 2;
 
       if (strcmp(uid_buffer, PesCard.c_str()) == 0) {
         lcd.clear();
@@ -934,10 +1084,8 @@ void formatar(){
   lcd.print("2 - NAO");
 
   while (1) {
-
     char key = kpd.getChar();
     vTaskDelay(90);
-
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
@@ -983,12 +1131,12 @@ void input(){
 }
 
 // -----------------------------------------------------------------
-// -----General_Hourmeter check-----
+// -----GeneralHourmeter check-----
 void hourcheck(){
   lcd.setCursor(0, 0);
   lcd.print("O HORIMETRO ESTÁ CORRETO?");
   lcd.setCursor(0, 1);
-  lcd.print(General_Hourmeter);
+  lcd.print(GHour.Hour);
   lcd.setCursor(0, 3);
   lcd.print("D-CONFIRMAR");
   lcd.setCursor(15, 3);
@@ -1001,7 +1149,6 @@ void hourcheck(){
       screens();
     else if (key == 'C')
       input();
-
   }
 }
 // -----------------------------------------------------------------
@@ -1013,7 +1160,7 @@ void vazamento(){
   lcd.setCursor(0, 2);
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
-  lcd.print("2 - NAO");
+  lcd.print("0 - NAO");
 
   while (opnav == true) {
 
@@ -1022,10 +1169,10 @@ void vazamento(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
-        Answer_1 = 1;
+        Ans.Answer1 = 1;
         garfos();
-      } else if (key == '2') {
-        Answer_1 = 2;
+      } else if (key == '0') {
+        Ans.Answer1  = 0;
         garfos();
       }
     }
@@ -1040,7 +1187,7 @@ void garfos(){
   lcd.setCursor(0, 2);
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
-  lcd.print("2 - NAO");
+  lcd.print("0 - NAO");
 
   while (opnav == true) {
     char key = kpd.getChar();
@@ -1048,10 +1195,10 @@ void garfos(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
-        Answer_2 = 1;
+        Ans.Answer2 = 1;
         emergencia();
-      } else if (key == '2') {
-        Answer_2 = 2;
+      } else if (key == '0') {
+        Ans.Answer2  = 0;
         emergencia();
       }
     }
@@ -1065,7 +1212,7 @@ void emergencia(){
   lcd.setCursor(0, 2);
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
-  lcd.print("2 - NAO");
+  lcd.print("0 - NAO");
 
   while (opnav == true) {
     char key = kpd.getChar();
@@ -1073,10 +1220,10 @@ void emergencia(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
-        Answer_3 = 1;
+        Ans.Answer3 = 1;
         comando();
-      } else if (key == '2') {
-        Answer_3 = 2;
+      } else if (key == '0') {
+        Ans.Answer3 = 0;
         comando();
       }
     }
@@ -1098,10 +1245,10 @@ void comando(){
     if (key != 'N') {
       vTaskDelay(50);
       if (key == '1') {
-        Answer_4 = 1;
+        Ans.Answer4 = 1;
         bateria();
-      } else if (key == '2') {
-        Answer_4 = 2;
+      } else if (key == '0') {
+        Ans.Answer4 = 0;
         bateria();
       }
     }
@@ -1115,7 +1262,7 @@ void bateria(){
   lcd.setCursor(0, 2);
   lcd.print("1 - SIM");
   lcd.setCursor(0, 3);
-  lcd.print("2 - NAO");
+  lcd.print("0 - NAO");
 
   while (opnav == true) {
 
@@ -1130,17 +1277,17 @@ void bateria(){
         lcd.print("CONCLUIDO");
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
-        Answer_5 = 1;
-        vTaskDlay(1000);
+        Ans.Answer5 = 1;
+        vTaskDelay(1000);
         opnav = true;  
         telafinal();
-      } else if (key == '2') {
+      } else if (key == '0') {
         lcd.clear();
         lcd.setCursor(6, 1);
         lcd.print("CONCLUIDO");
         lcd.setCursor(2, 2);
         lcd.print("MAQUINA LIBERADA");
-        Answer_5 = 2;
+        Ans.Answer5 = 0;
         vTaskDelay(1000);
         opnav = true;  
         telafinal();
@@ -1159,25 +1306,24 @@ void bateria(){
 void telafinal(){
   lcd.clear();
   lcd.setCursor(1, 0);
-  lcd.print("NMS-V0.1");
+  lcd.print("IHM-V0.9");
   lcd.setCursor(5, 1);
   lcd.print("GREENTECH");
   lcd.setCursor(1, 2);
   lcd.print("PRONTO PARA OPERAR");
   lcd.setCursor(5, 3);
   lcd.print("SHOWROOM-SP");
-
+  //vTaskResume(SenderHandle);
   while (opnav == true) { 
-
     char key = kpd.getChar();
-
     if (key != 'N'){
       vTaskDelay(70);
-      if (key == 'A') {
-        vTaskDelay(50);
-        lcd.clear();
+      if (key == 'A')
         esp_restart();
-      }
+      else if  (key == 'B')
+        apx();
     }
   } 
 }
+
+// end code
