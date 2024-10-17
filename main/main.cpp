@@ -232,8 +232,8 @@ int  manup =  0;
 int  manuc =  0; 
 bool opnav;
 bool psswdcheck;
-String cartoesCadastrados[2000]; // Defina o tamanho da lista
-int savecard = 0; // Variável para controlar o índice da lista
+//String cartoesCadastrados[2000]; // Defina o tamanho da lista
+//int savecard = 0; // Variável para controlar o índice da lista
 
 // ----------------------------------------------------------------
 // --Preferences Key---
@@ -241,7 +241,7 @@ const char *cadaspref =   "Cadastro";
 const char *prevpref  =   "Manupreve";
 const char *correpref =   "Manucorre";
 const char *HourmeterPreference  =   "hour";
-const char *listapref      =   "Cadastro Cartoes";
+const char *listapref      =   "CadastroCartoes";
 const char *GenerealMinutePreference      =   "min";
 const char *MinuteEnginePreference        =   "trac";
 const char *MinuteHidraulicPreference     =   "minbomb";
@@ -257,7 +257,9 @@ String PesCard  =   "B2B4BF1B";
 String UIDLists =   " ";
 String TAGLists =   " ";
 String listaCartoes = "";
-
+String listatec = "";
+String listaOpe = "";
+String listaAdm = "";
 TaskHandle_t SenderHandle;
 
 // ----------------------------------------------------------------
@@ -283,6 +285,9 @@ extern "C" void app_main(){
   lcd.noBlink();
 
   readpref();
+
+  Serial.println("Lista de cartões cadastrados lida da EEPROM:");
+  Serial.println(listaCartoes);
 
   lcd.setCursor(3, 2);
   lcd.print("INICIALIZANDO");
@@ -397,14 +402,13 @@ void xTaskNav(void *pvParameters){
        if (menu == '0') {
           opnav = false; 
           vTaskDelay(80);
-          eng();        
+          eng();       
         }
       }else {
         opnav = true; 
         apx();
       }
     }
-    
     esp_task_wdt_reset(); 
     vTaskDelay(1500);
   }
@@ -513,16 +517,15 @@ void RFIDConfig(){
 // -----------------------------------------------------------------
 // -----read flash memory-----
 void readpref(){
-  GHour.Hour         =   pref.getInt(HourmeterPreference, GHour.Hour); 
-  GHour.minute       =   pref.getInt(GenerealMinutePreference, GHour.minute);
-  THour.Hour         =   pref.getInt(HourmeterEnginePreference, THour.Hour);
-  THour.minute       =   pref.getInt(MinuteEnginePreference, THour.minute);
-  BHour.Hour         =   pref.getInt(MinuteHidraulicPreference, BHour.Hour);
-  BHour.minute       =   pref.getInt(HourmeterHidraulicPreference, BHour.minute);
-  manuc              =   pref.getInt(correpref, manuc);
-  manup              =   pref.getInt(prevpref, manup);
-  listaCartoes       =   pref.getString(listapref,  listaCartoes);
-
+  GHour.Hour                    =  pref.getInt(HourmeterPreference, GHour.Hour); 
+  GHour.minute                  =  pref.getInt(GenerealMinutePreference, GHour.minute);
+  THour.Hour                    =  pref.getInt(HourmeterEnginePreference, THour.Hour);
+  THour.minute                  =  pref.getInt(MinuteEnginePreference, THour.minute);
+  BHour.Hour                    =  pref.getInt(MinuteHidraulicPreference, BHour.Hour);
+  BHour.minute                  =  pref.getInt(HourmeterHidraulicPreference, BHour.minute);
+  manuc                         =  pref.getInt(correpref, manuc);
+  manup                         =  pref.getInt(prevpref, manup);
+  listaCartoes                  =  pref.getString(listapref, listaCartoes);
 }
 
 // -----------------------------------------------------------------
@@ -595,63 +598,36 @@ void tag(char key, int buffer){
 
 // -----------------------------------------------------------------
 // -----cadastro-----
-/* void CarregarCartoesCadastrados() {
-  //String conteudo = pref.getString(listapref, "");
-  int indice = 0;
-  String cartao = "";
-
-  for (int i = 0; i < conteudo.length(); i++) {
-    if (conteudo[i] == ';') {
-      cartoesCadastrados[indice] = cartao;
-      indice++;
-      cartao = "";
-    } else {
-      cartao += conteudo[i];
-    }
-  }
-
-  savecard = indice;
-} */
-
 void CadastrarCartao() {
   if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
     snprintf(CAD, sizeof(CAD), "%02X%02X%02X%02X",
-              rfid.uid.uidByte[0], rfid.uid.uidByte[1],
-              rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
+             rfid.uid.uidByte[0], rfid.uid.uidByte[1],
+             rfid.uid.uidByte[2], rfid.uid.uidByte[3]);
 
-    // Verifica se o cartão já existe na lista de cartões cadastrados
-    bool cartaoJaCadastrado = false;
-    for (int i = 0; i < savecard; i++) {
-      if  (cartoesCadastrados[i] == CAD) {
-        cartaoJaCadastrado = true;
-        break;
-      }
-    }
-
-    if (cartaoJaCadastrado) {
-      // Exibe mensagem de cartão já cadastrado
+    // Verifica se o cartão já está cadastrado na lista
+    if (listaCartoes.indexOf(CAD) != -1) {
       lcd.clear();
-      lcd.setCursor(1, 1);
-      lcd.print("CARTAO JA CADASTRADO!");
+      lcd.setCursor(7, 1);
+      lcd.print("CARTAO");
+      lcd.setCursor(9, 2);
+      lcd.print("JA");
+      lcd.setCursor(5, 3);
+      lcd.print("CADASTRADO!");
       delay(1500);
       lcd.clear();
-      cadastrar();
+      cadastrar(); 
     } else {
-        // Adiciona o cartão à lista de cartões cadastrados
-        cartoesCadastrados[savecard] = CAD;
-        savecard++;
-
-        // Salva a lista de cartões cadastrados na EEPROM
-        
-        for (int i = 0; i < savecard; i++) {
-        listaCartoes += cartoesCadastrados[i];
-        if (i < savecard - 1) {
-        listaCartoes += ";";
-        }
+      // Adiciona o cartão à lista
+      if (listaCartoes.length() > 0) {
+        listaCartoes += ";"; // Adiciona separador apenas se já houver cartões
       }
-      pref.putString(listapref, listaCartoes);
+      listaCartoes += CAD;
 
-        // Atualiza a exibição no LCD
+      // Salva a lista atualizada na EEPROM/NVS
+      pref.putString(listapref, listaCartoes);
+      Serial.println("Lista de cartões cadastrados escrita na EEPROM:");
+      Serial.println(listaCartoes);
+
       lcd.clear();
       lcd.setCursor(1, 1);
       lcd.print("CARTAO CADASTRADO:");
@@ -952,8 +928,8 @@ void telas(){
 // -----Cadastrar-----
 void cadastrar(){
   lcd.clear();
-  /* lcd.setCursor(1, 1);
-  lcd.print("TAG:"); */
+  lcd.setCursor(1, 1);
+  lcd.print("TIPO:"); 
   lcd.setCursor(1, 2);
   lcd.print("RFID:");
   lcd.setCursor(14, 3);
@@ -967,18 +943,39 @@ void cadastrar(){
 
     if (key != 'N' && key != 'F') {
       vTaskDelay(70);
-      if (key == 'C')
+      if (key == '1') {
+        lcd.setCursor(6, 1);
+        lcd.print("OPERADOR");
+        vTaskDelay(1000);
+        lcd.setCursor(6, 1); 
+        lcd.print("         ");
+       
+      } else if (key == '2') {
+        lcd.setCursor(6, 1);
+        lcd.print("TECNICO");
+        vTaskDelay(20);
+        vTaskDelay(1000);
+        lcd.setCursor(6, 1); 
+        lcd.print("         "); 
+      } else if (key == '3') {      
+        lcd.setCursor(6, 1);
+        lcd.print("ADMINISTRADOR");
+        vTaskDelay(20);
+        vTaskDelay(1000);
+        lcd.setCursor(6, 1); 
+        lcd.print("             "); 
+      } else if (key == 'C')  {
         dell(1);
-      else if (key == '#'){ 
+      } else if (key == '#'){ 
         vTaskDelay(20);
         b = 5;
         screens();
       }else if (key == 'A' || key == 'B') 
         vTaskDelay(5);
-      else if (key == '*') 
+      /* else if (key == '*') 
         erease(key, 0);
       else 
-        tag(key, 1); 
+        tag(key, 1); */ 
     } 
       // Aqui chamamos a função para cadastrar o cartão
         CadastrarCartao();
